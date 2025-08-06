@@ -39,8 +39,12 @@
                                         <td>{{ $item->nidn }}</td>
                                         <td>{{ $item->nama_dosen }}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-secondary">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Hapus</button>
+                                            <a href="{{ route('dosen.edit', $item->id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                                            <form action="{{ route('dosen.hapus', $item->id) }}" class="d-inline" method="post">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

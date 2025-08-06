@@ -42,4 +42,51 @@ class DosenController extends Controller
             return redirect()->back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
     }
+
+    public function edit($id)
+    {
+        $dosen = Dosen::findOrFail($id);
+        return view('dosen.edit', compact('dosen'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $dosen = Dosen::findOrFail($id);
+
+        $validasi = $request->validate([
+            'nidn' => 'required|string|max:15|unique:dosen,nidn,' . $dosen->id,
+            'nama_dosen' => 'required|string|max:50',
+            'prodi' => 'required|string|max:20',
+        ], [
+            'nidn.required' => 'NIDN harus diisi',
+            'nidn.unique' => 'NIDN sudah terdaftar',
+            'nama_dosen.required' => 'Nama Dosen harus diisi',
+            'prodi.required' => 'Program Studi harus diisi',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $dosen->update($validasi);
+            DB::commit();
+            return redirect()->route('dosen.index')->with('success', 'Data Dosen berhasil diperbarui');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal memperbarui data: ' . $e->getMessage()]);
+        }
+    }
+
+    public function hapus($id)
+    {
+        $dosen = Dosen::findOrFail($id);
+
+        DB::beginTransaction();
+        try {
+            $dosen->delete();
+            DB::commit();
+            return redirect()->route('dosen.index')->with('success', 'Data Dosen berhasil dihapus');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus data: ' . $e->getMessage()]);
+        }
+    }
 }
