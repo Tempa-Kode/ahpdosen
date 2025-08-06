@@ -18,6 +18,7 @@
     <!-- endinject -->
 
     <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ asset('vendors/datatables.net-bs5/dataTables.bootstrap5.css') }}">
     <!-- End plugin css for this page -->
 
     <!-- inject:css -->
@@ -88,7 +89,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link {{ Route::currentRouteName() == 'dosen.index' ? 'active' : '' }}" href="{{ route('dosen.index') }}">
                             <i class="link-icon" data-feather="database"></i>
                             <span class="menu-title">Data Dosen</span>
                         </a>
@@ -142,6 +143,8 @@
 <!-- endinject -->
 
 <!-- Plugin js for this page -->
+<script src="{{ asset('vendors/datatables.net/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('vendors/datatables.net-bs5/dataTables.bootstrap5.js') }}"></script>
 <!-- End plugin js for this page -->
 
 <!-- inject:js -->
@@ -150,6 +153,12 @@
 <!-- endinject -->
 
 <!-- Custom js for this page -->
+<script src="{{ asset('assets/js/data-table.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#datatable').DataTable();
+    });
+</script>
 <!-- End custom js for this page -->
 </body>
 </html>
