@@ -8,17 +8,26 @@ use Illuminate\Support\Facades\DB;
 
 class DosenController extends Controller
 {
+    /**
+     * Menampilkan daftar dosen.
+     */
     public function index()
     {
         $dosen = Dosen::all();
         return view('dosen.index', compact('dosen'));
     }
 
+    /**
+     * Menampilkan form tambah dosen.
+     */
     public function tambah()
     {
         return view('dosen.tambah');
     }
 
+    /**
+     * Menyimpan data dosen baru.
+     */
     public function simpan(Request $request)
     {
         $validasi = $request->validate([
@@ -43,12 +52,18 @@ class DosenController extends Controller
         }
     }
 
+    /**
+     * Menampilkan form edit dosen.
+     */
     public function edit($id)
     {
         $dosen = Dosen::findOrFail($id);
         return view('dosen.edit', compact('dosen'));
     }
 
+    /**
+     * Memperbarui data dosen.
+     */
     public function update(Request $request, $id)
     {
         $dosen = Dosen::findOrFail($id);
@@ -75,6 +90,9 @@ class DosenController extends Controller
         }
     }
 
+    /**
+     * Menghapus data dosen.
+     */
     public function hapus($id)
     {
         $dosen = Dosen::findOrFail($id);
