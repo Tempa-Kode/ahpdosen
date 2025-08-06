@@ -23,7 +23,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-header">
-                    <h4>InpuData Dosen</h4>
+                    <h4>Input Data Dosen</h4>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('dosen.simpan') }}" class="forms-sample" method="post">
