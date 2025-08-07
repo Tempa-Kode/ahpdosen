@@ -97,18 +97,15 @@
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="link-icon" data-feather="mail"></i>
-                            <span class="menu-title">Apps</span>
+                            <span class="menu-title">Data Kriteria</span>
                             <i class="link-arrow"></i>
                         </a>
                         <div class="submenu">
                             <ul class="submenu-item">
-                                <li class="category-heading">Email</li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/email/inbox.html">Inbox</a></li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/email/read.html">Read</a></li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/email/compose.html">Compose</a></li>
-                                <li class="category-heading">Other</li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/apps/chat.html">Chat</a></li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/apps/calendar.html">Calendar</a></li>
+                                <li class="category-heading">Data</li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('kriteria.index') }}">Kriteria</a></li>
+                                <li class="nav-item"><a class="nav-link" href="../../pages/email/read.html">Indikator Kriteria</a></li>
+                                <li class="nav-item"><a class="nav-link" href="../../pages/email/read.html">Sub Indikator Kriteria</a></li>
                             </ul>
                         </div>
                     </li>

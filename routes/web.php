@@ -15,4 +15,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/update/{id}', [\App\Http\Controllers\DosenController::class, 'update'])->name('dosen.update');
         Route::delete('/hapus/{id}', [\App\Http\Controllers\DosenController::class, 'hapus'])->name('dosen.hapus');
     });
+    Route::prefix('kriteria')->group(function () {
+        Route::get('/', [\App\Http\Controllers\KriteriaController::class, 'index'])->name('kriteria.index');
+        Route::get('/tambah', [\App\Http\Controllers\KriteriaController::class, 'tambah'])->name('kriteria.tambah');
+        Route::post('/simpan', [\App\Http\Controllers\KriteriaController::class, 'simpan'])->name('kriteria.simpan');
+        Route::get('/edit/{id}', [\App\Http\Controllers\KriteriaController::class, 'edit'])->name('kriteria.edit');
+        Route::post('/update/{id}', [\App\Http\Controllers\KriteriaController::class, 'update'])->name('kriteria.update');
+        Route::delete('/hapus/{id}', [\App\Http\Controllers\KriteriaController::class, 'hapus'])->name('kriteria.hapus');
+    });
 });
