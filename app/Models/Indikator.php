@@ -14,4 +14,9 @@ class Indikator extends Model
     {
         return $this->belongsTo(Kriteria::class, 'kriteria_id');
     }
+
+    public function subIndikator()
+    {
+        return $this->hasMany(SubIndikator::class, 'indikator_id');
+    }
 }

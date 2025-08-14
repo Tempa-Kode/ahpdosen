@@ -39,7 +39,7 @@
                     <div class="table-responsive mt-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="">Sub Indikator</h4>
-                            <a href="" class="btn btn-sm btn-primary">Tambah Sub Indikator</a>
+                            <a href="{{ route('subindikator.tambah', ['indikator_id' => $indikator->id]) }}" class="btn btn-sm btn-primary">Tambah Sub Indikator</a>
                         </div>
                         <table id="datatable" class="table">
                             <thead>
@@ -51,7 +51,22 @@
                             </tr>
                             </thead>
                             <tbody>
-
+                                @foreach($indikator->subIndikator as $subIndikator)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $subIndikator->nama_sub_indikator }}</td>
+                                        <td>{{ $subIndikator->skor_kredit ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('subindikator.edit', $subIndikator->id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                                            <a href="{{ route('subindikator.detail', $subIndikator->id) }}" class="btn btn-sm btn-warning">Detail</a>
+                                            <form action="{{ route('subindikator.hapus', $subIndikator->id) }}" class="d-inline" method="post">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

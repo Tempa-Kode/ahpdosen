@@ -32,4 +32,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::delete('/hapus/{id}', [\App\Http\Controllers\IndikatorController::class, 'hapus'])->name('indikator.hapus');
         Route::get('detail/{id}', [\App\Http\Controllers\IndikatorController::class, 'detail'])->name('indikator.detail');
     });
+    Route::prefix('sub-indikator')->group(function () {
+        Route::get('/tambah', [\App\Http\Controllers\SubIndikatorController::class, 'tambah'])->name('subindikator.tambah');
+        Route::post('/simpan', [\App\Http\Controllers\SubIndikatorController::class, 'simpan'])->name('subindikator.simpan');
+        Route::get('/edit/{id}', [\App\Http\Controllers\SubIndikatorController::class, 'edit'])->name('subindikator.edit');
+        Route::put('/update/{id}', [\App\Http\Controllers\SubIndikatorController::class, 'update'])->name('subindikator.update');
+        Route::delete('/hapus/{id}', [\App\Http\Controllers\SubIndikatorController::class, 'hapus'])->name('subindikator.hapus');
+        Route::get('/detail/{id}', [\App\Http\Controllers\SubIndikatorController::class, 'detail'])->name('subindikator.detail');
+    });
 });
