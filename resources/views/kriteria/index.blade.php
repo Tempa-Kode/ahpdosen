@@ -42,6 +42,7 @@
                                         <td>{{ $item->bobot }}</td>
                                         <td>
                                             <a href="{{ route('kriteria.edit', $item->id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                                            <a href="{{ route('kriteria.detail', $item->id) }}" class="btn btn-sm btn-warning">Detail</a>
                                             <form action="{{ route('kriteria.hapus', $item->id) }}" class="d-inline" method="post">
                                                 @csrf
                                                 @method('DELETE')

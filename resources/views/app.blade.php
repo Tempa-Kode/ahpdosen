@@ -95,19 +95,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="link-icon" data-feather="mail"></i>
+                        <a class="nav-link {{ Route::currentRouteName() == 'kriteria.index' ? 'active' : '' }}" href="{{ route('kriteria.index') }}">
+                            <i class="link-icon" data-feather="database"></i>
                             <span class="menu-title">Data Kriteria</span>
-                            <i class="link-arrow"></i>
                         </a>
-                        <div class="submenu">
-                            <ul class="submenu-item">
-                                <li class="category-heading">Data</li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('kriteria.index') }}">Kriteria</a></li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/email/read.html">Indikator Kriteria</a></li>
-                                <li class="nav-item"><a class="nav-link" href="../../pages/email/read.html">Sub Indikator Kriteria</a></li>
-                            </ul>
-                        </div>
                     </li>
                 </ul>
             </div>

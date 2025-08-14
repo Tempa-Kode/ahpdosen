@@ -20,7 +20,16 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/tambah', [\App\Http\Controllers\KriteriaController::class, 'tambah'])->name('kriteria.tambah');
         Route::post('/simpan', [\App\Http\Controllers\KriteriaController::class, 'simpan'])->name('kriteria.simpan');
         Route::get('/edit/{id}', [\App\Http\Controllers\KriteriaController::class, 'edit'])->name('kriteria.edit');
+        Route::get('/detail/{id}', [\App\Http\Controllers\KriteriaController::class, 'detail'])->name('kriteria.detail');
         Route::post('/update/{id}', [\App\Http\Controllers\KriteriaController::class, 'update'])->name('kriteria.update');
         Route::delete('/hapus/{id}', [\App\Http\Controllers\KriteriaController::class, 'hapus'])->name('kriteria.hapus');
+    });
+    Route::prefix('indikator')->group(function () {
+        Route::get('/tambah', [\App\Http\Controllers\IndikatorController::class, 'tambah'])->name('indikator.tambah');
+        Route::post('/simpan', [\App\Http\Controllers\IndikatorController::class, 'simpan'])->name('indikator.simpan');
+        Route::get('/edit/{id}', [\App\Http\Controllers\IndikatorController::class, 'edit'])->name('indikator.edit');
+        Route::post('/update/{id}', [\App\Http\Controllers\IndikatorController::class, 'update'])->name('indikator.update');
+        Route::delete('/hapus/{id}', [\App\Http\Controllers\IndikatorController::class, 'hapus'])->name('indikator.hapus');
+        Route::get('detail/{id}', [\App\Http\Controllers\IndikatorController::class, 'detail'])->name('indikator.detail');
     });
 });

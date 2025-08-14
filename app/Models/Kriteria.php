@@ -15,4 +15,9 @@ class Kriteria extends Model
     ];
 
     public $timestamps = false;
+
+    public function indikator()
+    {
+        return $this->hasMany(Indikator::class);
+    }
 }

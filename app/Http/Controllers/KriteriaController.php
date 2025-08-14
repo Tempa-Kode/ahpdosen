@@ -42,6 +42,12 @@ class KriteriaController extends Controller
         }
     }
 
+    public function detail($id)
+    {
+        $kriteria = Kriteria::where('id', $id)->with('indikator')->firstOrFail();
+        return view('kriteria.detail', compact('kriteria'));
+    }
+
     public function edit($id)
     {
         $kriteria = Kriteria::findOrFail($id);
