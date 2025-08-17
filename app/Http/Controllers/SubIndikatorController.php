@@ -86,7 +86,7 @@ class SubIndikatorController extends Controller
 
     public function detail($id)
     {
-        $subIndikator = SubIndikator::where('id', $id)->with('indikator.kriteria')->first();
+        $subIndikator = SubIndikator::where('id', $id)->with('indikator.kriteria', 'subSubIndikator')->first();
         if (!$subIndikator) {
             return redirect()->back()->withErrors(['error' => 'Sub Indikator tidak ditemukan.']);
         }

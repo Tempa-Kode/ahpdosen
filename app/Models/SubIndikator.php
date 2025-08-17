@@ -18,4 +18,9 @@ class SubIndikator extends Model
     {
         return $this->belongsTo(Indikator::class, 'indikator_id');
     }
+
+    public function subSubIndikator()
+    {
+        return $this->hasMany(SubSubIndikator::class, 'sub_indikator_id');
+    }
 }

@@ -52,18 +52,34 @@
                     <div class="table-responsive mt-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="">Sub-Sub Indikator</h4>
-                            <a href="" class="btn btn-sm btn-primary">Tambah Sub-Sub Indikator</a>
+                            <a href="{{ route('subsubindikator.tambah', ['sub_indikator_id' => $subIndikator->id]) }}" class="btn btn-sm btn-primary">Tambah Sub-Sub Indikator</a>
                         </div>
                         <table id="datatable" class="table">
                             <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Sub Indikator</th>
+                                <th>Nama Sub Sub Indikator</th>
                                 <th>Skor Kredit</th>
                                 <th>Aksi</th>
                             </tr>
                             </thead>
                             <tbody>
+                            @foreach($subIndikator->subSubIndikator as $index => $subSubIndikator)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $subSubIndikator->nama_sub_sub_indikator }}</td>
+                                    <td>{{ $subSubIndikator->skor_kredit }}</td>
+                                    <td>
+                                        <a href="{{ route('subsubindikator.edit', $subSubIndikator->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="{{ route('subsubindikator.hapus', $subSubIndikator->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus sub-sub indikator ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
