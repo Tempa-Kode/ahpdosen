@@ -19,10 +19,10 @@ class IndikatorController extends Controller
     public function simpan(Request $request)
     {
         $validasi = $request->validate([
-            'kriteria_id' => 'required|exists:kriteria,id',
+            'kriteria_id' => 'nullable|exists:kriteria,id',
             'nama_indikator' => 'required|string|max:255',
             'kd_indikator' => 'required|string|max:50',
-            'bobot_indikator' => 'required|numeric|min:0|max:100',
+            'bobot_indikator' => 'nullable|numeric|min:0|max:100',
         ], [
             'kriteria_id.required' => 'Kriteria harus dipilih.',
             'nama_indikator.required' => 'Nama indikator harus diisi.',
@@ -50,9 +50,9 @@ class IndikatorController extends Controller
     public function update(Request $request, $id)
     {
         $validasi = $request->validate([
-            'kd_indikator' => 'required|string|max:50',
+            'kd_indikator' => 'nullable|string|max:50',
             'nama_indikator' => 'required|string|max:255',
-            'bobot_indikator' => 'required|numeric|min:0|max:100',
+            'bobot_indikator' => 'nullable|numeric|min:0|max:100',
         ], [
             'kd_indikator.required' => 'Kode indikator harus diisi.',
             'nama_indikator.required' => 'Nama indikator harus diisi.',
