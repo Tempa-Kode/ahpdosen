@@ -7,7 +7,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Data</a></li>
             <li class="breadcrumb-item"><a href="{{ route('kriteria.index') }}">Kriteria</a></li>
-            <li class="breadcrumb-item"><a href="">Detail Kriteria</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('kriteria.detail', $indikator->kriteria_id) }}">Detail Kriteria</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit Indikator</li>
         </ol>
     </nav>
@@ -32,8 +32,16 @@
                         @method('POST')
                         <input type="number" name="kriteria_id" id="kriteria_id" value="{{ $indikator->id }}" hidden>
                         <div class="mb-3">
+                            <label for="kd_indikator" class="form-label">Kode Indikator</label>
+                            <input type="text" class="form-control" id="kd_indikator" name="kd_indikator" autocomplete="off" value="{{ old('kd_indikator', $indikator->kd_indikator) }}">
+                        </div>
+                        <div class="mb-3">
                             <label for="nama_indikator" class="form-label">Nama Indikator</label>
                             <input type="text" class="form-control" id="nama_indikator" name="nama_indikator" autocomplete="off" value="{{ old('nama_indikator', $indikator->nama_indikator) }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="bobot_indikator" class="form-label">Bobot Indikator</label>
+                            <input type="number" class="form-control" id="bobot_indikator" step="any" name="bobot_indikator" autocomplete="off" value="{{ old('bobot_indikator', $indikator->bobot_indikator) }}">
                         </div>
                         <button type="submit" class="btn btn-primary me-2">Edit</button>
                     </form>

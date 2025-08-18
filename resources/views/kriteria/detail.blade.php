@@ -50,7 +50,9 @@
                             <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Kode Indikator</th>
                                 <th>Nama Indikator</th>
+                                <th>Bobot Indikator</th>
                                 <th>Aksi</th>
                             </tr>
                             </thead>
@@ -58,7 +60,9 @@
                             @foreach($kriteria->indikator as $indikator)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $indikator->kd_indikator ?? '-' }}</td>
                                     <td>{{ $indikator->nama_indikator }}</td>
+                                    <td>{{ $indikator->bobot_indikator ?? '-' }}</td>
                                     <td>
                                         <a href="{{ route('indikator.edit', $indikator->id) }}" class="btn btn-sm btn-secondary">Edit</a>
                                         <a href="{{ route('indikator.detail', $indikator->id) }}" class="btn btn-sm btn-warning">Detail</a>

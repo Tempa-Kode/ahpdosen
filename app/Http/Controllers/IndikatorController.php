@@ -21,9 +21,13 @@ class IndikatorController extends Controller
         $validasi = $request->validate([
             'kriteria_id' => 'required|exists:kriteria,id',
             'nama_indikator' => 'required|string|max:255',
+            'kd_indikator' => 'required|string|max:50',
+            'bobot_indikator' => 'required|numeric|min:0|max:100',
         ], [
             'kriteria_id.required' => 'Kriteria harus dipilih.',
             'nama_indikator.required' => 'Nama indikator harus diisi.',
+            'kd_indikator.required' => 'Kode indikator harus diisi.',
+            'bobot_indikator.required' => 'Bobot indikator harus diisi.',
         ]);
 
         DB::beginTransaction();
@@ -46,9 +50,13 @@ class IndikatorController extends Controller
     public function update(Request $request, $id)
     {
         $validasi = $request->validate([
+            'kd_indikator' => 'required|string|max:50',
             'nama_indikator' => 'required|string|max:255',
+            'bobot_indikator' => 'required|numeric|min:0|max:100',
         ], [
+            'kd_indikator.required' => 'Kode indikator harus diisi.',
             'nama_indikator.required' => 'Nama indikator harus diisi.',
+            'bobot_indikator.required' => 'Bobot indikator harus diisi.',
         ]);
 
         DB::beginTransaction();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Indikator extends Model
 {
     protected $table = 'indikator';
-    protected $fillable = ['kriteria_id', 'nama_indikator'];
+    protected $fillable = ['kriteria_id', 'kd_indikator', 'nama_indikator', 'bobot_indikator'];
     public $timestamps = false;
 
     public function kriteria()
