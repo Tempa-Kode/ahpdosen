@@ -21,7 +21,7 @@ class IndikatorController extends Controller
         $validasi = $request->validate([
             'kriteria_id' => 'nullable|exists:kriteria,id',
             'nama_indikator' => 'required|string|max:255',
-            'kd_indikator' => 'required|string|max:50',
+            'kd_indikator' => 'nullable|string|max:50',
             'bobot_indikator' => 'nullable|numeric|min:0|max:100',
         ], [
             'kriteria_id.required' => 'Kriteria harus dipilih.',
