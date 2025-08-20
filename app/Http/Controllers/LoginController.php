@@ -42,6 +42,50 @@ class LoginController extends Controller
 
     public function dashboard()
     {
-        return view('dashboard');
+        // Data dummy untuk dosen terbaik
+        $dosenTerbaik = [
+            [
+                'nama' => 'Dosen A',
+                'prodi' => 'Teknik Informatika',
+                'skor' => 92.5
+            ],
+            [
+                'nama' => 'Dosen B',
+                'prodi' => 'Sistem Informasi',
+                'skor' => 89.8
+            ],
+            [
+                'nama' => 'Dosen C',
+                'prodi' => 'Teknik Informatika',
+                'skor' => 87.3
+            ],
+            [
+                'nama' => 'Dosen D',
+                'prodi' => 'Sistem Informasi',
+                'skor' => 85.6
+            ],
+            [
+                'nama' => 'Dosen E',
+                'prodi' => 'Sains Data',
+                'skor' => 84.2
+            ],
+            [
+                'nama' => 'Dosen F',
+                'prodi' => 'Teknik Informatika',
+                'skor' => 82.9
+            ],
+            [
+                'nama' => 'Dosen G',
+                'prodi' => 'Sistem Informasi',
+                'skor' => 81.4
+            ],
+            [
+                'nama' => 'Dosen H',
+                'prodi' => 'Sains Data',
+                'skor' => 80.7
+            ]
+        ];
+
+        return view('dashboard', compact('dosenTerbaik'));
     }
 }
