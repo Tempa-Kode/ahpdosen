@@ -41,7 +41,7 @@ class SubSubIndikatorController extends Controller
                 ->with('success', 'Sub Sub Indikator berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.']);
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.' . $e->getMessage()]]);
         }
     }
 
@@ -76,7 +76,7 @@ class SubSubIndikatorController extends Controller
                 ->with('success', 'Sub Sub Indikator berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data.']);
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data.' . $e->getMessage()]]);
         }
     }
 
@@ -92,7 +92,7 @@ class SubSubIndikatorController extends Controller
                 ->with('success', 'Sub Sub Indikator berhasil dihapus.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data.']);
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data.' . $e->getMessage()]]);
         }
     }
 }
