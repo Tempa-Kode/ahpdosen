@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PenilaianController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\LoginController::class, 'login'])->name('login');
@@ -47,4 +48,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::put('/update/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'update'])->name('subsubindikator.update');
         Route::delete('/hapus/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'hapus'])->name('subsubindikator.hapus');
     });
+
+    Route::get('/penilaian/{dosen}/form', [PenilaianController::class, 'form'])->name('penilaian.form');
+    Route::post('/penilaian/{dosen}/store', [PenilaianController::class, 'store'])->name('penilaian.store');
 });

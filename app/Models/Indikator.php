@@ -19,4 +19,10 @@ class Indikator extends Model
     {
         return $this->hasMany(SubIndikator::class, 'indikator_id');
     }
+
+    public function penilaians()
+    {
+        // Argumen 'penilaian' adalah nama yang kita definisikan di method morphs() pada migrasi
+        return $this->morphMany(Penilaian::class, 'penilaian');
+    }
 }

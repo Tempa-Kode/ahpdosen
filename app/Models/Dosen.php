@@ -15,4 +15,9 @@ class Dosen extends Model
     ];
 
     public $timestamps = false;
+
+    public function penilaians()
+    {
+        return $this->hasMany(Penilaian::class);
+    }
 }
