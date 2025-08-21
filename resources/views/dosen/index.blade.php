@@ -29,6 +29,7 @@
                                 <th>No</th>
                                 <th>NIDN</th>
                                 <th>Nama Dosen</th>
+                                <th>Prodi</th>
                                 <th>Aksi</th>
                             </tr>
                             </thead>
@@ -38,6 +39,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->nidn }}</td>
                                         <td>{{ $item->nama_dosen }}</td>
+                                        <td>{{ $item->prodi }}</td>
                                         <td>
                                             <a href="{{ route('dosen.edit', $item->id) }}" class="btn btn-sm btn-secondary">Edit</a>
                                             <form action="{{ route('dosen.hapus', $item->id) }}" class="d-inline" method="post">
