@@ -51,4 +51,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     Route::get('/penilaian/{dosen}/form', [PenilaianController::class, 'form'])->name('penilaian.form');
     Route::post('/penilaian/{dosen}/store', [PenilaianController::class, 'store'])->name('penilaian.store');
+
+    // AHP Routes
+    Route::prefix('ahp')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AhpController::class, 'dashboard'])->name('ahp.dashboard');
+        Route::get('/detail/{dosen}', [\App\Http\Controllers\AhpController::class, 'detail'])->name('ahp.detail');
+        Route::get('/comparison', [\App\Http\Controllers\AhpController::class, 'comparison'])->name('ahp.comparison');
+        Route::get('/debug', [\App\Http\Controllers\AhpController::class, 'debug'])->name('ahp.debug');
+    });
 });
