@@ -109,6 +109,63 @@
                                 <span class="menu-title">Data Kriteria</span>
                             </a>
                         </li>
+                        <li class="nav-item mega-menu">
+                            <a href="#" class="nav-link">
+                                <i class="link-icon" data-feather="feather"></i>
+                                <span class="menu-title">Perhitungan</span>
+                                <i class="link-arrow"></i>
+                            </a>
+                            <div class="submenu">
+                                <div class="col-group-wrapper row">
+                                    <div class="col-group col-md-9">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <p class="category-heading">Hasil Perhitungan AHP</p>
+                                                <div class="submenu-item">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <ul>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="{{ route("perhitungan.show.pendidikan-dan-pembelajaran") }}">Pendidikan
+                                                                        Dan Pembelajaran</a></li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Penelitian</a>
+                                                                </li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Pengabdian
+                                                                        Kepada Masyarakat</a></li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Kegiatan
+                                                                        Penunjang Tridharma</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <ul>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Hasil
+                                                                        Keseluruhan</a></li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Ranking
+                                                                        Final</a></li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="#"
+                                                                        onclick="alert('Belum tersedia')">Laporan
+                                                                        Lengkap</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Str::startsWith(Route::currentRouteName(), "ahp.") ? "active" : "" }}"
                                 href="{{ route("ahp.dashboard") }}">
@@ -167,6 +224,8 @@
         });
     </script>
     <!-- End custom js for this page -->
+
+    @yield("js")
 </body>
 
 </html>

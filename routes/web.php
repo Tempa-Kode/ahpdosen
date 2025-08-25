@@ -59,4 +59,13 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/comparison', [\App\Http\Controllers\AhpController::class, 'comparison'])->name('ahp.comparison');
         Route::get('/debug', [\App\Http\Controllers\AhpController::class, 'debug'])->name('ahp.debug');
     });
+
+    // Perhitungan Routes
+    Route::prefix('perhitungan')->group(function () {
+        Route::get('/pendidikan-dan-pembelajaran', [\App\Http\Controllers\PerhitunganController::class, 'showPendidikanDanPembelajaran'])->name('perhitungan.show.pendidikan-dan-pembelajaran');
+        Route::get('/api/pendidikan-dan-pembelajaran', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikan-dan-pembelajaran');
+    });
+
+    // Legacy route - untuk backward compatibility
+    Route::get('/perhitungan', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikanDanPembelajaran');
 });
