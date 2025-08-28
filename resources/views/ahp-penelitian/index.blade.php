@@ -420,37 +420,61 @@
                     <p><strong>ID:</strong> ${data.dosen.id}</p>
                 </div>
 
+                <!-- Tab Navigation -->
                 <div class="col-12">
-                    <h6>Detail Perhitungan per Indikator</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Indikator</th>
-                                    <th>Nilai Asli</th>
-                                    <th>Skala (1-5)</th>
-                                    <th>Bobot Prioritas</th>
-                                    <th>Skor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${Object.entries(data.detail_perhitungan).map(([kode, detail]) => `
-                                                                    <tr>
-                                                                        <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
-                                                                        <td>${detail.total_nilai_indikator}</td>
-                                                                        <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                                        <td>${detail.bobot_prioritas}</td>
-                                                                        <td><span class="badge bg-success">${detail.skor}</span></td>
-                                                                    </tr>
-                                                                `).join('')}
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-dark">
-                                    <td colspan="4"><strong>Total Skor AHP</strong></td>
-                                    <td><strong>${data.skor_total_ahp}</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                    <ul class="nav nav-tabs" id="dosenDetailTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="perhitungan-tab" data-bs-toggle="tab" data-bs-target="#perhitungan-pane" type="button" role="tab">
+                                <i class="fas fa-calculator"></i> Detail Perhitungan
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="matriks-tab" data-bs-toggle="tab" data-bs-target="#matriks-pane" type="button" role="tab">
+                                <i class="fas fa-table"></i> Matriks Perbandingan Individual
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3" id="dosenDetailTabsContent">
+                        <!-- Tab 1: Detail Perhitungan -->
+                        <div class="tab-pane fade show active" id="perhitungan-pane" role="tabpanel">
+                            <h6>Detail Perhitungan per Indikator</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Indikator</th>
+                                            <th>Nilai Asli</th>
+                                            <th>Skala (1-5)</th>
+                                            <th>Bobot Prioritas</th>
+                                            <th>Skor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${Object.entries(data.detail_perhitungan).map(([kode, detail]) => `
+                                                    <tr>
+                                                        <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
+                                                        <td>${detail.total_nilai_indikator}</td>
+                                                        <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
+                                                        <td>${detail.bobot_prioritas}</td>
+                                                        <td><span class="badge bg-success">${detail.skor}</span></td>
+                                                    </tr>
+                                                `).join('')}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-dark">
+                                            <td colspan="4"><strong>Total Skor AHP</strong></td>
+                                            <td><strong>${data.skor_total_ahp}</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Matriks Perbandingan Individual -->
+                        <div class="tab-pane fade" id="matriks-pane" role="tabpanel">
+                            ${generateMatriksPerbandinganHtml(data.matriks_perbandingan_individual)}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -547,6 +571,136 @@
                 alert('Fitur export PDF akan segera tersedia');
             }
 
+            function generateMatriksPerbandinganHtml(matriksData) {
+                const indikatorKode = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'];
+
+                return `
+                    <div class="row">
+                        <!-- Nilai Asli Indikator -->
+                        <div class="col-12 mb-4">
+                            <h6><i class="fas fa-list"></i> Nilai Asli Indikator Dosen</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>Indikator</th>
+                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Nilai</strong></td>
+                                            ${indikatorKode.map(kode => `<td><strong>${matriksData.nilai_indikator_asli[kode]}</strong></td>`).join('')}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Matriks Perbandingan -->
+                        <div class="col-12 mb-4">
+                            <h6><i class="fas fa-table"></i> Matriks Perbandingan Berpasangan</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Indikator</th>
+                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${indikatorKode.map(kode1 => `
+                                                    <tr>
+                                                        <td><strong>${kode1}</strong></td>
+                                                        ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_perbandingan[kode1][kode2]}</td>`).join('')}
+                                                    </tr>
+                                                `).join('')}
+                                        <tr class="table-warning">
+                                            <td><strong>Jumlah</strong></td>
+                                            ${indikatorKode.map(kode => `<td><strong>${matriksData.jumlah_kolom[kode]}</strong></td>`).join('')}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Matriks Normalisasi -->
+                        <div class="col-12 mb-4">
+                            <h6><i class="fas fa-balance-scale"></i> Matriks Normalisasi & Bobot Prioritas</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th>Kriteria</th>
+                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
+                                            <th>Jumlah</th>
+                                            <th>Bobot Prioritas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${indikatorKode.map(kode1 => `
+                                                    <tr>
+                                                        <td><strong>${kode1}</strong></td>
+                                                        ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_normalisasi[kode1][kode2]}</td>`).join('')}
+                                                        <td><strong>${matriksData.jumlah_baris[kode1]}</strong></td>
+                                                        <td><span class="badge bg-success">${matriksData.bobot_prioritas_individual[kode1]}</span></td>
+                                                    </tr>
+                                                `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Lambda Maks dan Konsistensi -->
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calculator"></i> Perhitungan λ Maks</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>Indikator</th>
+                                            <th>Perhitungan</th>
+                                            <th>Hasil</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${indikatorKode.map(kode => `
+                                                    <tr>
+                                                        <td><strong>${kode}</strong></td>
+                                                        <td>${matriksData.jumlah_kolom[kode]} × ${matriksData.bobot_prioritas_individual[kode]}</td>
+                                                        <td><span class="badge bg-info">${matriksData.lambda_maks.detail[kode]}</span></td>
+                                                    </tr>
+                                                `).join('')}
+                                        <tr class="table-warning">
+                                            <td colspan="2"><strong>Total λ Maks</strong></td>
+                                            <td><strong>${matriksData.lambda_maks.total}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Uji Konsistensi -->
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check-circle"></i> Uji Konsistensi</h6>
+                            <div class="alert ${matriksData.konsistensi.status === 'Konsisten' ? 'alert-success' : 'alert-danger'}">
+                                <p><strong>λ Maks:</strong> ${matriksData.lambda_maks.total}</p>
+                                <p><strong>CI:</strong> ${matriksData.konsistensi.CI}</p>
+                                <small class="text-muted">CI = (λ maks - n) / (n - 1) = (${matriksData.lambda_maks.total} - 5) / 4</small>
+
+                                <p class="mt-2"><strong>RI:</strong> ${matriksData.konsistensi.RI}</p>
+                                <p><strong>CR:</strong> ${matriksData.konsistensi.CR}</p>
+                                <small class="text-muted">CR = CI / RI = ${matriksData.konsistensi.CI} / ${matriksData.konsistensi.RI}</small>
+
+                                <hr>
+                                <h6><span class="badge ${matriksData.konsistensi.status === 'Konsisten' ? 'bg-success' : 'bg-danger'}">${matriksData.konsistensi.status}</span></h6>
+                                <small>Konsisten jika CR ≤ 0.1</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             function showLoading(show) {
                 console.log('showLoading called with:', show);
                 const overlay = document.getElementById('loading-overlay');
@@ -579,5 +733,73 @@
 
                 updateRankingTable(filteredData);
             });
+
+            async function showDetailDosen(dosenId) {
+                console.log('Loading detail for dosen ID:', dosenId);
+
+                try {
+                    const response = await fetch(`/api/ahp-penelitian/dosen/${dosenId}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Detail dosen data:', data);
+
+                    // Update konten tab Detail Perhitungan
+                    document.getElementById('detailPerhitunganTable').innerHTML = generateDetailTable(data);
+
+                    // Update konten tab Matriks Perbandingan Individual
+                    document.getElementById('matriksPerbandinganIndividual').innerHTML =
+                        generateMatriksPerbandinganHtml(data.matriks_perbandingan_individual);
+
+                    // Tampilkan modal
+                    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error('Error loading detail dosen:', error);
+                    alert('Gagal memuat detail dosen. Silakan coba lagi.');
+                }
+            }
+
+            function generateDetailTable(data) {
+                // Function untuk generate tabel detail perhitungan yang sudah ada
+                const detailHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Indikator</th>
+                                    <th>Nilai Asli</th>
+                                    <th>Skala Interval</th>
+                                    <th>Normalisasi</th>
+                                    <th>Bobot × Normalisasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.keys(data.detail_skor).map(indikator => `
+                                            <tr>
+                                                <td><strong>${indikator}</strong></td>
+                                                <td>${data.detail_skor[indikator].nilai_asli}</td>
+                                                <td>${data.detail_skor[indikator].skala_interval}</td>
+                                                <td>${data.detail_skor[indikator].skala_normalisasi}</td>
+                                                <td><span class="badge bg-success">${(data.detail_skor[indikator].skala_normalisasi * data.bobot_global[indikator]).toFixed(6)}</span></td>
+                                            </tr>
+                                        `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-warning">
+                                    <td colspan="4"><strong>Total Skor AHP</strong></td>
+                                    <td><strong><span class="badge bg-primary">${data.skor_total_ahp}</span></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                `;
+
+                return detailHtml;
+            }
         </script>
     @endsection
