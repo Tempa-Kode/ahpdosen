@@ -171,12 +171,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>Perhitungan λ maks:</h6>
+                                <p class="text-muted small">Formula: Total Perbandingan × Bobot Prioritas</p>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <thead class="table-info">
                                             <tr>
                                                 <th>Indikator</th>
-                                                <th>Jumlah Kolom × Bobot</th>
+                                                <th>Total Perbandingan × Bobot</th>
                                                 <th>λ maks</th>
                                             </tr>
                                         </thead>
@@ -468,32 +469,53 @@
             }
 
             function populateStep4(konsistensi) {
-                // Lambda maks table
+                // Lambda maks table dengan detail yang lebih jelas
                 const tbody = document.getElementById('lambda-maks-table');
+                const totalPerbandingan = konsistensi.total_perbandingan_per_kolom;
+                const bobotPrioritas = konsistensi.bobot_prioritas;
+
                 tbody.innerHTML = Object.entries(konsistensi.lambda_maks_detail).map(([kode, lambda]) => `
         <tr>
             <td><strong>${kode}</strong></td>
-            <td>Jumlah kolom × ${ahpData.langkah_perhitungan['3_bobot_prioritas'].bobot_prioritas[kode]}</td>
-            <td>${lambda}</td>
+            <td>${totalPerbandingan[kode]} × ${bobotPrioritas[kode]}</td>
+            <td><span class="badge bg-info">${lambda}</span></td>
         </tr>
     `).join('') + `
-        <tr class="table-info">
+        <tr class="table-warning">
             <td colspan="2"><strong>Total λ maks</strong></td>
             <td><strong>${konsistensi.total_lambda_maks}</strong></td>
         </tr>
     `;
 
-                // Konsistensi result
+                // Konsistensi result dengan penjelasan lengkap
                 const alertClass = konsistensi.status_konsistensi === 'Konsisten' ? 'alert-success' : 'alert-danger';
                 document.getElementById('konsistensi-result').className = `alert ${alertClass}`;
+
+                // Tampilkan CI dan CR langsung tanpa format tambahan
+                const ciDisplay = konsistensi.CI || konsistensi.CI_raw || 0;
+                const crDisplay = konsistensi.CR || konsistensi.CR_raw || 0;
+
                 document.getElementById('konsistensi-result').innerHTML = `
         <h6>Hasil Perhitungan:</h6>
-        <p><strong>Total λ maks:</strong> ${konsistensi.total_lambda_maks}</p>
-        <p><strong>CI:</strong> ${konsistensi.CI}</p>
-        <p><strong>RI:</strong> ${konsistensi.RI}</p>
-        <p><strong>CR:</strong> ${konsistensi.CR}</p>
-        <hr>
-        <h6 class="mb-0">Status: <span class="badge ${konsistensi.status_konsistensi === 'Konsisten' ? 'bg-success' : 'bg-danger'}">${konsistensi.status_konsistensi}</span></h6>
+        <div class="row">
+            <div class="col-md-12">
+                <p><strong>Total λ maks:</strong> ${konsistensi.total_lambda_maks}</p>
+                <p><strong>Jumlah Kriteria (n):</strong> 5</p>
+                <hr>
+                <p><strong>CI (Consistency Index):</strong> <strong>${ciDisplay}</strong></p>
+                <small class="text-muted">Rumus: (λ maks - n) / (n - 1) = (${konsistensi.total_lambda_maks} - 5) / (5 - 1)</small>
+
+                <p class="mt-2"><strong>RI (Random Index):</strong> ${konsistensi.RI}</p>
+                <small class="text-muted">Nilai tetap untuk matriks 5×5</small>
+
+                <p class="mt-2"><strong>CR (Consistency Ratio):</strong> <strong class="text-primary">${crDisplay}</strong></p>
+                <small class="text-muted">Rumus: CI / RI = ${ciDisplay} / ${konsistensi.RI}</small>
+
+                <hr>
+                <h6 class="mb-0">Status: <span class="badge ${konsistensi.status_konsistensi === 'Konsisten' ? 'bg-success' : 'bg-danger'}">${konsistensi.status_konsistensi}</span></h6>
+                <small class="text-muted d-block mt-1">Konsisten jika CR ≤ 0.1, saat ini CR = ${crDisplay}</small>
+            </div>
+        </div>
     `;
             }
 

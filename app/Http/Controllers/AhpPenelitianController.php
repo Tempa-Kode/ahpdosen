@@ -153,34 +153,53 @@ class AhpPenelitianController extends Controller
         $jumlahKolom = $matriksData['jumlah_kolom'];
         $bobot = $bobotPrioritas['bobot_prioritas'];
 
-        // Hitung λ maks
+        // Hitung λ maks dengan rumus yang benar:
+        // Total Perbandingan x Bobot Prioritas untuk setiap kriteria
         $lambdaMaks = [];
         $totalLambdaMaks = 0;
 
         $indikatorKode = array_keys($bobot);
-        foreach ($indikatorKode as $i => $kode) {
+        foreach ($indikatorKode as $kode) {
+            // Lambda maks = Total perbandingan kolom × Bobot prioritas
             $lambdaMaks[$kode] = $jumlahKolom[$kode] * $bobot[$kode];
             $totalLambdaMaks += $lambdaMaks[$kode];
         }
 
-        // Hitung CI
-        $CI = ($totalLambdaMaks - $n) / ($n - 1);
+        // Lambda maks rata-rata
+        $lambdaMaksRataRata = $totalLambdaMaks;
 
-        // Hitung CR
+        // Hitung CI (Consistency Index)
+        $CI = ($lambdaMaksRataRata - $n) / ($n - 1);
+
+        // Hitung CR (Consistency Ratio)
         $RI = $this->randomIndex[$n] ?? 1.12;
         $CR = $CI / $RI;
 
-        return [
-            'lambda_maks_detail' => $lambdaMaks,
-            'total_lambda_maks' => round($totalLambdaMaks, 5),
-            'CI' => round($CI, 7),
-            'RI' => $RI,
-            'CR' => round($CR, 10),
-            'status_konsistensi' => $CR <= 0.1 ? 'Konsisten' : 'Tidak Konsisten'
-        ];
-    }
+        // Format CR untuk tampilan yang lebih cantik
+        $CR_formatted = $this->formatAngkaKecil($CR);
+        $CI_formatted = $this->formatAngkaKecil($CI);
 
-    /**
+        return [
+            'total_perbandingan_per_kolom' => $jumlahKolom,
+            'bobot_prioritas' => $bobot,
+            'lambda_maks_detail' => array_map(function($val) { return round($val, 5); }, $lambdaMaks),
+            'total_lambda_maks' => round($totalLambdaMaks, 5),
+            'lambda_maks_rata_rata' => round($lambdaMaksRataRata, 5),
+            'CI' => $CI_formatted,
+            'CI_raw' => round($CI, 10),
+            'RI' => $RI,
+            'CR' => $CR_formatted,
+            'CR_raw' => round($CR, 10),
+            'status_konsistensi' => abs($CR) <= 0.1 ? 'Konsisten' : 'Tidak Konsisten',
+            'penjelasan' => [
+                'rumus_lambda_maks' => 'Total Perbandingan × Bobot Prioritas',
+                'rumus_ci' => '(λ maks - n) / (n - 1)',
+                'rumus_cr' => 'CI / RI',
+                'batas_konsistensi' => 'CR ≤ 0.1',
+                'interpretasi_angka' => 'Angka yang sangat kecil (mendekati 0) menunjukkan konsistensi yang sangat baik'
+            ]
+        ];
+    }    /**
      * Normalisasi data dosen berdasarkan skala interval
      */
     private function normalisasiDataDosen($dataDosen)
@@ -319,5 +338,14 @@ class AhpPenelitianController extends Controller
             'skor_total_ahp' => round($skorTotal, 5),
             'bobot_prioritas_digunakan' => $bobotPrioritas['bobot_prioritas']
         ]);
+    }
+
+    /**
+     * Format angka yang sangat kecil untuk tampilan yang lebih cantik
+     */
+    private function formatAngkaKecil($angka)
+    {
+        // Tampilkan angka dalam format desimal langsung dengan 10 digit
+        return number_format($angka, 10, '.', '');
     }
 }

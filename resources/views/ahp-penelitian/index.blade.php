@@ -4,22 +4,6 @@
 
 @section("konten")
     <div class="container-fluid">
-        <!-- Header Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <h1 class="card-title mb-0">
-                            <i class="fas fa-chart-line me-2"></i>
-                            Analytical Hierarchy Process (AHP) - Penelitian
-                        </h1>
-                        <p class="card-text mt-2">
-                            Sistem penilaian kinerja dosen berdasarkan indikator penelitian menggunakan metode AHP
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Statistics Cards -->
         <div class="row mb-4" id="statistik-cards">
@@ -240,7 +224,7 @@
                 showLoading(true);
 
                 try {
-                    const response = await fetch('/api/ahp-penelitian/');
+                    const response = await fetch('/api/ahp-penelitian');
 
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -328,11 +312,15 @@
 
             function updateKonsistensi(konsistensiData) {
                 const badgeClass = konsistensiData.status_konsistensi === 'Konsisten' ? 'bg-success' : 'bg-danger';
+
+                // Tampilkan CR langsung tanpa format tambahan
+                let crDisplay = konsistensiData.CR || konsistensiData.CR_raw || 0;
+
                 const html = `
         <span class="badge ${badgeClass}">
             ${konsistensiData.status_konsistensi}
         </span>
-        <small class="text-muted d-block">CR: ${konsistensiData.CR}</small>
+        <small class="text-muted d-block">CR: <strong>${crDisplay}</strong></small>
     `;
                 document.getElementById('status-konsistensi').innerHTML = html;
             }
@@ -418,6 +406,11 @@
 
                 try {
                     const response = await fetch(`/api/ahp-penelitian/dosen/${dosenId}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
                     const data = await response.json();
 
                     const modalContent = `
@@ -442,14 +435,14 @@
                             </thead>
                             <tbody>
                                 ${Object.entries(data.detail_perhitungan).map(([kode, detail]) => `
-                                            <tr>
-                                                <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
-                                                <td>${detail.total_nilai_indikator}</td>
-                                                <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                <td>${detail.bobot_prioritas}</td>
-                                                <td><span class="badge bg-success">${detail.skor}</span></td>
-                                            </tr>
-                                        `).join('')}
+                                                                    <tr>
+                                                                        <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
+                                                                        <td>${detail.total_nilai_indikator}</td>
+                                                                        <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
+                                                                        <td>${detail.bobot_prioritas}</td>
+                                                                        <td><span class="badge bg-success">${detail.skor}</span></td>
+                                                                    </tr>
+                                                                `).join('')}
                             </tbody>
                             <tfoot>
                                 <tr class="table-dark">
