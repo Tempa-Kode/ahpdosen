@@ -129,8 +129,8 @@
                                                                         href="{{ route("perhitungan.show.pendidikan-dan-pembelajaran") }}">Pendidikan
                                                                         Dan Pembelajaran</a></li>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="#"
-                                                                        onclick="alert('Belum tersedia')">Penelitian</a>
+                                                                        href="{{ route("ahp.penelitian.index") }}">Penelitian
+                                                                        (AHP)</a>
                                                                 </li>
                                                                 <li class="nav-item"><a class="nav-link"
                                                                         href="#"

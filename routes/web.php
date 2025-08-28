@@ -66,6 +66,25 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/api/pendidikan-dan-pembelajaran', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikan-dan-pembelajaran');
     });
 
+    // AHP Penelitian Routes (Web Interface)
+    Route::prefix('ahp-penelitian')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AhpPenelitianWebController::class, 'index'])->name('ahp.penelitian.index');
+        Route::get('/langkah-perhitungan', [\App\Http\Controllers\AhpPenelitianWebController::class, 'langkahPerhitungan'])->name('ahp.penelitian.langkah');
+        Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpPenelitianWebController::class, 'detailDosen'])->name('ahp.penelitian.detail.dosen');
+    });
+
     // Legacy route - untuk backward compatibility
     Route::get('/perhitungan', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikanDanPembelajaran');
+});
+
+// API Routes untuk Penelitian (tanpa middleware auth untuk kemudahan akses)
+Route::prefix('api/penelitian')->name('api.penelitian.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PerhitunganPenelitianController::class, 'hitungSemuaDosen'])->name('api.penelitian');
+    Route::get('/skala-interval-kpt01', [\App\Http\Controllers\PerhitunganPenelitianController::class, 'laporanSkalaIntervalKPT01'])->name('skala.interval.kpt01');
+});
+
+// API Routes untuk AHP Penelitian
+Route::prefix('api/ahp-penelitian')->name('api.ahp.penelitian.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AhpPenelitianController::class, 'perhitunganAhpPenelitian'])->name('perhitungan.lengkap');
+    Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpPenelitianController::class, 'detailDosenAhp'])->name('detail.dosen');
 });
