@@ -664,11 +664,12 @@
                         <div class="tab-pane fade show active" id="perhitungan-pane" role="tabpanel">
                             <h6>Detail Perhitungan per Indikator</h6>
                             <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
+                                <table class="table table-sm table-striped">
+                                    <thead class="table-dark">
                                         <tr>
                                             <th>Indikator</th>
                                             <th>Nama Indikator</th>
+                                            <th>Total Nilai Indikator</th>
                                             <th>Skala Normalisasi</th>
                                             <th>Bobot Prioritas</th>
                                             <th>Skor</th>
@@ -688,19 +689,14 @@
                                                 <tr>
                                                     <td><strong>${kode}</strong></td>
                                                     <td><small>${namaIndikator[kode] || 'Unknown'}</small></td>
+                                                    <td><span class="badge bg-secondary">${detail.total_nilai_indikator || 0}</span></td>
                                                     <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                    <td>${detail.bobot_prioritas}</td>
+                                                    <td><span class="badge bg-warning text-dark">${detail.bobot_prioritas}</span></td>
                                                     <td><span class="badge bg-success">${detail.skor}</span></td>
                                                 </tr>
                                             `;
                                         }).join('')}
                                     </tbody>
-                                    <tfoot>
-                                        <tr class="table-dark">
-                                            <td colspan="4"><strong>Total Skor AHP</strong></td>
-                                            <td><strong>${dosenData.skor_total_ahp}</strong></td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -817,44 +813,6 @@
 
             return `
                     <div class="row">
-                        <!-- Detail Skor per Indikator -->
-                        <div class="col-12 mb-4">
-                            <h6><i class="fas fa-list"></i> Detail Skor per Indikator</h6>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-sm">
-                                    <thead class="table-info">
-                                        <tr>
-                                            <th>Kode</th>
-                                            <th>Nama Indikator</th>
-                                            <th>Skala Normalisasi</th>
-                                            <th>Bobot Prioritas</th>
-                                            <th>Skor Akhir</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${indikatorKode.map(kode => {
-                                            const detail = dosenData.detail_skor[kode] || {};
-                                            return `
-                                                <tr>
-                                                    <td><strong>${kode}</strong></td>
-                                                    <td>${namaIndikator[kode]}</td>
-                                                    <td><span class="badge bg-info">${detail.skala_normalisasi || 0}</span></td>
-                                                    <td>${detail.bobot_prioritas || '0.000'}</td>
-                                                    <td><span class="badge bg-success">${detail.skor || 0}</span></td>
-                                                </tr>
-                                            `;
-                                        }).join('')}
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="table-warning">
-                                            <td colspan="4"><strong>Total Skor AHP</strong></td>
-                                            <td><strong>${dosenData.skor_total_ahp}</strong></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-
                         <!-- Matriks Perbandingan Berpasangan (Simulasi) -->
                         <div class="col-12 mb-4">
                             <h6><i class="fas fa-table"></i> Matriks Perbandingan Berpasangan</h6>
