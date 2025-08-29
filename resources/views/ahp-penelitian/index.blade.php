@@ -684,30 +684,15 @@
                                                 'KPT05': 'Karya Ilmiah atau seni yang dipamerkan'
                                             };
 
-                                            return ` <
-                    tr >
-                    <
-                    td > < strong > $ {
-                        kode
-                    } < /strong></td >
-                    <
-                    td > < small > $ {
-                        namaIndikator[kode] || 'Unknown'
-                    } < /small></td >
-                    <
-                    td > < span class = "badge bg-info" > $ {
-                        detail.skala_normalisasi
-                    } < /span></td >
-                    <
-                    td > $ {
-                        detail.bobot_prioritas
-                    } < /td> <
-                    td > < span class = "badge bg-success" > $ {
-                        detail.skor
-                    } < /span></td >
-                    <
-                    /tr>
-                `;
+                                            return `
+                                                <tr>
+                                                    <td><strong>${kode}</strong></td>
+                                                    <td><small>${namaIndikator[kode] || 'Unknown'}</small></td>
+                                                    <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
+                                                    <td>${detail.bobot_prioritas}</td>
+                                                    <td><span class="badge bg-success">${detail.skor}</span></td>
+                                                </tr>
+                                            `;
                                         }).join('')}
                                     </tbody>
                                     <tfoot>
@@ -849,29 +834,15 @@
                                     <tbody>
                                         ${indikatorKode.map(kode => {
                                             const detail = dosenData.detail_skor[kode] || {};
-                                            return ` <
-                tr >
-                <
-                td > < strong > $ {
-                    kode
-                } < /strong></td >
-                <
-                td > $ {
-                    namaIndikator[kode]
-                } < /td> <
-                td > < span class = "badge bg-info" > $ {
-                    detail.skala_normalisasi || 0
-                } < /span></td >
-                <
-                td > $ {
-                    detail.bobot_prioritas || '0.000'
-                } < /td> <
-                td > < span class = "badge bg-success" > $ {
-                    detail.skor || 0
-                } < /span></td >
-                <
-                /tr>
-            `;
+                                            return `
+                                                <tr>
+                                                    <td><strong>${kode}</strong></td>
+                                                    <td>${namaIndikator[kode]}</td>
+                                                    <td><span class="badge bg-info">${detail.skala_normalisasi || 0}</span></td>
+                                                    <td>${detail.bobot_prioritas || '0.000'}</td>
+                                                    <td><span class="badge bg-success">${detail.skor || 0}</span></td>
+                                                </tr>
+                                            `;
                                         }).join('')}
                                     </tbody>
                                     <tfoot>
@@ -910,11 +881,10 @@
                                                             const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
                                                             const perbandingan = (nilai1 / nilai2).toFixed(3);
                                                             return `<td>${perbandingan}</td>`;
-        }
-        }).join('')
-        } <
-        /tr>
-        `).join('')}
+                                                        }
+                                                    }).join('')}
+                                                </tr>
+                                            `).join('')}
                                     </tbody>
                                 </table>
                             </div>
@@ -936,15 +906,11 @@
                                     ${indikatorKode.map(kode => {
                                         const detail = dosenData.detail_skor[kode] || {};
                                         const kontribusi = ((detail.skor || 0) / dosenData.skor_total_ahp * 100).toFixed(1);
-                                        return ` <
-        div class = "col-md-6" >
-        <
-        small > < strong > $ {
-                kode
-            }: < /strong> ${detail.skor || 0} (${kontribusi}%)</small >
-            <
-            /div>
-        `;
+                                        return `
+                                            <div class="col-md-6">
+                                                <small><strong>${kode}:</strong> ${detail.skor || 0} (${kontribusi}%)</small>
+                                            </div>
+                                        `;
                                     }).join('')}
                                 </div>
                             </div>
@@ -953,44 +919,44 @@
                 `;
         }
 
-        function showLoading(show) {
-            console.log('showLoading called with:', show);
-            const overlay = document.getElementById('loading-overlay');
-            if (overlay) {
-                if (show) {
-                    overlay.style.display = 'flex';
-                    overlay.classList.add('d-flex');
-                    overlay.classList.remove('d-none');
-                    console.log('Loading overlay shown');
+            function showLoading(show) {
+                console.log('showLoading called with:', show);
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    if (show) {
+                        overlay.style.display = 'flex';
+                        overlay.classList.add('d-flex');
+                        overlay.classList.remove('d-none');
+                        console.log('Loading overlay shown');
+                    } else {
+                        overlay.style.display = 'none';
+                        overlay.classList.add('d-none');
+                        overlay.classList.remove('d-flex');
+                        console.log('Loading overlay hidden');
+                    }
                 } else {
-                    overlay.style.display = 'none';
-                    overlay.classList.add('d-none');
-                    overlay.classList.remove('d-flex');
-                    console.log('Loading overlay hidden');
+                    console.error('Loading overlay element not found!');
                 }
-            } else {
-                console.error('Loading overlay element not found!');
-            }
-        }
-
-        // Filter by Program Studi
-        document.getElementById('filter-prodi').addEventListener('change', function() {
-            const selectedProdi = this.value;
-
-            if (selectedProdi === '') {
-                filteredData = ahpData.hasil_ranking;
-            } else {
-                filteredData = ahpData.hasil_ranking.filter(item => item.dosen.prodi === selectedProdi);
             }
 
-            updateRankingTable(filteredData);
+            // Filter by Program Studi
+            document.getElementById('filter-prodi').addEventListener('change', function() {
+                const selectedProdi = this.value;
 
-            // Update prioritas global dengan data yang difilter
-            const filteredAhpData = {
-                ...ahpData,
-                hasil_ranking: filteredData
-            };
-            updatePrioritasGlobal(filteredAhpData);
-        });
-    </script>
+                if (selectedProdi === '') {
+                    filteredData = ahpData.hasil_ranking;
+                } else {
+                    filteredData = ahpData.hasil_ranking.filter(item => item.dosen.prodi === selectedProdi);
+                }
+
+                updateRankingTable(filteredData);
+
+                // Update prioritas global dengan data yang difilter
+                const filteredAhpData = {
+                    ...ahpData,
+                    hasil_ranking: filteredData
+                };
+                updatePrioritasGlobal(filteredAhpData);
+            });
+        </script>
 @endsection
