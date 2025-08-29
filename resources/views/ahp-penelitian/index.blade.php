@@ -816,9 +816,6 @@
                         <!-- Matriks Perbandingan Berpasangan (Simulasi) -->
                         <div class="col-12 mb-4">
                             <h6><i class="fas fa-table"></i> Matriks Perbandingan Berpasangan</h6>
-                            <div class="alert alert-info">
-                                <small><i class="fas fa-info-circle"></i> Matriks ini merupakan representasi dari nilai skala normalisasi yang telah dihitung</small>
-                            </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm text-center">
                                     <thead class="table-dark">
@@ -845,32 +842,6 @@
                                             `).join('')}
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-
-                        <!-- Rangkuman Perhitungan -->
-                        <div class="col-12">
-                            <h6><i class="fas fa-calculator"></i> Rangkuman Perhitungan</h6>
-                            <div class="alert alert-success">
-                                <h6><strong>Hasil Akhir:</strong></h6>
-                                <p class="mb-1"><strong>Nama Dosen:</strong> ${dosenData.dosen.nama}</p>
-                                <p class="mb-1"><strong>Program Studi:</strong> ${dosenData.dosen.prodi}</p>
-                                <p class="mb-1"><strong>Ranking:</strong> <span class="badge bg-warning">${dosenData.ranking}</span></p>
-                                <p class="mb-0"><strong>Skor Total AHP:</strong> <span class="badge bg-success fs-6">${dosenData.skor_total_ahp}</span></p>
-
-                                <hr>
-                                <h6>Kontribusi per Indikator:</h6>
-                                <div class="row">
-                                    ${indikatorKode.map(kode => {
-                                        const detail = dosenData.detail_skor[kode] || {};
-                                        const kontribusi = ((detail.skor || 0) / dosenData.skor_total_ahp * 100).toFixed(1);
-                                        return `
-                                            <div class="col-md-6">
-                                                <small><strong>${kode}:</strong> ${detail.skor || 0} (${kontribusi}%)</small>
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
                             </div>
                         </div>
                     </div>
