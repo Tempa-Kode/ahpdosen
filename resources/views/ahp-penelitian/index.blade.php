@@ -841,6 +841,91 @@
                                                 </tr>
                                             `).join('')}
                                     </tbody>
+                                    <tfoot class="table-warning">
+                                        <tr>
+                                            <th><strong>TOTAL</strong></th>
+                                            ${indikatorKode.map(kodeCol => {
+                                                // Hitung total untuk setiap kolom
+                                                let totalKolom = 0;
+                                                indikatorKode.forEach(kodeBaris => {
+                                                    if (kodeBaris === kodeCol) {
+                                                        totalKolom += 1; // Diagonal = 1
+                                                    } else {
+                                                        const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                        const nilai2 = dosenData.detail_skor[kodeCol]?.skala_normalisasi || 1;
+                                                        totalKolom += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                    }
+                                                });
+                                                return `<th class="bg-warning"><strong>${totalKolom.toFixed(3)}</strong></th>`;
+                                            }).join('')}
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Matriks Normalisasi dan Bobot Prioritas -->
+                        <div class="col-12 mb-4">
+                            <h6><i class="fas fa-calculator"></i> Matriks Normalisasi dan Bobot Prioritas</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm text-center">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th></th>
+                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
+                                            <th>Jumlah</th>
+                                            <th>Bobot Prioritas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${indikatorKode.map(kode1 => {
+                                            // Hitung total untuk setiap kolom (sama seperti sebelumnya)
+                                            const totalsPerKolom = {};
+                                            indikatorKode.forEach(kodeCol => {
+                                                let totalKolom = 0;
+                                                indikatorKode.forEach(kodeBaris => {
+                                                    if (kodeBaris === kodeCol) {
+                                                        totalKolom += 1;
+                                                    } else {
+                                                        const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                        const nilai2 = dosenData.detail_skor[kodeCol]?.skala_normalisasi || 1;
+                                                        totalKolom += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                    }
+                                                });
+                                                totalsPerKolom[kodeCol] = totalKolom;
+                                            });
+
+                                            // Hitung nilai normalisasi untuk baris ini
+                                            const nilaiNormalisasi = [];
+                                            indikatorKode.forEach(kode2 => {
+                                                let nilaiAsli;
+                                                if (kode1 === kode2) {
+                                                    nilaiAsli = 1;
+                                                } else {
+                                                    const nilai1 = dosenData.detail_skor[kode1]?.skala_normalisasi || 1;
+                                                    const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
+                                                    nilaiAsli = parseFloat((nilai1 / nilai2).toFixed(3));
+                                                }
+                                                const normalisasi = (nilaiAsli / totalsPerKolom[kode2]).toFixed(4);
+                                                nilaiNormalisasi.push(parseFloat(normalisasi));
+                                            });
+
+                                            // Hitung rata-rata (bobot prioritas)
+                                            const rataRata = (nilaiNormalisasi.reduce((sum, val) => sum + val, 0) / nilaiNormalisasi.length).toFixed(4);
+
+                                            // Hitung jumlah per baris
+                                            const jumlahBaris = nilaiNormalisasi.reduce((sum, val) => sum + val, 0).toFixed(4);
+
+                                            return `
+                                                <tr>
+                                                    <th class="table-success">${kode1}</th>
+                                                    ${nilaiNormalisasi.map(nilai => `<td>${nilai.toFixed(4)}</td>`).join('')}
+                                                    <td class="bg-info text-white"><strong>${jumlahBaris}</strong></td>
+                                                    <th class="bg-warning"><strong>${rataRata}</strong></th>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
