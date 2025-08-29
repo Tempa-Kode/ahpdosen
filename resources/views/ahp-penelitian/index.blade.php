@@ -866,7 +866,7 @@
 
                         <!-- Matriks Normalisasi dan Bobot Prioritas -->
                         <div class="col-12 mb-4">
-                            <h6><i class="fas fa-calculator"></i> Matriks Normalisasi dan Bobot Prioritas</h6>
+                            <h6><i class="fas fa-calculator"></i>Bobot Prioritas</h6>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm text-center">
                                     <thead class="table-success">
