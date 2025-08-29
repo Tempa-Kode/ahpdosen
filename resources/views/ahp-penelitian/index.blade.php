@@ -96,6 +96,94 @@
             </div>
         </div>
 
+        <!-- Tahap Choice: Prioritas Global -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-crown me-2"></i>
+                            Tahap Choice : Prioritas Global
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>Tahap Choice - Prioritas Global</h6>
+                            <p class="mb-0">Pada tahap <strong>choice</strong> ini akan dilakukan perbandingan dari setiap
+                                kriteria yang ada dengan mengalikan nilai bobot prioritas dari persepsi, dengan bobot
+                                prioritas setiap kriteria dengan cara:</p>
+                        </div>
+
+                        <!-- Tabel Prioritas Global -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h6>Hasil Prioritas Global</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered prioritas-global-table">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th rowspan="2" class="text-center align-middle">KRITERIA</th>
+                                                <th colspan="5" class="text-center">ALTERNATIF (DOSEN)</th>
+                                                <th rowspan="2" class="text-center align-middle">Prioritas Global</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center">K1</th>
+                                                <th class="text-center">K2</th>
+                                                <th class="text-center">K3</th>
+                                                <th class="text-center">K4</th>
+                                                <th class="text-center">K5</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prioritas-global-tbody">
+                                            <!-- Data akan diisi via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formula Perhitungan -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6>Formula Perhitungan Prioritas Global</h6>
+                                <div class="alert alert-light border">
+                                    <p class="mb-2"><strong>Untuk Nilai Persepsi Berdasarkan Nilai bobot Prioritas yang
+                                            dihasilkan dari total matriks kriteria dibagi elemen:</strong></p>
+                                    <div class="row" id="formula-perhitungan">
+                                        <!-- Formula akan diisi via JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ranking Final -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h6>Ranking Final Berdasarkan Prioritas Global</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead class="table-success">
+                                            <tr>
+                                                <th>Ranking</th>
+                                                <th>Nama Dosen</th>
+                                                <th>Program Studi</th>
+                                                <th>Prioritas Global</th>
+                                                <th>Persentase (%)</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ranking-final-tbody">
+                                            <!-- Data akan diisi via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Chart Section -->
         <div class="row mt-4">
             <div class="col-md-6">
@@ -204,6 +292,31 @@
             font-size: 2rem;
             opacity: 0.8;
         }
+
+        .prioritas-global-table {
+            font-size: 0.9em;
+        }
+
+        .prioritas-global-table th {
+            background-color: #343a40 !important;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .prioritas-global-table .table-warning {
+            background-color: #fff3cd !important;
+        }
+
+        .formula-card {
+            border-left: 4px solid #28a745;
+        }
+
+        .priority-value {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #0066cc;
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -239,6 +352,7 @@
                     updateStatistiks(data);
                     updateKonsistensi(data.langkah_perhitungan['4_uji_konsistensi']);
                     updateRankingTable(data.hasil_ranking);
+                    updatePrioritasGlobal(data);
                     createCharts(data.hasil_ranking);
 
                     // Pastikan loading hilang setelah semua proses selesai dengan delay kecil
@@ -401,6 +515,126 @@
                 }).join('');
             }
 
+            function updatePrioritasGlobal(data) {
+                try {
+                    const bobotPrioritas = data.langkah_perhitungan['3_bobot_prioritas'].bobot_prioritas;
+                    const ranking = data.hasil_ranking;
+
+                    if (!bobotPrioritas || !ranking) {
+                        console.warn('Data bobot prioritas atau ranking tidak tersedia');
+                        return;
+                    }
+
+                    // Update tabel prioritas global
+                    const tbody = document.getElementById('prioritas-global-tbody');
+
+                    // Buat baris untuk bobot prioritas
+                    const bobotRow = `
+                        <tr class="table-warning">
+                            <td><strong>Bobot Prioritas</strong></td>
+                            <td class="text-center">${bobotPrioritas.KPT01 || '0.000'}</td>
+                            <td class="text-center">${bobotPrioritas.KPT02 || '0.000'}</td>
+                            <td class="text-center">${bobotPrioritas.KPT03 || '0.000'}</td>
+                            <td class="text-center">${bobotPrioritas.KPT04 || '0.000'}</td>
+                            <td class="text-center">${bobotPrioritas.KPT05 || '0.000'}</td>
+                            <td class="text-center"><strong>-</strong></td>
+                        </tr>
+                    `;
+
+                    // Buat baris untuk setiap dosen (hanya top 5)
+                    const dosenRows = ranking.slice(0, 5).map((item, index) => {
+                        const prioritasGlobal = item.skor_total_ahp;
+
+                        return `
+                            <tr>
+                                <td><strong>${item.dosen?.nama?.split(' ').slice(0, 2).join(' ') || 'N/A'}</strong></td>
+                                <td class="text-center">${item.detail_skor?.KPT01?.skala_normalisasi || 0}</td>
+                                <td class="text-center">${item.detail_skor?.KPT02?.skala_normalisasi || 0}</td>
+                                <td class="text-center">${item.detail_skor?.KPT03?.skala_normalisasi || 0}</td>
+                                <td class="text-center">${item.detail_skor?.KPT04?.skala_normalisasi || 0}</td>
+                                <td class="text-center">${item.detail_skor?.KPT05?.skala_normalisasi || 0}</td>
+                                <td class="text-center priority-value">${prioritasGlobal}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    tbody.innerHTML = bobotRow + dosenRows;
+
+                    // Update formula perhitungan
+                    updateFormulaPerhitungan(ranking.slice(0, 2), bobotPrioritas);
+
+                    // Update ranking final
+                    updateRankingFinal(ranking);
+
+                } catch (error) {
+                    console.error('Error updating prioritas global:', error);
+                    document.getElementById('prioritas-global-tbody').innerHTML =
+                        '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
+                }
+            }
+
+            function updateFormulaPerhitungan(topDosen, bobotPrioritas) {
+                const formulaDiv = document.getElementById('formula-perhitungan');
+
+                const formulaHtml = topDosen.map((dosen, index) => {
+                    const nama = dosen.dosen.nama.split(' ').slice(0, 2).join(' ');
+                    const calculations = [
+                        `(${dosen.detail_skor.KPT01?.skala_normalisasi || 0} × ${bobotPrioritas.KPT01})`,
+                        `(${dosen.detail_skor.KPT02?.skala_normalisasi || 0} × ${bobotPrioritas.KPT02})`,
+                        `(${dosen.detail_skor.KPT03?.skala_normalisasi || 0} × ${bobotPrioritas.KPT03})`,
+                        `(${dosen.detail_skor.KPT04?.skala_normalisasi || 0} × ${bobotPrioritas.KPT04})`,
+                        `(${dosen.detail_skor.KPT05?.skala_normalisasi || 0} × ${bobotPrioritas.KPT05})`
+                    ];
+
+                    return `
+                        <div class="col-md-6">
+                            <div class="card formula-card">
+                                <div class="card-body">
+                                    <h6><strong>${nama} =</strong></h6>
+                                    <p class="mb-1" style="font-size: 0.9em;">${calculations.join(' + ')}</p>
+                                    <p class="mb-0 priority-value">= ${dosen.skor_total_ahp}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                formulaDiv.innerHTML = formulaHtml;
+            }
+
+            function updateRankingFinal(ranking) {
+                const tbody = document.getElementById('ranking-final-tbody');
+
+                const maxScore = Math.max(...ranking.map(item => item.skor_total_ahp));
+
+                const rows = ranking.slice(0, 10).map((item, index) => {
+                    const persentase = ((item.skor_total_ahp / maxScore) * 100).toFixed(2);
+                    const statusBadge = index === 0 ?
+                        '<span class="badge bg-warning"><i class="fas fa-crown"></i> Terbaik</span>' :
+                        index < 3 ? '<span class="badge bg-success">Top 3</span>' :
+                        '<span class="badge bg-secondary">Standar</span>';
+
+                    const rankBadge = index < 3 ? `rank-${index + 1}` : 'bg-light';
+
+                    return `
+                        <tr ${index === 0 ? 'class="table-warning"' : ''}>
+                            <td>
+                                <span class="badge rank-badge ${rankBadge}">
+                                    ${item.ranking}
+                                </span>
+                            </td>
+                            <td><strong>${item.dosen.nama}</strong></td>
+                            <td><span class="badge bg-info">${item.dosen.prodi}</span></td>
+                            <td><code>${item.skor_total_ahp}</code></td>
+                            <td><strong>${persentase}%</strong></td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                tbody.innerHTML = rows;
+            }
+
             async function lihatDetailDosen(dosenId) {
                 showLoading(true);
 
@@ -452,14 +686,14 @@
                                     </thead>
                                     <tbody>
                                         ${Object.entries(data.detail_perhitungan).map(([kode, detail]) => `
-                                                    <tr>
-                                                        <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
-                                                        <td>${detail.total_nilai_indikator}</td>
-                                                        <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                        <td>${detail.bobot_prioritas}</td>
-                                                        <td><span class="badge bg-success">${detail.skor}</span></td>
-                                                    </tr>
-                                                `).join('')}
+                                                                            <tr>
+                                                                                <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
+                                                                                <td>${detail.total_nilai_indikator}</td>
+                                                                                <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
+                                                                                <td>${detail.bobot_prioritas}</td>
+                                                                                <td><span class="badge bg-success">${detail.skor}</span></td>
+                                                                            </tr>
+                                                                        `).join('')}
                                     </tbody>
                                     <tfoot>
                                         <tr class="table-dark">
@@ -610,11 +844,11 @@
                                     </thead>
                                     <tbody>
                                         ${indikatorKode.map(kode1 => `
-                                                    <tr>
-                                                        <td><strong>${kode1}</strong></td>
-                                                        ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_perbandingan[kode1][kode2]}</td>`).join('')}
-                                                    </tr>
-                                                `).join('')}
+                                                                            <tr>
+                                                                                <td><strong>${kode1}</strong></td>
+                                                                                ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_perbandingan[kode1][kode2]}</td>`).join('')}
+                                                                            </tr>
+                                                                        `).join('')}
                                         <tr class="table-warning">
                                             <td><strong>Jumlah</strong></td>
                                             ${indikatorKode.map(kode => `<td><strong>${matriksData.jumlah_kolom[kode]}</strong></td>`).join('')}
@@ -639,13 +873,13 @@
                                     </thead>
                                     <tbody>
                                         ${indikatorKode.map(kode1 => `
-                                                    <tr>
-                                                        <td><strong>${kode1}</strong></td>
-                                                        ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_normalisasi[kode1][kode2]}</td>`).join('')}
-                                                        <td><strong>${matriksData.jumlah_baris[kode1]}</strong></td>
-                                                        <td><span class="badge bg-success">${matriksData.bobot_prioritas_individual[kode1]}</span></td>
-                                                    </tr>
-                                                `).join('')}
+                                                                            <tr>
+                                                                                <td><strong>${kode1}</strong></td>
+                                                                                ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_normalisasi[kode1][kode2]}</td>`).join('')}
+                                                                                <td><strong>${matriksData.jumlah_baris[kode1]}</strong></td>
+                                                                                <td><span class="badge bg-success">${matriksData.bobot_prioritas_individual[kode1]}</span></td>
+                                                                            </tr>
+                                                                        `).join('')}
                                     </tbody>
                                 </table>
                             </div>
@@ -665,12 +899,12 @@
                                     </thead>
                                     <tbody>
                                         ${indikatorKode.map(kode => `
-                                                    <tr>
-                                                        <td><strong>${kode}</strong></td>
-                                                        <td>${matriksData.jumlah_kolom[kode]} × ${matriksData.bobot_prioritas_individual[kode]}</td>
-                                                        <td><span class="badge bg-info">${matriksData.lambda_maks.detail[kode]}</span></td>
-                                                    </tr>
-                                                `).join('')}
+                                                                            <tr>
+                                                                                <td><strong>${kode}</strong></td>
+                                                                                <td>${matriksData.jumlah_kolom[kode]} × ${matriksData.bobot_prioritas_individual[kode]}</td>
+                                                                                <td><span class="badge bg-info">${matriksData.lambda_maks.detail[kode]}</span></td>
+                                                                            </tr>
+                                                                        `).join('')}
                                         <tr class="table-warning">
                                             <td colspan="2"><strong>Total λ Maks</strong></td>
                                             <td><strong>${matriksData.lambda_maks.total}</strong></td>
@@ -732,6 +966,13 @@
                 }
 
                 updateRankingTable(filteredData);
+
+                // Update prioritas global dengan data yang difilter
+                const filteredAhpData = {
+                    ...ahpData,
+                    hasil_ranking: filteredData
+                };
+                updatePrioritasGlobal(filteredAhpData);
             });
 
             async function showDetailDosen(dosenId) {
@@ -780,14 +1021,14 @@
                             </thead>
                             <tbody>
                                 ${Object.keys(data.detail_skor).map(indikator => `
-                                            <tr>
-                                                <td><strong>${indikator}</strong></td>
-                                                <td>${data.detail_skor[indikator].nilai_asli}</td>
-                                                <td>${data.detail_skor[indikator].skala_interval}</td>
-                                                <td>${data.detail_skor[indikator].skala_normalisasi}</td>
-                                                <td><span class="badge bg-success">${(data.detail_skor[indikator].skala_normalisasi * data.bobot_global[indikator]).toFixed(6)}</span></td>
-                                            </tr>
-                                        `).join('')}
+                                                                    <tr>
+                                                                        <td><strong>${indikator}</strong></td>
+                                                                        <td>${data.detail_skor[indikator].nilai_asli}</td>
+                                                                        <td>${data.detail_skor[indikator].skala_interval}</td>
+                                                                        <td>${data.detail_skor[indikator].skala_normalisasi}</td>
+                                                                        <td><span class="badge bg-success">${(data.detail_skor[indikator].skala_normalisasi * data.bobot_global[indikator]).toFixed(6)}</span></td>
+                                                                    </tr>
+                                                                `).join('')}
                             </tbody>
                             <tfoot>
                                 <tr class="table-warning">
