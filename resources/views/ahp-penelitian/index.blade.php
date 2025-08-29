@@ -320,61 +320,59 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    @push("scripts")
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            let ahpData = {};
-            let filteredData = [];
+    <script>
+        let ahpData = {};
+        let filteredData = [];
 
-            // Load data saat halaman dimuat
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM loaded, starting AHP data load...');
-                loadAhpData();
-            });
+        // Load data saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting AHP data load...');
+            loadAhpData();
+        });
 
-            async function loadAhpData() {
-                console.log('Loading AHP data...');
-                showLoading(true);
+        async function loadAhpData() {
+            console.log('Loading AHP data...');
+            showLoading(true);
 
-                try {
-                    const response = await fetch('/api/ahp-penelitian');
+            try {
+                const response = await fetch('/api/ahp-penelitian');
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    const data = await response.json();
-                    console.log('AHP data loaded successfully:', data);
-
-                    ahpData = data;
-                    filteredData = data.hasil_ranking;
-
-                    updateStatistiks(data);
-                    updateKonsistensi(data.langkah_perhitungan['4_uji_konsistensi']);
-                    updateRankingTable(data.hasil_ranking);
-                    updatePrioritasGlobal(data);
-                    createCharts(data.hasil_ranking);
-
-                    // Pastikan loading hilang setelah semua proses selesai dengan delay kecil
-                    setTimeout(() => {
-                        console.log('All data processing complete, hiding loading...');
-                        showLoading(false);
-                    }, 100);
-
-                } catch (error) {
-                    console.error('Error loading AHP data:', error);
-                    alert('Gagal memuat data AHP. Silakan refresh halaman.');
-                    showLoading(false);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
+
+                const data = await response.json();
+                console.log('AHP data loaded successfully:', data);
+
+                ahpData = data;
+                filteredData = data.hasil_ranking;
+
+                updateStatistiks(data);
+                updateKonsistensi(data.langkah_perhitungan['4_uji_konsistensi']);
+                updateRankingTable(data.hasil_ranking);
+                updatePrioritasGlobal(data);
+                createCharts(data.hasil_ranking);
+
+                // Pastikan loading hilang setelah semua proses selesai dengan delay kecil
+                setTimeout(() => {
+                    console.log('All data processing complete, hiding loading...');
+                    showLoading(false);
+                }, 100);
+
+            } catch (error) {
+                console.error('Error loading AHP data:', error);
+                alert('Gagal memuat data AHP. Silakan refresh halaman.');
+                showLoading(false);
             }
+        }
 
-            function updateStatistiks(data) {
-                const total = data.hasil_ranking.length;
-                const avgScore = data.hasil_ranking.reduce((sum, item) => sum + item.skor_total_ahp, 0) / total;
-                const maxScore = Math.max(...data.hasil_ranking.map(item => item.skor_total_ahp));
-                const konsisten = data.langkah_perhitungan['4_uji_konsistensi'].status_konsistensi;
+        function updateStatistiks(data) {
+            const total = data.hasil_ranking.length;
+            const avgScore = data.hasil_ranking.reduce((sum, item) => sum + item.skor_total_ahp, 0) / total;
+            const maxScore = Math.max(...data.hasil_ranking.map(item => item.skor_total_ahp));
+            const konsisten = data.langkah_perhitungan['4_uji_konsistensi'].status_konsistensi;
 
-                const statsHtml = `
+            const statsHtml = `
         <div class="col-md-3">
             <div class="card card-stats text-center">
                 <div class="card-body">
@@ -421,37 +419,37 @@
         </div>
     `;
 
-                document.getElementById('statistik-cards').innerHTML = statsHtml;
-            }
+            document.getElementById('statistik-cards').innerHTML = statsHtml;
+        }
 
-            function updateKonsistensi(konsistensiData) {
-                const badgeClass = konsistensiData.status_konsistensi === 'Konsisten' ? 'bg-success' : 'bg-danger';
+        function updateKonsistensi(konsistensiData) {
+            const badgeClass = konsistensiData.status_konsistensi === 'Konsisten' ? 'bg-success' : 'bg-danger';
 
-                // Tampilkan CR langsung tanpa format tambahan
-                let crDisplay = konsistensiData.CR || konsistensiData.CR_raw || 0;
+            // Tampilkan CR langsung tanpa format tambahan
+            let crDisplay = konsistensiData.CR || konsistensiData.CR_raw || 0;
 
-                const html = `
+            const html = `
         <span class="badge ${badgeClass}">
             ${konsistensiData.status_konsistensi}
         </span>
         <small class="text-muted d-block">CR: <strong>${crDisplay}</strong></small>
     `;
-                document.getElementById('status-konsistensi').innerHTML = html;
-            }
+            document.getElementById('status-konsistensi').innerHTML = html;
+        }
 
-            function updateRankingTable(rankingData) {
-                const tbody = document.getElementById('ranking-tbody');
+        function updateRankingTable(rankingData) {
+            const tbody = document.getElementById('ranking-tbody');
 
-                tbody.innerHTML = rankingData.map(item => {
-                    const rankClass = item.ranking <= 3 ? `rank-${item.ranking}` : 'bg-light';
+            tbody.innerHTML = rankingData.map(item => {
+                const rankClass = item.ranking <= 3 ? `rank-${item.ranking}` : 'bg-light';
 
-                    // Format bobot prioritas untuk semua indikator
-                    const bobotHtml = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'].map(kode => {
-                        const detail = item.detail_skor[kode];
-                        return detail ? detail.bobot_prioritas : '0.000';
-                    }).join('<br>');
+                // Format bobot prioritas untuk semua indikator
+                const bobotHtml = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'].map(kode => {
+                    const detail = item.detail_skor[kode];
+                    return detail ? detail.bobot_prioritas : '0.000';
+                }).join('<br>');
 
-                    return `
+                return `
             <tr>
                 <td>
                     <span class="badge rank-badge ${rankClass}">
@@ -512,24 +510,24 @@
                 </td>
             </tr>
         `;
-                }).join('');
-            }
+            }).join('');
+        }
 
-            function updatePrioritasGlobal(data) {
-                try {
-                    const bobotPrioritas = data.langkah_perhitungan['3_bobot_prioritas'].bobot_prioritas;
-                    const ranking = data.hasil_ranking;
+        function updatePrioritasGlobal(data) {
+            try {
+                const bobotPrioritas = data.langkah_perhitungan['3_bobot_prioritas'].bobot_prioritas;
+                const ranking = data.hasil_ranking;
 
-                    if (!bobotPrioritas || !ranking) {
-                        console.warn('Data bobot prioritas atau ranking tidak tersedia');
-                        return;
-                    }
+                if (!bobotPrioritas || !ranking) {
+                    console.warn('Data bobot prioritas atau ranking tidak tersedia');
+                    return;
+                }
 
-                    // Update tabel prioritas global
-                    const tbody = document.getElementById('prioritas-global-tbody');
+                // Update tabel prioritas global
+                const tbody = document.getElementById('prioritas-global-tbody');
 
-                    // Buat baris untuk bobot prioritas
-                    const bobotRow = `
+                // Buat baris untuk bobot prioritas
+                const bobotRow = `
                         <tr class="table-warning">
                             <td><strong>Bobot Prioritas</strong></td>
                             <td class="text-center">${bobotPrioritas.KPT01 || '0.000'}</td>
@@ -541,11 +539,11 @@
                         </tr>
                     `;
 
-                    // Buat baris untuk setiap dosen (hanya top 5)
-                    const dosenRows = ranking.slice(0, 5).map((item, index) => {
-                        const prioritasGlobal = item.skor_total_ahp;
+                // Buat baris untuk setiap dosen (hanya top 5)
+                const dosenRows = ranking.slice(0, 5).map((item, index) => {
+                    const prioritasGlobal = item.skor_total_ahp;
 
-                        return `
+                    return `
                             <tr>
                                 <td><strong>${item.dosen?.nama?.split(' ').slice(0, 2).join(' ') || 'N/A'}</strong></td>
                                 <td class="text-center">${item.detail_skor?.KPT01?.skala_normalisasi || 0}</td>
@@ -556,37 +554,37 @@
                                 <td class="text-center priority-value">${prioritasGlobal}</td>
                             </tr>
                         `;
-                    }).join('');
+                }).join('');
 
-                    tbody.innerHTML = bobotRow + dosenRows;
+                tbody.innerHTML = bobotRow + dosenRows;
 
-                    // Update formula perhitungan
-                    updateFormulaPerhitungan(ranking.slice(0, 2), bobotPrioritas);
+                // Update formula perhitungan
+                updateFormulaPerhitungan(ranking.slice(0, 2), bobotPrioritas);
 
-                    // Update ranking final
-                    updateRankingFinal(ranking);
+                // Update ranking final
+                updateRankingFinal(ranking);
 
-                } catch (error) {
-                    console.error('Error updating prioritas global:', error);
-                    document.getElementById('prioritas-global-tbody').innerHTML =
-                        '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
-                }
+            } catch (error) {
+                console.error('Error updating prioritas global:', error);
+                document.getElementById('prioritas-global-tbody').innerHTML =
+                    '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
             }
+        }
 
-            function updateFormulaPerhitungan(topDosen, bobotPrioritas) {
-                const formulaDiv = document.getElementById('formula-perhitungan');
+        function updateFormulaPerhitungan(topDosen, bobotPrioritas) {
+            const formulaDiv = document.getElementById('formula-perhitungan');
 
-                const formulaHtml = topDosen.map((dosen, index) => {
-                    const nama = dosen.dosen.nama.split(' ').slice(0, 2).join(' ');
-                    const calculations = [
-                        `(${dosen.detail_skor.KPT01?.skala_normalisasi || 0} × ${bobotPrioritas.KPT01})`,
-                        `(${dosen.detail_skor.KPT02?.skala_normalisasi || 0} × ${bobotPrioritas.KPT02})`,
-                        `(${dosen.detail_skor.KPT03?.skala_normalisasi || 0} × ${bobotPrioritas.KPT03})`,
-                        `(${dosen.detail_skor.KPT04?.skala_normalisasi || 0} × ${bobotPrioritas.KPT04})`,
-                        `(${dosen.detail_skor.KPT05?.skala_normalisasi || 0} × ${bobotPrioritas.KPT05})`
-                    ];
+            const formulaHtml = topDosen.map((dosen, index) => {
+                const nama = dosen.dosen.nama.split(' ').slice(0, 2).join(' ');
+                const calculations = [
+                    `(${dosen.detail_skor.KPT01?.skala_normalisasi || 0} × ${bobotPrioritas.KPT01})`,
+                    `(${dosen.detail_skor.KPT02?.skala_normalisasi || 0} × ${bobotPrioritas.KPT02})`,
+                    `(${dosen.detail_skor.KPT03?.skala_normalisasi || 0} × ${bobotPrioritas.KPT03})`,
+                    `(${dosen.detail_skor.KPT04?.skala_normalisasi || 0} × ${bobotPrioritas.KPT04})`,
+                    `(${dosen.detail_skor.KPT05?.skala_normalisasi || 0} × ${bobotPrioritas.KPT05})`
+                ];
 
-                    return `
+                return `
                         <div class="col-md-6">
                             <div class="card formula-card">
                                 <div class="card-body">
@@ -597,26 +595,26 @@
                             </div>
                         </div>
                     `;
-                }).join('');
+            }).join('');
 
-                formulaDiv.innerHTML = formulaHtml;
-            }
+            formulaDiv.innerHTML = formulaHtml;
+        }
 
-            function updateRankingFinal(ranking) {
-                const tbody = document.getElementById('ranking-final-tbody');
+        function updateRankingFinal(ranking) {
+            const tbody = document.getElementById('ranking-final-tbody');
 
-                const maxScore = Math.max(...ranking.map(item => item.skor_total_ahp));
+            const maxScore = Math.max(...ranking.map(item => item.skor_total_ahp));
 
-                const rows = ranking.slice(0, 10).map((item, index) => {
-                    const persentase = ((item.skor_total_ahp / maxScore) * 100).toFixed(2);
-                    const statusBadge = index === 0 ?
-                        '<span class="badge bg-warning"><i class="fas fa-crown"></i> Terbaik</span>' :
-                        index < 3 ? '<span class="badge bg-success">Top 3</span>' :
-                        '<span class="badge bg-secondary">Standar</span>';
+            const rows = ranking.slice(0, 10).map((item, index) => {
+                const persentase = ((item.skor_total_ahp / maxScore) * 100).toFixed(2);
+                const statusBadge = index === 0 ?
+                    '<span class="badge bg-warning"><i class="fas fa-crown"></i> Terbaik</span>' :
+                    index < 3 ? '<span class="badge bg-success">Top 3</span>' :
+                    '<span class="badge bg-secondary">Standar</span>';
 
-                    const rankBadge = index < 3 ? `rank-${index + 1}` : 'bg-light';
+                const rankBadge = index < 3 ? `rank-${index + 1}` : 'bg-light';
 
-                    return `
+                return `
                         <tr ${index === 0 ? 'class="table-warning"' : ''}>
                             <td>
                                 <span class="badge rank-badge ${rankBadge}">
@@ -630,28 +628,30 @@
                             <td>${statusBadge}</td>
                         </tr>
                     `;
-                }).join('');
+            }).join('');
 
-                tbody.innerHTML = rows;
-            }
+            tbody.innerHTML = rows;
+        }
 
-            async function lihatDetailDosen(dosenId) {
-                showLoading(true);
+        async function lihatDetailDosen(dosenId) {
+            showLoading(true);
 
-                try {
-                    const response = await fetch(`/api/ahp-penelitian/dosen/${dosenId}`);
+            try {
+                // Cari data dosen dari ahpData yang sudah ada
+                const dosenData = ahpData.hasil_ranking.find(item => item.dosen.id == dosenId);
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
+                if (!dosenData) {
+                    throw new Error('Data dosen tidak ditemukan');
+                }
 
-                    const data = await response.json();
-
-                    const modalContent = `
+                const modalContent = `
             <div class="row">
                 <div class="col-12 mb-3">
                     <h6>Informasi Dosen</h6>
-                    <p><strong>ID:</strong> ${data.dosen.id}</p>
+                    <p><strong>NIDN:</strong> ${dosenData.dosen.nidn}</p>
+                    <p><strong>Nama:</strong> ${dosenData.dosen.nama}</p>
+                    <p><strong>Program Studi:</strong> ${dosenData.dosen.prodi}</p>
+                    <p><strong>Ranking:</strong> <span class="badge bg-warning">${dosenData.ranking}</span></p>
                 </div>
 
                 <!-- Tab Navigation -->
@@ -678,27 +678,52 @@
                                     <thead>
                                         <tr>
                                             <th>Indikator</th>
-                                            <th>Nilai Asli</th>
-                                            <th>Skala (1-5)</th>
+                                            <th>Nama Indikator</th>
+                                            <th>Skala Normalisasi</th>
                                             <th>Bobot Prioritas</th>
                                             <th>Skor</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${Object.entries(data.detail_perhitungan).map(([kode, detail]) => `
-                                                                            <tr>
-                                                                                <td><strong>${kode}</strong><br><small>${detail.nama_indikator}</small></td>
-                                                                                <td>${detail.total_nilai_indikator}</td>
-                                                                                <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                                                <td>${detail.bobot_prioritas}</td>
-                                                                                <td><span class="badge bg-success">${detail.skor}</span></td>
-                                                                            </tr>
-                                                                        `).join('')}
+                                        ${Object.entries(dosenData.detail_skor).map(([kode, detail]) => {
+                                            const namaIndikator = {
+                                                'KPT01': 'Publikasi Terakreditasi Nasional & Internasional',
+                                                'KPT02': 'Presentasi dalam seminar nasional dan internasional',
+                                                'KPT03': 'Buku dari hasil penelitian',
+                                                'KPT04': 'HaKI',
+                                                'KPT05': 'Karya Ilmiah atau seni yang dipamerkan'
+                                            };
+
+                                            return ` <
+                    tr >
+                    <
+                    td > < strong > $ {
+                        kode
+                    } < /strong></td >
+                    <
+                    td > < small > $ {
+                        namaIndikator[kode] || 'Unknown'
+                    } < /small></td >
+                    <
+                    td > < span class = "badge bg-info" > $ {
+                        detail.skala_normalisasi
+                    } < /span></td >
+                    <
+                    td > $ {
+                        detail.bobot_prioritas
+                    } < /td> <
+                    td > < span class = "badge bg-success" > $ {
+                        detail.skor
+                    } < /span></td >
+                    <
+                    /tr>
+                `;
+                                        }).join('')}
                                     </tbody>
                                     <tfoot>
                                         <tr class="table-dark">
                                             <td colspan="4"><strong>Total Skor AHP</strong></td>
-                                            <td><strong>${data.skor_total_ahp}</strong></td>
+                                            <td><strong>${dosenData.skor_total_ahp}</strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -707,340 +732,275 @@
 
                         <!-- Tab 2: Matriks Perbandingan Individual -->
                         <div class="tab-pane fade" id="matriks-pane" role="tabpanel">
-                            ${generateMatriksPerbandinganHtml(data.matriks_perbandingan_individual)}
+                            ${generateMatriksPerbandinganHtml(dosenData)}
                         </div>
                     </div>
                 </div>
             </div>
         `;
 
-                    document.getElementById('modal-detail-content').innerHTML = modalContent;
-                    new bootstrap.Modal(document.getElementById('detailDosenModal')).show();
+                document.getElementById('modal-detail-content').innerHTML = modalContent;
+                new bootstrap.Modal(document.getElementById('detailDosenModal')).show();
 
-                } catch (error) {
-                    console.error('Error loading detail dosen:', error);
-                    alert('Gagal memuat detail dosen.');
-                } finally {
-                    showLoading(false);
-                }
+            } catch (error) {
+                console.error('Error loading detail dosen:', error);
+                alert('Gagal memuat detail dosen: ' + error.message);
+            } finally {
+                showLoading(false);
             }
+        }
 
-            function createCharts(rankingData) {
-                console.log('Creating charts...');
+        function createCharts(rankingData) {
+            console.log('Creating charts...');
 
-                try {
-                    // Top 10 Dosen Chart
-                    const top10 = rankingData.slice(0, 10);
-                    const ctx1 = document.getElementById('topDosenChart').getContext('2d');
+            try {
+                // Top 10 Dosen Chart
+                const top10 = rankingData.slice(0, 10);
+                const ctx1 = document.getElementById('topDosenChart').getContext('2d');
 
-                    new Chart(ctx1, {
-                        type: 'bar',
-                        data: {
-                            labels: top10.map(item => item.dosen.nama.split(' ').slice(0, 2).join(' ')),
-                            datasets: [{
-                                label: 'Skor AHP',
-                                data: top10.map(item => item.skor_total_ahp),
-                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: top10.map(item => item.dosen.nama.split(' ').slice(0, 2).join(' ')),
+                        datasets: [{
+                            label: 'Skor AHP',
+                            data: top10.map(item => item.skor_total_ahp),
+                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
                             }
                         }
-                    });
+                    }
+                });
 
-                    // Distribusi Program Studi Chart
-                    const prodiStats = {};
-                    rankingData.forEach(item => {
-                        prodiStats[item.dosen.prodi] = (prodiStats[item.dosen.prodi] || 0) + 1;
-                    });
+                // Distribusi Program Studi Chart
+                const prodiStats = {};
+                rankingData.forEach(item => {
+                    prodiStats[item.dosen.prodi] = (prodiStats[item.dosen.prodi] || 0) + 1;
+                });
 
-                    const ctx2 = document.getElementById('prodiChart').getContext('2d');
+                const ctx2 = document.getElementById('prodiChart').getContext('2d');
 
-                    new Chart(ctx2, {
-                        type: 'pie',
-                        data: {
-                            labels: Object.keys(prodiStats),
-                            datasets: [{
-                                data: Object.values(prodiStats),
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 0.8)',
-                                    'rgba(54, 162, 235, 0.8)',
-                                    'rgba(255, 205, 86, 0.8)',
-                                    'rgba(75, 192, 192, 0.8)'
-                                ]
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
-                        }
-                    });
+                new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(prodiStats),
+                        datasets: [{
+                            data: Object.values(prodiStats),
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 205, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
 
-                    console.log('Charts created successfully');
+                console.log('Charts created successfully');
 
-                } catch (error) {
-                    console.error('Error creating charts:', error);
-                }
+            } catch (error) {
+                console.error('Error creating charts:', error);
             }
+        }
 
-            function lihatLangkahPerhitungan() {
-                window.open('/dashboard/ahp-penelitian/langkah-perhitungan', '_blank');
-            }
+        function lihatLangkahPerhitungan() {
+            window.open('/dashboard/ahp-penelitian/langkah-perhitungan', '_blank');
+        }
 
-            function exportToExcel() {
-                // Implementasi export Excel
-                alert('Fitur export Excel akan segera tersedia');
-            }
+        function exportToExcel() {
+            // Implementasi export Excel
+            alert('Fitur export Excel akan segera tersedia');
+        }
 
-            function exportToPDF() {
-                // Implementasi export PDF
-                alert('Fitur export PDF akan segera tersedia');
-            }
+        function exportToPDF() {
+            // Implementasi export PDF
+            alert('Fitur export PDF akan segera tersedia');
+        }
 
-            function generateMatriksPerbandinganHtml(matriksData) {
-                const indikatorKode = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'];
+        function generateMatriksPerbandinganHtml(dosenData) {
+            const indikatorKode = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'];
+            const namaIndikator = {
+                'KPT01': 'Publikasi Terakreditasi Nasional & Internasional',
+                'KPT02': 'Presentasi dalam seminar nasional dan internasional',
+                'KPT03': 'Buku dari hasil penelitian',
+                'KPT04': 'HaKI',
+                'KPT05': 'Karya Ilmiah atau seni yang dipamerkan'
+            };
 
-                return `
+            return `
                     <div class="row">
-                        <!-- Nilai Asli Indikator -->
+                        <!-- Detail Skor per Indikator -->
                         <div class="col-12 mb-4">
-                            <h6><i class="fas fa-list"></i> Nilai Asli Indikator Dosen</h6>
+                            <h6><i class="fas fa-list"></i> Detail Skor per Indikator</h6>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-sm">
                                     <thead class="table-info">
                                         <tr>
-                                            <th>Indikator</th>
-                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
+                                            <th>Kode</th>
+                                            <th>Nama Indikator</th>
+                                            <th>Skala Normalisasi</th>
+                                            <th>Bobot Prioritas</th>
+                                            <th>Skor Akhir</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><strong>Nilai</strong></td>
-                                            ${indikatorKode.map(kode => `<td><strong>${matriksData.nilai_indikator_asli[kode]}</strong></td>`).join('')}
-                                        </tr>
+                                        ${indikatorKode.map(kode => {
+                                            const detail = dosenData.detail_skor[kode] || {};
+                                            return ` <
+                tr >
+                <
+                td > < strong > $ {
+                    kode
+                } < /strong></td >
+                <
+                td > $ {
+                    namaIndikator[kode]
+                } < /td> <
+                td > < span class = "badge bg-info" > $ {
+                    detail.skala_normalisasi || 0
+                } < /span></td >
+                <
+                td > $ {
+                    detail.bobot_prioritas || '0.000'
+                } < /td> <
+                td > < span class = "badge bg-success" > $ {
+                    detail.skor || 0
+                } < /span></td >
+                <
+                /tr>
+            `;
+                                        }).join('')}
                                     </tbody>
+                                    <tfoot>
+                                        <tr class="table-warning">
+                                            <td colspan="4"><strong>Total Skor AHP</strong></td>
+                                            <td><strong>${dosenData.skor_total_ahp}</strong></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Matriks Perbandingan -->
+                        <!-- Matriks Perbandingan Berpasangan (Simulasi) -->
                         <div class="col-12 mb-4">
                             <h6><i class="fas fa-table"></i> Matriks Perbandingan Berpasangan</h6>
+                            <div class="alert alert-info">
+                                <small><i class="fas fa-info-circle"></i> Matriks ini merupakan representasi dari nilai skala normalisasi yang telah dihitung</small>
+                            </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-sm">
-                                    <thead class="table-primary">
+                                <table class="table table-bordered table-sm text-center">
+                                    <thead class="table-dark">
                                         <tr>
-                                            <th>Indikator</th>
+                                            <th></th>
                                             ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         ${indikatorKode.map(kode1 => `
-                                                                            <tr>
-                                                                                <td><strong>${kode1}</strong></td>
-                                                                                ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_perbandingan[kode1][kode2]}</td>`).join('')}
-                                                                            </tr>
-                                                                        `).join('')}
-                                        <tr class="table-warning">
-                                            <td><strong>Jumlah</strong></td>
-                                            ${indikatorKode.map(kode => `<td><strong>${matriksData.jumlah_kolom[kode]}</strong></td>`).join('')}
-                                        </tr>
+                                                <tr>
+                                                    <th class="table-dark">${kode1}</th>
+                                                    ${indikatorKode.map(kode2 => {
+                                                        if (kode1 === kode2) {
+                                                            return '<td><strong>1</strong></td>';
+                                                        } else {
+                                                            const nilai1 = dosenData.detail_skor[kode1]?.skala_normalisasi || 1;
+                                                            const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
+                                                            const perbandingan = (nilai1 / nilai2).toFixed(3);
+                                                            return `<td>${perbandingan}</td>`;
+        }
+        }).join('')
+        } <
+        /tr>
+        `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Matriks Normalisasi -->
-                        <div class="col-12 mb-4">
-                            <h6><i class="fas fa-balance-scale"></i> Matriks Normalisasi & Bobot Prioritas</h6>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-sm">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>Kriteria</th>
-                                            ${indikatorKode.map(kode => `<th>${kode}</th>`).join('')}
-                                            <th>Jumlah</th>
-                                            <th>Bobot Prioritas</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${indikatorKode.map(kode1 => `
-                                                                            <tr>
-                                                                                <td><strong>${kode1}</strong></td>
-                                                                                ${indikatorKode.map(kode2 => `<td>${matriksData.matriks_normalisasi[kode1][kode2]}</td>`).join('')}
-                                                                                <td><strong>${matriksData.jumlah_baris[kode1]}</strong></td>
-                                                                                <td><span class="badge bg-success">${matriksData.bobot_prioritas_individual[kode1]}</span></td>
-                                                                            </tr>
-                                                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Lambda Maks dan Konsistensi -->
-                        <div class="col-md-6">
-                            <h6><i class="fas fa-calculator"></i> Perhitungan λ Maks</h6>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-sm">
-                                    <thead class="table-info">
-                                        <tr>
-                                            <th>Indikator</th>
-                                            <th>Perhitungan</th>
-                                            <th>Hasil</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${indikatorKode.map(kode => `
-                                                                            <tr>
-                                                                                <td><strong>${kode}</strong></td>
-                                                                                <td>${matriksData.jumlah_kolom[kode]} × ${matriksData.bobot_prioritas_individual[kode]}</td>
-                                                                                <td><span class="badge bg-info">${matriksData.lambda_maks.detail[kode]}</span></td>
-                                                                            </tr>
-                                                                        `).join('')}
-                                        <tr class="table-warning">
-                                            <td colspan="2"><strong>Total λ Maks</strong></td>
-                                            <td><strong>${matriksData.lambda_maks.total}</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Uji Konsistensi -->
-                        <div class="col-md-6">
-                            <h6><i class="fas fa-check-circle"></i> Uji Konsistensi</h6>
-                            <div class="alert ${matriksData.konsistensi.status === 'Konsisten' ? 'alert-success' : 'alert-danger'}">
-                                <p><strong>λ Maks:</strong> ${matriksData.lambda_maks.total}</p>
-                                <p><strong>CI:</strong> ${matriksData.konsistensi.CI}</p>
-                                <small class="text-muted">CI = (λ maks - n) / (n - 1) = (${matriksData.lambda_maks.total} - 5) / 4</small>
-
-                                <p class="mt-2"><strong>RI:</strong> ${matriksData.konsistensi.RI}</p>
-                                <p><strong>CR:</strong> ${matriksData.konsistensi.CR}</p>
-                                <small class="text-muted">CR = CI / RI = ${matriksData.konsistensi.CI} / ${matriksData.konsistensi.RI}</small>
+                        <!-- Rangkuman Perhitungan -->
+                        <div class="col-12">
+                            <h6><i class="fas fa-calculator"></i> Rangkuman Perhitungan</h6>
+                            <div class="alert alert-success">
+                                <h6><strong>Hasil Akhir:</strong></h6>
+                                <p class="mb-1"><strong>Nama Dosen:</strong> ${dosenData.dosen.nama}</p>
+                                <p class="mb-1"><strong>Program Studi:</strong> ${dosenData.dosen.prodi}</p>
+                                <p class="mb-1"><strong>Ranking:</strong> <span class="badge bg-warning">${dosenData.ranking}</span></p>
+                                <p class="mb-0"><strong>Skor Total AHP:</strong> <span class="badge bg-success fs-6">${dosenData.skor_total_ahp}</span></p>
 
                                 <hr>
-                                <h6><span class="badge ${matriksData.konsistensi.status === 'Konsisten' ? 'bg-success' : 'bg-danger'}">${matriksData.konsistensi.status}</span></h6>
-                                <small>Konsisten jika CR ≤ 0.1</small>
+                                <h6>Kontribusi per Indikator:</h6>
+                                <div class="row">
+                                    ${indikatorKode.map(kode => {
+                                        const detail = dosenData.detail_skor[kode] || {};
+                                        const kontribusi = ((detail.skor || 0) / dosenData.skor_total_ahp * 100).toFixed(1);
+                                        return ` <
+        div class = "col-md-6" >
+        <
+        small > < strong > $ {
+                kode
+            }: < /strong> ${detail.skor || 0} (${kontribusi}%)</small >
+            <
+            /div>
+        `;
+                                    }).join('')}
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
-            }
+        }
 
-            function showLoading(show) {
-                console.log('showLoading called with:', show);
-                const overlay = document.getElementById('loading-overlay');
-                if (overlay) {
-                    if (show) {
-                        overlay.style.display = 'flex';
-                        overlay.classList.add('d-flex');
-                        overlay.classList.remove('d-none');
-                        console.log('Loading overlay shown');
-                    } else {
-                        overlay.style.display = 'none';
-                        overlay.classList.add('d-none');
-                        overlay.classList.remove('d-flex');
-                        console.log('Loading overlay hidden');
-                    }
+        function showLoading(show) {
+            console.log('showLoading called with:', show);
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                if (show) {
+                    overlay.style.display = 'flex';
+                    overlay.classList.add('d-flex');
+                    overlay.classList.remove('d-none');
+                    console.log('Loading overlay shown');
                 } else {
-                    console.error('Loading overlay element not found!');
+                    overlay.style.display = 'none';
+                    overlay.classList.add('d-none');
+                    overlay.classList.remove('d-flex');
+                    console.log('Loading overlay hidden');
                 }
+            } else {
+                console.error('Loading overlay element not found!');
+            }
+        }
+
+        // Filter by Program Studi
+        document.getElementById('filter-prodi').addEventListener('change', function() {
+            const selectedProdi = this.value;
+
+            if (selectedProdi === '') {
+                filteredData = ahpData.hasil_ranking;
+            } else {
+                filteredData = ahpData.hasil_ranking.filter(item => item.dosen.prodi === selectedProdi);
             }
 
-            // Filter by Program Studi
-            document.getElementById('filter-prodi').addEventListener('change', function() {
-                const selectedProdi = this.value;
+            updateRankingTable(filteredData);
 
-                if (selectedProdi === '') {
-                    filteredData = ahpData.hasil_ranking;
-                } else {
-                    filteredData = ahpData.hasil_ranking.filter(item => item.dosen.prodi === selectedProdi);
-                }
-
-                updateRankingTable(filteredData);
-
-                // Update prioritas global dengan data yang difilter
-                const filteredAhpData = {
-                    ...ahpData,
-                    hasil_ranking: filteredData
-                };
-                updatePrioritasGlobal(filteredAhpData);
-            });
-
-            async function showDetailDosen(dosenId) {
-                console.log('Loading detail for dosen ID:', dosenId);
-
-                try {
-                    const response = await fetch(`/api/ahp-penelitian/dosen/${dosenId}`);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    const data = await response.json();
-                    console.log('Detail dosen data:', data);
-
-                    // Update konten tab Detail Perhitungan
-                    document.getElementById('detailPerhitunganTable').innerHTML = generateDetailTable(data);
-
-                    // Update konten tab Matriks Perbandingan Individual
-                    document.getElementById('matriksPerbandinganIndividual').innerHTML =
-                        generateMatriksPerbandinganHtml(data.matriks_perbandingan_individual);
-
-                    // Tampilkan modal
-                    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-                    modal.show();
-
-                } catch (error) {
-                    console.error('Error loading detail dosen:', error);
-                    alert('Gagal memuat detail dosen. Silakan coba lagi.');
-                }
-            }
-
-            function generateDetailTable(data) {
-                // Function untuk generate tabel detail perhitungan yang sudah ada
-                const detailHtml = `
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Indikator</th>
-                                    <th>Nilai Asli</th>
-                                    <th>Skala Interval</th>
-                                    <th>Normalisasi</th>
-                                    <th>Bobot × Normalisasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${Object.keys(data.detail_skor).map(indikator => `
-                                                                    <tr>
-                                                                        <td><strong>${indikator}</strong></td>
-                                                                        <td>${data.detail_skor[indikator].nilai_asli}</td>
-                                                                        <td>${data.detail_skor[indikator].skala_interval}</td>
-                                                                        <td>${data.detail_skor[indikator].skala_normalisasi}</td>
-                                                                        <td><span class="badge bg-success">${(data.detail_skor[indikator].skala_normalisasi * data.bobot_global[indikator]).toFixed(6)}</span></td>
-                                                                    </tr>
-                                                                `).join('')}
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-warning">
-                                    <td colspan="4"><strong>Total Skor AHP</strong></td>
-                                    <td><strong><span class="badge bg-primary">${data.skor_total_ahp}</span></strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                `;
-
-                return detailHtml;
-            }
-        </script>
-    @endsection
+            // Update prioritas global dengan data yang difilter
+            const filteredAhpData = {
+                ...ahpData,
+                hasil_ranking: filteredData
+            };
+            updatePrioritasGlobal(filteredAhpData);
+        });
+    </script>
+@endsection
