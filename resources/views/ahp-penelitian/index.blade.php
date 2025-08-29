@@ -56,16 +56,6 @@
                             <i class="fas fa-trophy me-2"></i>
                             Ranking Dosen Berdasarkan AHP
                         </h5>
-                        <div>
-                            <button class="btn btn-success btn-sm" onclick="exportToExcel()">
-                                <i class="fas fa-file-excel me-1"></i>
-                                Export Excel
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="exportToPDF()">
-                                <i class="fas fa-file-pdf me-1"></i>
-                                Export PDF
-                            </button>
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
