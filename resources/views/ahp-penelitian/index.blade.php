@@ -928,6 +928,295 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="alert alert-info mt-2">
+                                <small><strong>Keterangan:</strong> Setiap nilai dalam matriks dibagi dengan total kolom yang sesuai, kemudian dihitung rata-rata per baris untuk mendapatkan bobot prioritas.</small>
+                            </div>
+                        </div>
+
+                        <!-- Uji Konsistensi CI dan CR -->
+                        <div class="col-12 mb-4">
+                            <h6><i class="fas fa-check-circle"></i> Uji Konsistensi (CI & CR)</h6>
+                            <div class="row">
+                                <!-- Perhitungan Lambda Max -->
+                                <div class="col-md-6">
+                                    <div class="card border-info">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">Perhitungan λ Max (Lambda Max)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-bordered text-center">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Kriteria</th>
+                                                            <th>Bobot Prioritas</th>
+                                                            <th>Jumlah Kolom</th>
+                                                            <th>Hasil</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${indikatorKode.map((kode, index) => {
+                                                            // Hitung total untuk kolom ini
+                                                            let totalKolom = 0;
+                                                            indikatorKode.forEach(kodeBaris => {
+                                                                if (kodeBaris === kode) {
+                                                                    totalKolom += 1;
+                                                                } else {
+                                                                    const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                                    const nilai2 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                                    totalKolom += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                }
+                                                            });
+
+                                                            // Hitung bobot prioritas dari tabel normalisasi (rata-rata baris)
+                                                            const totalsPerKolom = {};
+                                                            indikatorKode.forEach(kodeCol => {
+                                                                let totalKol = 0;
+                                                                indikatorKode.forEach(kodeBaris => {
+                                                                    if (kodeBaris === kodeCol) {
+                                                                        totalKol += 1;
+                                                                    } else {
+                                                                        const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                                        const nilai2 = dosenData.detail_skor[kodeCol]?.skala_normalisasi || 1;
+                                                                        totalKol += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                    }
+                                                                });
+                                                                totalsPerKolom[kodeCol] = totalKol;
+                                                            });
+
+                                                            // Hitung nilai normalisasi untuk baris ini (kriteria kode)
+                                                            const nilaiNormalisasi = [];
+                                                            indikatorKode.forEach(kode2 => {
+                                                                let nilaiAsli;
+                                                                if (kode === kode2) {
+                                                                    nilaiAsli = 1;
+                                                                } else {
+                                                                    const nilai1 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                                    const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
+                                                                    nilaiAsli = parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                }
+                                                                const normalisasi = (nilaiAsli / totalsPerKolom[kode2]).toFixed(4);
+                                                                nilaiNormalisasi.push(parseFloat(normalisasi));
+                                                            });
+
+                                                            // Hitung rata-rata (bobot prioritas) dari tabel normalisasi
+                                                            const bobotPrioritas = (nilaiNormalisasi.reduce((sum, val) => sum + val, 0) / nilaiNormalisasi.length).toFixed(4);
+                                                            const hasil = (totalKolom * parseFloat(bobotPrioritas)).toFixed(4);
+
+                                                            return `
+                                                                <tr>
+                                                                    <td><strong>${kode}</strong></td>
+                                                                    <td class="bg-success text-white">${bobotPrioritas}</td>
+                                                                    <td>${totalKolom.toFixed(3)}</td>
+                                                                    <td class="bg-light"><strong>${hasil}</strong></td>
+                                                                </tr>
+                                                            `;
+                                                        }).join('')}
+                                                    </tbody>
+                                                    <tfoot class="table-warning">
+                                                        <tr>
+                                                            <th colspan="3"><strong>λ Max =</strong></th>
+                                                            <th class="bg-warning">
+                                                                <strong>
+                                                                    ${(() => {
+                                                                        let lambdaMax = 0;
+                                                                        indikatorKode.forEach(kode => {
+                                                                            // Hitung total kolom
+                                                                            let totalKolom = 0;
+                                                                            indikatorKode.forEach(kodeBaris => {
+                                                                                if (kodeBaris === kode) {
+                                                                                    totalKolom += 1;
+                                                                                } else {
+                                                                                    const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                                                    const nilai2 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                                                    totalKolom += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                                }
+                                                                            });
+
+                                                                            // Hitung bobot prioritas dari tabel normalisasi
+                                                                            const totalsPerKolom = {};
+                                                                            indikatorKode.forEach(kodeCol => {
+                                                                                let totalKol = 0;
+                                                                                indikatorKode.forEach(kodeBaris => {
+                                                                                    if (kodeBaris === kodeCol) {
+                                                                                        totalKol += 1;
+                                                                                    } else {
+                                                                                        const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                                                        const nilai2 = dosenData.detail_skor[kodeCol]?.skala_normalisasi || 1;
+                                                                                        totalKol += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                                    }
+                                                                                });
+                                                                                totalsPerKolom[kodeCol] = totalKol;
+                                                                            });
+
+                                                                            const nilaiNormalisasi = [];
+                                                                            indikatorKode.forEach(kode2 => {
+                                                                                let nilaiAsli;
+                                                                                if (kode === kode2) {
+                                                                                    nilaiAsli = 1;
+                                                                                } else {
+                                                                                    const nilai1 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                                                    const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
+                                                                                    nilaiAsli = parseFloat((nilai1 / nilai2).toFixed(3));
+                                                                                }
+                                                                                const normalisasi = (nilaiAsli / totalsPerKolom[kode2]).toFixed(4);
+                                                                                nilaiNormalisasi.push(parseFloat(normalisasi));
+                                                                            });
+
+                                                                            const bobotPrioritas = (nilaiNormalisasi.reduce((sum, val) => sum + val, 0) / nilaiNormalisasi.length);
+                                                                            lambdaMax += (totalKolom * bobotPrioritas);
+                                                                        });
+                                                                        return lambdaMax.toFixed(4);
+                                                                    })()}
+                                                                </strong>
+                                                            </th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hasil CI dan CR -->
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">Hasil Uji Konsistensi</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            ${(() => {
+                                                // Hitung Lambda Max dengan bobot prioritas dari tabel normalisasi
+                                                let lambdaMax = 0;
+                                                indikatorKode.forEach(kode => {
+                                                    // Hitung total kolom
+                                                    let totalKolom = 0;
+                                                    indikatorKode.forEach(kodeBaris => {
+                                                        if (kodeBaris === kode) {
+                                                            totalKolom += 1;
+                                                        } else {
+                                                            const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                            const nilai2 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                            totalKolom += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                        }
+                                                    });
+
+                                                    // Hitung bobot prioritas dari tabel normalisasi
+                                                    const totalsPerKolom = {};
+                                                    indikatorKode.forEach(kodeCol => {
+                                                        let totalKol = 0;
+                                                        indikatorKode.forEach(kodeBaris => {
+                                                            if (kodeBaris === kodeCol) {
+                                                                totalKol += 1;
+                                                            } else {
+                                                                const nilai1 = dosenData.detail_skor[kodeBaris]?.skala_normalisasi || 1;
+                                                                const nilai2 = dosenData.detail_skor[kodeCol]?.skala_normalisasi || 1;
+                                                                totalKol += parseFloat((nilai1 / nilai2).toFixed(3));
+                                                            }
+                                                        });
+                                                        totalsPerKolom[kodeCol] = totalKol;
+                                                    });
+
+                                                    const nilaiNormalisasi = [];
+                                                    indikatorKode.forEach(kode2 => {
+                                                        let nilaiAsli;
+                                                        if (kode === kode2) {
+                                                            nilaiAsli = 1;
+                                                        } else {
+                                                            const nilai1 = dosenData.detail_skor[kode]?.skala_normalisasi || 1;
+                                                            const nilai2 = dosenData.detail_skor[kode2]?.skala_normalisasi || 1;
+                                                            nilaiAsli = parseFloat((nilai1 / nilai2).toFixed(3));
+                                                        }
+                                                        const normalisasi = (nilaiAsli / totalsPerKolom[kode2]).toFixed(4);
+                                                        nilaiNormalisasi.push(parseFloat(normalisasi));
+                                                    });
+
+                                                    const bobotPrioritas = (nilaiNormalisasi.reduce((sum, val) => sum + val, 0) / nilaiNormalisasi.length);
+                                                    lambdaMax += (totalKolom * bobotPrioritas);
+                                                });
+
+                                                // Hitung CI
+                                                const n = indikatorKode.length; // Jumlah kriteria (5)
+                                                const CI = (lambdaMax - n) / (n - 1);
+
+                                                // Random Index untuk n=5
+                                                const RI = 1.12; // Nilai RI untuk 5 kriteria
+
+                                                // Hitung CR
+                                                const CR = CI / RI;
+
+                                                // Status konsistensi
+                                                const statusKonsistensi = CR <= 0.1 ? 'KONSISTEN' : 'TIDAK KONSISTEN';
+                                                const badgeClass = CR <= 0.1 ? 'bg-success' : 'bg-danger';
+
+                                                return `
+                                                    <div class="mb-3">
+                                                        <h6>Formula Perhitungan:</h6>
+                                                        <div class="alert alert-light">
+                                                            <p class="mb-1"><strong>CI =</strong> (λ Max - n) / (n - 1)</p>
+                                                            <p class="mb-1"><strong>CR =</strong> CI / RI</p>
+                                                            <p class="mb-0"><small>Dimana: n = jumlah kriteria, RI = Random Index</small></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row text-center">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="text-info">λ Max</h5>
+                                                                    <h4 class="text-primary">${lambdaMax.toFixed(4)}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="text-info">n (Kriteria)</h5>
+                                                                    <h4 class="text-primary">${n}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="text-warning">CI</h5>
+                                                                    <h4 class="text-dark">${CI.toFixed(4)}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="text-warning">RI</h5>
+                                                                    <h4 class="text-dark">${RI}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="text-center">
+                                                        <div class="card ${badgeClass} text-white">
+                                                            <div class="card-body">
+                                                                <h5>Consistency Ratio (CR)</h5>
+                                                                <h2>${CR.toFixed(4)}</h2>
+                                                                <p class="mb-2">
+                                                                    <span class="badge bg-light text-dark">${statusKonsistensi}</span>
+                                                                </p>
+                                                                <small>
+                                                                    ${CR <= 0.1 ?
+                                                                        'CR ≤ 0.1, matriks perbandingan konsisten' :
+                                                                        'CR > 0.1, matriks perbandingan tidak konsisten'
+                                                                    }
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            })()}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
