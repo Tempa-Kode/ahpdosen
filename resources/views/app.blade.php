@@ -136,9 +136,8 @@
                                                                         href="{{  route('pengabdian.index') }}">
                                                                         Pengabdian Kepada Masyarakat</a></li>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="#"
-                                                                        onclick="alert('Belum tersedia')">Kegiatan
-                                                                        Penunjang Tridharma</a></li>
+                                                                        href="{{ route('perhitungan.penilaian.k004.page') }}">
+                                                                        Kegiatan Penunjang Tridharma</a></li>
                                                             </ul>
                                                         </div>
                                                         <div class="col-md-6">

@@ -95,3 +95,10 @@ Route::get('pengabdian-kepada-masyarakat', [\App\Http\Controllers\PerhitunganPKM
 Route::prefix('api/perhitungan-pkm')->name('api.perhitungan.pkm.')->group(function () {
     Route::get('/penilaian', [\App\Http\Controllers\PerhitunganPKMController::class, 'penilaianK003'])->name('index');
 });
+
+// API Routes untuk perhitungan Tridarma
+Route::prefix('api/perhitungan-tridarma')->name('api.perhitungan.tridarma.')->group(function () {
+    Route::get('/penilaian', [\App\Http\Controllers\PerhitunganTridarmaController::class, 'penilaianK004'])->name('index');
+});
+
+Route::get('kegiatan-penunjang-tridarma', [\App\Http\Controllers\PerhitunganTridarmaController::class, 'penilaianK004Page'])->name('perhitungan.penilaian.k004.page');
