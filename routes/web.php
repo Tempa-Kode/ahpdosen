@@ -88,3 +88,10 @@ Route::prefix('api/ahp-penelitian')->name('api.ahp.penelitian.')->group(function
     Route::get('/', [\App\Http\Controllers\AhpPenelitianController::class, 'perhitunganAhpPenelitian'])->name('perhitungan.lengkap');
     Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpPenelitianController::class, 'detailDosenAhp'])->name('detail.dosen');
 });
+
+Route::get('pengabdian-kepada-masyarakat', [\App\Http\Controllers\PerhitunganPKMController::class, 'penilaianK003Page'])->name('pengabdian.index');
+
+// API Routes untuk Perhitungan PKM
+Route::prefix('api/perhitungan-pkm')->name('api.perhitungan.pkm.')->group(function () {
+    Route::get('/penilaian', [\App\Http\Controllers\PerhitunganPKMController::class, 'penilaianK003'])->name('index');
+});
