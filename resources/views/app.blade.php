@@ -133,9 +133,8 @@
                                                                         (AHP)</a>
                                                                 </li>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="#"
-                                                                        onclick="alert('Belum tersedia')">Pengabdian
-                                                                        Kepada Masyarakat</a></li>
+                                                                        href="{{  route('pengabdian.index') }}">
+                                                                        Pengabdian Kepada Masyarakat</a></li>
                                                                 <li class="nav-item"><a class="nav-link"
                                                                         href="#"
                                                                         onclick="alert('Belum tersedia')">Kegiatan
