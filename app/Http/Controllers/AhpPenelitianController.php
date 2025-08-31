@@ -58,6 +58,27 @@ class AhpPenelitianController extends Controller
         // 6. Hitung skor akhir AHP
         $skorAhp = $this->hitungSkorAhp($dataNormalisasi, $bobotPrioritas);
 
+        // 7. Hitung prioritas global untuk setiap dosen
+        $bobotKriteria = $bobotPrioritas['bobot_prioritas'];
+        $prioritasGlobal = [];
+        foreach ($skorAhp as $dosenData) {
+            $totalGlobal = 0;
+            foreach ($bobotKriteria as $kode => $bobotK) {
+                // Bobot prioritas dosen pada kriteria: gunakan bobot_prioritas (hasil matriks normalisasi dosen)
+                $bobotPrioritasDosen = isset($dosenData['detail_skor'][$kode]['bobot_prioritas'])
+                    ? $dosenData['detail_skor'][$kode]['bobot_prioritas']
+                    : 0;
+                $totalGlobal += $bobotPrioritasDosen * $bobotK;
+            }
+            $prioritasGlobal[] = [
+                'dosen' => $dosenData['dosen'],
+                'prioritas_global' => $totalGlobal, // hasil prioritas global
+                'detail_skor' => $dosenData['detail_skor'],
+                'skor_total_ahp' => $dosenData['skor_total_ahp'],
+                'ranking' => $dosenData['ranking'] ?? null
+            ];
+        }
+
         return response()->json([
             'langkah_perhitungan' => [
                 '1_bobot_dasar_indikator' => $this->bobotDasar,
@@ -65,9 +86,11 @@ class AhpPenelitianController extends Controller
                 '3_bobot_prioritas' => $bobotPrioritas,
                 '4_uji_konsistensi' => $konsistensi,
                 '5_data_normalisasi_dosen' => $dataNormalisasi,
-                '6_skor_akhir_ahp' => $skorAhp
+                '6_skor_akhir_ahp' => $skorAhp,
+                '7_prioritas_global' => $prioritasGlobal
             ],
             'hasil_ranking' => $this->urutkanHasil($skorAhp),
+            'prioritas_global' => $prioritasGlobal,
             'kesimpulan' => [
                 'konsistensi_diterima' => $konsistensi['CR'] <= 0.1,
                 'total_dosen_dievaluasi' => count($skorAhp),
@@ -233,6 +256,59 @@ class AhpPenelitianController extends Controller
     }
 
     /**
+     * Menghitung bobot prioritas individual per dosen (matriks perbandingan, normalisasi, bobot prioritas)
+     */
+    private function hitungBobotPrioritasIndividual($nilaiNormalisasi, $indikatorKode = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'])
+    {
+        $n = count($indikatorKode);
+        // 1. Matriks perbandingan berpasangan
+        $pairwiseMatrix = [];
+        foreach ($indikatorKode as $kode1) {
+            $row = [];
+            foreach ($indikatorKode as $kode2) {
+                $nilai1 = isset($nilaiNormalisasi[$kode1]) ? $nilaiNormalisasi[$kode1]['skala_normalisasi'] : 1;
+                $nilai2 = isset($nilaiNormalisasi[$kode2]) ? $nilaiNormalisasi[$kode2]['skala_normalisasi'] : 1;
+                $row[] = $nilai2 != 0 ? round($nilai1 / $nilai2, 5) : 1;
+            }
+            $pairwiseMatrix[$kode1] = $row;
+        }
+        // 2. Jumlah kolom
+        $columnTotals = [];
+        for ($j = 0; $j < $n; $j++) {
+            $sum = 0;
+            foreach ($indikatorKode as $kode1) {
+                $sum += $pairwiseMatrix[$kode1][$j];
+            }
+            $columnTotals[$j] = round($sum, 5);
+        }
+        // 3. Matriks normalisasi
+        $normalizedMatrix = [];
+        foreach ($indikatorKode as $i => $kode1) {
+            $row = [];
+            for ($j = 0; $j < $n; $j++) {
+                $val = $columnTotals[$j] != 0 ? $pairwiseMatrix[$kode1][$j] / $columnTotals[$j] : 0;
+                $row[] = round($val, 5);
+            }
+            $normalizedMatrix[$kode1] = $row;
+        }
+        // 4. Jumlah baris dan bobot prioritas
+        $jumlahBaris = [];
+        $bobotPrioritasIndividu = [];
+        foreach ($indikatorKode as $i => $kode1) {
+            $rowSum = array_sum($normalizedMatrix[$kode1]);
+            $jumlahBaris[$kode1] = round($rowSum, 5);
+            $bobotPrioritasIndividu[$kode1] = round($rowSum / $n, 5);
+        }
+        return [
+            'pairwise_matrix' => $pairwiseMatrix,
+            'column_totals' => $columnTotals,
+            'normalized_matrix' => $normalizedMatrix,
+            'jumlah_baris' => $jumlahBaris,
+            'bobot_prioritas_individu' => $bobotPrioritasIndividu
+        ];
+    }
+
+    /**
      * Menghitung skor akhir AHP
      */
     private function hitungSkorAhp($dataNormalisasi, $bobotPrioritas)
@@ -247,19 +323,24 @@ class AhpPenelitianController extends Controller
             $skorTotal = 0;
             $detailSkor = [];
 
-            foreach (['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'] as $kode) {
+            // Hitung bobot prioritas individual per dosen
+            $indikatorKode = ['KPT01', 'KPT02', 'KPT03', 'KPT04', 'KPT05'];
+            $individu = $this->hitungBobotPrioritasIndividual($nilaiNormalisasi, $indikatorKode);
+
+            foreach ($indikatorKode as $kode) {
                 if (isset($nilaiNormalisasi[$kode])) {
                     $nilaiSkala = $nilaiNormalisasi[$kode]['skala_normalisasi'];
                     $bobotIndikator = $bobot[$kode];
                     $skorIndikator = $nilaiSkala * $bobotIndikator;
-
                     $skorTotal += $skorIndikator;
-
                     $detailSkor[$kode] = [
                         'total_nilai_indikator' => $nilaiNormalisasi[$kode]['total_nilai_indikator'],
                         'skala_normalisasi' => $nilaiSkala,
-                        'bobot_prioritas' => $bobotIndikator,
-                        'skor' => round($skorIndikator, 5)
+                        'bobot_prioritas' => $individu['bobot_prioritas_individu'][$kode],
+                        'skor' => round($skorIndikator, 5),
+                        'matriks_perbandingan' => $individu['pairwise_matrix'][$kode],
+                        'matriks_normalisasi' => $individu['normalized_matrix'][$kode],
+                        'jumlah_baris' => $individu['jumlah_baris'][$kode]
                     ];
                 }
             }
