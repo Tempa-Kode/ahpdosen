@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test AHP Tridarma API</title>
+</head>
+<body>
+    <h1>Test AHP Tridarma API</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        function testAPI() {
+            console.log('Testing API...');
+            fetch('/api/ahp-tridarma')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data received:', data);
+                    document.getElementById('result').innerHTML = `
+                        <h3>API Response:</h3>
+                        <p>Status: ${data.status}</p>
+                        <p>Jumlah Dosen: ${data.data ? data.data.jumlah_dosen : 'N/A'}</p>
+                        <p>Konsistensi: ${data.data ? data.data.konsistensi.konsisten : 'N/A'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = `
+                        <h3>Error:</h3>
+                        <p>${error.message}</p>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>

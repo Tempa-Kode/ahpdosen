@@ -133,10 +133,14 @@
                                                                         (AHP)</a>
                                                                 </li>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="{{  route('pengabdian.index') }}">
+                                                                        href="{{ route("ahp.tridarma.index") }}">AHP
+                                                                        Tridarma</a>
+                                                                </li>
+                                                                <li class="nav-item"><a class="nav-link"
+                                                                        href="{{ route("pengabdian.index") }}">
                                                                         Pengabdian Kepada Masyarakat</a></li>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="{{ route('perhitungan.penilaian.k004.page') }}">
+                                                                        href="{{ route("perhitungan.penilaian.k004.page") }}">
                                                                         Kegiatan Penunjang Tridharma</a></li>
                                                             </ul>
                                                         </div>
@@ -215,7 +219,7 @@
     <!-- endinject -->
 
     <!-- Custom js for this page -->
-    <script src="{{ asset("assets/js/data-table.js") }}"></script>
+    <script src="{{ asset("js/data-table.js") }}"></script>
     <script>
         $(document).ready(function() {
             $('#datatable').DataTable();

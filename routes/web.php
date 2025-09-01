@@ -73,7 +73,20 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpPenelitianWebController::class, 'detailDosen'])->name('ahp.penelitian.detail.dosen');
     });
 
-    // Legacy route - untuk backward compatibility
+    // AHP Tridarma Routes (Web Interface)
+    Route::prefix('ahp-tridarma')->group(function () {
+        Route::get('/', function () {
+            return view('ahp-tridarma.index-new');
+        })->name('ahp.tridarma.index');
+
+        Route::get('/langkah-perhitungan', function () {
+            return view('ahp-tridarma.langkah-perhitungan');
+        })->name('ahp.tridarma.langkah.perhitungan');
+
+        Route::get('/detail-dosen', function () {
+            return view('ahp-tridarma.detail-dosen');
+        })->name('ahp.tridarma.detail.dosen');
+    });    // Legacy route - untuk backward compatibility
     Route::get('/perhitungan', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikanDanPembelajaran');
 });
 
@@ -87,6 +100,12 @@ Route::prefix('api/penelitian')->name('api.penelitian.')->group(function () {
 Route::prefix('api/ahp-penelitian')->name('api.ahp.penelitian.')->group(function () {
     Route::get('/', [\App\Http\Controllers\AhpPenelitianController::class, 'perhitunganAhpPenelitian'])->name('perhitungan.lengkap');
     Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpPenelitianController::class, 'detailDosenAhp'])->name('detail.dosen');
+});
+
+// API Routes untuk AHP Tridarma
+Route::prefix('api/ahp-tridarma')->name('api.ahp.tridarma.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AhpTridarmaController::class, 'perhitunganAhpTridarma'])->name('perhitungan.lengkap');
+    Route::get('/dosen/{dosen_id}', [\App\Http\Controllers\AhpTridarmaController::class, 'detailDosenAhpTridarma'])->name('detail.dosen');
 });
 
 Route::get('pengabdian-kepada-masyarakat', [\App\Http\Controllers\PerhitunganPKMController::class, 'penilaianK003Page'])->name('pengabdian.index');
