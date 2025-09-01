@@ -70,6 +70,7 @@ class AhpPenelitianController extends Controller
                     : 0;
                 $totalGlobal += $bobotPrioritasDosen * $bobotK;
             }
+
             $prioritasGlobal[] = [
                 'dosen' => $dosenData['dosen'],
                 'prioritas_global' => $totalGlobal, // hasil prioritas global
@@ -78,6 +79,22 @@ class AhpPenelitianController extends Controller
                 'ranking' => $dosenData['ranking'] ?? null
             ];
         }
+
+        // Urutkan data prioritas global dari tertinggi ke terendah
+        usort($prioritasGlobal, function($a, $b) {
+            return $b['prioritas_global'] <=> $a['prioritas_global'];
+        });
+
+        // Tambahkan ranking baru berdasarkan prioritas global
+        foreach ($prioritasGlobal as $index => &$data) {
+            $data['ranking'] = $index + 1;
+        }
+
+        // 8. Hitung persentase menggunakan min-max scaling
+        $prioritasGlobal = $this->hitungPersentaseMinMax($prioritasGlobal);
+
+        // 9. Tambahkan kategori nilai decimal berdasarkan range persentase
+        $prioritasGlobal = $this->tambahkanKategoriNilaiDecimal($prioritasGlobal);
 
         return response()->json([
             'langkah_perhitungan' => [
@@ -91,10 +108,18 @@ class AhpPenelitianController extends Controller
             ],
             'hasil_ranking' => $this->urutkanHasil($skorAhp),
             'prioritas_global' => $prioritasGlobal,
+            'range_kategori' => [
+                ['range' => '81% - 100%', 'kategori' => 'Sangat tinggi', 'nilai_decimal' => 5.00000],
+                ['range' => '61% - 80%', 'kategori' => 'Tinggi', 'nilai_decimal' => 4.00000],
+                ['range' => '41% - 60%', 'kategori' => 'Sedang', 'nilai_decimal' => 3.00000],
+                ['range' => '21% - 40%', 'kategori' => 'Rendah', 'nilai_decimal' => 2.00000],
+                ['range' => '0 - 20%', 'kategori' => 'Sangat rendah', 'nilai_decimal' => 1.00000]
+            ],
             'kesimpulan' => [
                 'konsistensi_diterima' => $konsistensi['CR'] <= 0.1,
                 'total_dosen_dievaluasi' => count($skorAhp),
-                'metode' => 'Analytical Hierarchy Process (AHP)'
+                'metode' => 'Analytical Hierarchy Process (AHP)',
+                'rumus_persentase' => 'Min-Max Scaling: (x - min) / (max - min) × 100%'
             ]
         ]);
     }
@@ -428,5 +453,77 @@ class AhpPenelitianController extends Controller
     {
         // Tampilkan angka dalam format desimal langsung dengan 10 digit
         return number_format($angka, 10, '.', '');
+    }
+
+    /**
+     * Menghitung persentase menggunakan min-max scaling
+     */
+    private function hitungPersentaseMinMax($prioritasGlobal)
+    {
+        if (empty($prioritasGlobal)) {
+            return $prioritasGlobal;
+        }
+
+        // Cari nilai minimum dan maksimum prioritas global
+        $nilaiPrioritas = array_column($prioritasGlobal, 'prioritas_global');
+        $nilaiMin = min($nilaiPrioritas);
+        $nilaiMax = max($nilaiPrioritas);
+
+        // Hitung persentase untuk setiap dosen
+        foreach ($prioritasGlobal as &$data) {
+            $nilaiPrioritas = $data['prioritas_global'];
+
+            // Rumus min-max scaling: (x - min) / (max - min) * 100
+            if ($nilaiMax - $nilaiMin != 0) {
+                $persentase = (($nilaiPrioritas - $nilaiMin) / ($nilaiMax - $nilaiMin)) * 100;
+            } else {
+                $persentase = 100; // Jika semua nilai sama, beri 100%
+            }
+
+            $data['persentase'] = round($persentase, 2);
+            $data['nilai_min'] = $nilaiMin;
+            $data['nilai_max'] = $nilaiMax;
+            $data['formula_perhitungan'] = "({$nilaiPrioritas} - {$nilaiMin}) / ({$nilaiMax} - {$nilaiMin}) * 100% = {$persentase}%";
+        }
+
+        return $prioritasGlobal;
+    }
+
+    /**
+     * Menambahkan kategori nilai decimal berdasarkan range persentase
+     */
+    private function tambahkanKategoriNilaiDecimal($prioritasGlobal)
+    {
+        // Definisi range dan kategori sesuai dengan screenshot
+        $rangeKategori = [
+            ['range' => '81% - 100%', 'kategori' => 'Sangat tinggi', 'nilai_decimal' => 5.00000],
+            ['range' => '61% - 80%', 'kategori' => 'Tinggi', 'nilai_decimal' => 4.00000],
+            ['range' => '41% - 60%', 'kategori' => 'Sedang', 'nilai_decimal' => 3.00000],
+            ['range' => '21% - 40%', 'kategori' => 'Rendah', 'nilai_decimal' => 2.00000],
+            ['range' => '0 - 20%', 'kategori' => 'Sangat rendah', 'nilai_decimal' => 1.00000]
+        ];
+
+        foreach ($prioritasGlobal as &$data) {
+            $persentase = $data['persentase'];
+
+            // Tentukan kategori berdasarkan persentase
+            if ($persentase >= 81) {
+                $kategori = $rangeKategori[0];
+            } elseif ($persentase >= 61) {
+                $kategori = $rangeKategori[1];
+            } elseif ($persentase >= 41) {
+                $kategori = $rangeKategori[2];
+            } elseif ($persentase >= 21) {
+                $kategori = $rangeKategori[3];
+            } else {
+                $kategori = $rangeKategori[4];
+            }
+
+            $data['kategori_range'] = $kategori['range'];
+            $data['kategori_label'] = $kategori['kategori'];
+            $data['nilai_decimal'] = $kategori['nilai_decimal'];
+        }
+
+        return $prioritasGlobal;
     }
 }

@@ -154,7 +154,7 @@
                                                 <th>Program Studi</th>
                                                 <th>Prioritas Global</th>
                                                 <th>Persentase (%)</th>
-                                                <th>Status</th>
+                                                <th>Nilai Desimal</th>
                                             </tr>
                                         </thead>
                                         <tbody id="ranking-final-tbody">
@@ -413,7 +413,7 @@
         function updatePrioritasGlobal(data) {
             const tbody = document.getElementById('prioritas-global-tbody');
             const bobotPrioritas = data.langkah_perhitungan?.['3_bobot_prioritas']?.bobot_prioritas;
-            const ranking = Array.isArray(data.hasil_ranking) ? data.hasil_ranking : [];
+            const ranking = Array.isArray(data.prioritas_global) ? data.prioritas_global : [];
 
             if (!bobotPrioritas || ranking.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Data prioritas tidak lengkap.</td></tr>';
@@ -434,13 +434,13 @@
 
             const dosenRows = ranking.slice(0, 5).map(item => `
                 <tr>
-                    <td><strong>${item.dosen?.nama?.split(' ').slice(0, 2).join(' ') || 'N/A'}</strong></td>
-                    <td class="text-center">${item.detail_skor?.KPT01?.skala_normalisasi || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT02?.skala_normalisasi || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT03?.skala_normalisasi || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT04?.skala_normalisasi || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT05?.skala_normalisasi || 0}</td>
-                    <td class="text-center priority-value">${item.skor_total_ahp}</td>
+                    <td><strong>${item.dosen?.nama || 'N/A'}</strong></td>
+                    <td class="text-center">${item.detail_skor?.KPT01?.bobot_prioritas || 0}</td>
+                    <td class="text-center">${item.detail_skor?.KPT02?.bobot_prioritas || 0}</td>
+                    <td class="text-center">${item.detail_skor?.KPT03?.bobot_prioritas || 0}</td>
+                    <td class="text-center">${item.detail_skor?.KPT04?.bobot_prioritas || 0}</td>
+                    <td class="text-center">${item.detail_skor?.KPT05?.bobot_prioritas || 0}</td>
+                    <td class="text-center priority-value">${item.prioritas_global }</td>
                 </tr>
             `).join('');
 
@@ -455,18 +455,18 @@
             formulaDiv.innerHTML = topDosen.map(dosen => {
                 const nama = dosen.dosen.nama.split(' ').slice(0, 2).join(' ');
                 const calculations = [
-                    `(${dosen.detail_skor.KPT01?.skala_normalisasi || 0} × ${bobotPrioritas.KPT01})`,
-                    `(${dosen.detail_skor.KPT02?.skala_normalisasi || 0} × ${bobotPrioritas.KPT02})`,
-                    `(${dosen.detail_skor.KPT03?.skala_normalisasi || 0} × ${bobotPrioritas.KPT03})`,
-                    `(${dosen.detail_skor.KPT04?.skala_normalisasi || 0} × ${bobotPrioritas.KPT04})`,
-                    `(${dosen.detail_skor.KPT05?.skala_normalisasi || 0} × ${bobotPrioritas.KPT05})`
+                    `(${dosen.detail_skor.KPT01?.bobot_prioritas || 0} × ${bobotPrioritas.KPT01})`,
+                    `(${dosen.detail_skor.KPT02?.bobot_prioritas || 0} × ${bobotPrioritas.KPT02})`,
+                    `(${dosen.detail_skor.KPT03?.bobot_prioritas || 0} × ${bobotPrioritas.KPT03})`,
+                    `(${dosen.detail_skor.KPT04?.bobot_prioritas || 0} × ${bobotPrioritas.KPT04})`,
+                    `(${dosen.detail_skor.KPT05?.bobot_prioritas || 0} × ${bobotPrioritas.KPT05})`
                 ];
                 return `
                     <div class="col-md-6">
                         <div class="card formula-card"><div class="card-body">
                             <h6><strong>${nama} =</strong></h6>
                             <p class="mb-1" style="font-size: 0.9em;">${calculations.join(' + ')}</p>
-                            <p class="mb-0 priority-value">= ${dosen.skor_total_ahp}</p>
+                            <p class="mb-0 priority-value">= ${dosen.prioritas_global}</p>
                         </div></div>
                     </div>
                 `;
@@ -480,18 +480,15 @@
             const maxScore = Math.max(...ranking.map(item => item.skor_total_ahp));
             tbody.innerHTML = ranking.slice(0, 10).map((item, index) => {
                 const persentase = maxScore > 0 ? ((item.skor_total_ahp / maxScore) * 100).toFixed(2) : 0;
-                const statusBadge = index === 0 ? '<span class="badge bg-warning"><i class="fas fa-crown"></i> Terbaik</span>' :
-                                    index < 3 ? '<span class="badge bg-success">Top 3</span>' :
-                                    '<span class="badge bg-secondary">Standar</span>';
                 const rankBadge = index < 3 ? `rank-${index + 1}` : 'bg-light';
                 return `
                     <tr ${index === 0 ? 'class="table-warning"' : ''}>
                         <td><span class="badge rank-badge ${rankBadge}">${item.ranking}</span></td>
                         <td><strong>${item.dosen.nama}</strong></td>
                         <td><span class="badge bg-info">${item.dosen.prodi}</span></td>
-                        <td><code>${item.skor_total_ahp}</code></td>
-                        <td><strong>${persentase}%</strong></td>
-                        <td>${statusBadge}</td>
+                        <td><code>${item.prioritas_global}</code></td>
+                        <td><strong>${item.persentase}%</strong></td>
+                        <td><strong>${item.nilai_decimal}</strong></td>
                     </tr>
                 `;
             }).join('');
