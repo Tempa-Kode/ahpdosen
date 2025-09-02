@@ -10,10 +10,10 @@ class AhpTridarmaController extends Controller
 {
     // Bobot dasar untuk masing-masing kriteria Tridarma
     private $bobotDasar = [
-        'K001' => 3.00000, // Pendidikan dan Pembelajaran
-        'K002' => 2.50000, // Penelitian
-        'K003' => 2.00000, // PKM
-        'K004' => 1.50000  // Penunjang
+        'K001' => 0.35, // Pendidikan dan Pembelajaran
+        'K002' => 0.45, // Penelitian
+        'K003' => 0.1, // PKM
+        'K004' => 0.1 // Penunjang
     ];
 
     // Random Index untuk menghitung CR
@@ -70,6 +70,7 @@ class AhpTridarmaController extends Controller
             'status' => 'success',
             'message' => 'Perhitungan AHP Tridarma berhasil',
             'data' => [
+                'data_kriteria' => $dataKriteria,
                 'matriks_perbandingan' => $matriks,
                 'bobot_prioritas' => $bobotPrioritas,
                 'konsistensi' => $konsistensi,
@@ -103,8 +104,8 @@ class AhpTridarmaController extends Controller
         $dataK001 = json_decode($hasilK001->getContent(), true);
 
         // K002 - Penelitian
-        $controllerK002 = new \App\Http\Controllers\PerhitunganPenelitianController();
-        $hasilK002 = $controllerK002->hitungSemuaDosen();
+        $controllerK002 = new \App\Http\Controllers\AhpPenelitianController();
+        $hasilK002 = $controllerK002->perhitunganAhpPenelitian();
         $dataK002 = json_decode($hasilK002->getContent(), true);
 
         // K003 - PKM
@@ -138,7 +139,7 @@ class AhpTridarmaController extends Controller
         // Proses data K001 - Pendidikan dan Pembelajaran
         if (isset($dataK001['hasil_perhitungan'])) {
             foreach ($dataK001['hasil_perhitungan'] as $item) {
-                $dosenId = $item['dosen']['id'] ?? null;
+                $dosenId = $item['dosen_id'] ?? null;
                 if ($dosenId && isset($gabunganDosen[$dosenId])) {
                     $gabunganDosen[$dosenId]['K001'] = $item['skala_interval']['nilai_decimal'] ?? 1.0;
                 }
@@ -146,23 +147,11 @@ class AhpTridarmaController extends Controller
         }
 
         // Proses data K002 - Penelitian
-        if (isset($dataK002) && is_array($dataK002)) {
-            foreach ($dataK002 as $item) {
+        if (isset($dataK002['prioritas_global']) && is_array($dataK002['prioritas_global'])) {
+            foreach ($dataK002['prioritas_global'] as $item) {
                 $dosenId = $item['dosen']['id'] ?? null;
                 if ($dosenId && isset($gabunganDosen[$dosenId])) {
-                    // Hitung rata-rata nilai bobot dari semua indikator penelitian
-                    $totalBobot = 0;
-                    $jumlahIndikator = 0;
-
-                    if (isset($item['perhitungan']) && isset($item['perhitungan']['detail_indikator'])) {
-                        foreach ($item['perhitungan']['detail_indikator'] as $indikator) {
-                            $totalBobot += $indikator['bobot'] ?? 1.0;
-                            $jumlahIndikator++;
-                        }
-                    }
-
-                    $rataRataBobot = $jumlahIndikator > 0 ? $totalBobot / $jumlahIndikator : 1.0;
-                    $gabunganDosen[$dosenId]['K002'] = $rataRataBobot;
+                    $gabunganDosen[$dosenId]['K002'] = $item['nilai_decimal'] ?? 1.0;
                 }
             }
         }

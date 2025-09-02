@@ -62,8 +62,7 @@
                                         <th class="text-center" title="Pendidikan dan Pembelajaran">K001</th>
                                         <th class="text-center" title="Penelitian">K002</th>
                                         <th class="text-center" title="PKM">K003</th>
-                                        <th class="text-center">Bobot Prioritas</th>
-                                        <th class="text-center">Skor AHP</th>
+                                        <th class="text-center" title="PKM">K004</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -363,15 +362,7 @@
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K001?.nilai || '0.000'}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K002?.nilai || '0.000'}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K003?.nilai || '0.000'}</span></td>
-                        <td class="text-center" style="font-size: 0.8em; font-family: monospace;">
-                            <div style="line-height: 1.3;">
-                                <small>K001: ${detailKriteria.K001?.bobot || '0.000'}</small><br>
-                                <small>K002: ${detailKriteria.K002?.bobot || '0.000'}</small><br>
-                                <small>K003: ${detailKriteria.K003?.bobot || '0.000'}</small><br>
-                                <small>K004: ${detailKriteria.K004?.bobot || '0.000'}</small>
-                            </div>
-                        </td>
-                        <td><span class="badge skor-badge bg-primary">${item.prioritas_global || '0.000'}</span></td>
+                        <td><span class="badge bg-secondary indikator-score">${detailKriteria.K004?.nilai || '0.000'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="lihatDetailDosen(${item.dosen.id})">
                                 <i class="fas fa-eye me-1"></i>Detail
