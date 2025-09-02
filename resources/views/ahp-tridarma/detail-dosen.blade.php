@@ -53,29 +53,80 @@
                 </div>
             </div>
 
-            <!-- Detail Kriteria -->
+            <!-- Matriks Bobot Prioritas Dosen -->
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-warning text-dark">
-                            <h5><i class="fas fa-chart-bar me-2"></i>Detail Penilaian per Kriteria</h5>
+                        <div class="card-header bg-gradient-primary text-white">
+                            <h5><i class="fas fa-table me-2"></i>Matriks Bobot Prioritas Dosen</h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th>Kriteria</th>
-                                            <th>Nama Kriteria</th>
-                                            <th>Nilai Asli</th>
-                                            <th>Nilai Normalisasi</th>
-                                            <th>Bobot Kriteria</th>
-                                            <th>Kontribusi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="detail-kriteria">
-                                    </tbody>
-                                </table>
+                            <!-- Matriks Perbandingan Nilai Dosen -->
+                            <div class="mb-4">
+                                <h6 class="text-primary">Matriks Perbandingan Antar Kriteria (Berdasarkan Nilai Dosen)</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered matriks-table">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Kriteria</th>
+                                                <th>K001</th>
+                                                <th>K002</th>
+                                                <th>K003</th>
+                                                <th>K004</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="matriks-perbandingan-dosen">
+                                        </tbody>
+                                        <tfoot class="table-warning">
+                                            <tr id="total-kolom-matriks">
+                                                <th>TOTAL</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Analisis Kekuatan dan Kelemahan -->
+                            <div class="mb-4">
+                                <h6 class="text-warning">Analisis Kekuatan dan Kelemahan</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card border-success">
+                                            <div class="card-header bg-success text-white">
+                                                <h6 class="mb-0"><i class="fas fa-thumbs-up me-2"></i>Kekuatan</h6>
+                                            </div>
+                                            <div class="card-body" id="analisis-kekuatan">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning text-dark">
+                                                <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Area
+                                                    Pengembangan</h6>
+                                            </div>
+                                            <div class="card-body" id="analisis-kelemahan">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Formula Matriks -->
+                            <div class="formula-box">
+                                <strong>Penjelasan Matriks Bobot Prioritas:</strong><br><br>
+                                <strong>1. Matriks Perbandingan:</strong><br>
+                                a<sub>ij</sub> = Nilai_Kriteria_i / Nilai_Kriteria_j<br>
+                                <em>Menunjukkan seberapa kuat kriteria i dibanding kriteria j untuk dosen ini</em><br><br>
+
+                                <strong>2. Interpretasi Nilai:</strong><br>
+                                • a<sub>ij</sub> > 1: Kriteria i lebih baik dari kriteria j<br>
+                                • a<sub>ij</sub> = 1: Kriteria i sama dengan kriteria j<br>
+                                • a<sub>ij</sub>
+                                < 1: Kriteria i lebih lemah dari kriteria j<br><br>
+
+                                    <strong>3. Konsistensi:</strong><br>
+                                    a<sub>ij</sub> = 1/a<sub>ji</sub> (properti reciprocal)
                             </div>
                         </div>
                     </div>
@@ -166,6 +217,79 @@
             background-color: #CD7F32 !important;
             color: #fff;
         }
+
+        /* Styling untuk tabel perhitungan */
+        .table-bordered th,
+        .table-bordered td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table-bordered th:first-child,
+        .table-bordered td:first-child {
+            text-align: left;
+        }
+
+        code {
+            background-color: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.85em;
+        }
+
+        .step-title {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Styling untuk matriks */
+        .matriks-table th,
+        .matriks-table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .matriks-table .kriteria-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: left !important;
+        }
+
+        /* Gradient backgrounds */
+        .bg-gradient-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3) !important;
+        }
+
+        /* Progress bars styling */
+        .progress {
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+        }
+
+        /* Card hover effects */
+        .card {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Badge animations */
+        .badge {
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: scale(1.05);
+        }
     </style>
 
     <script>
@@ -207,7 +331,7 @@
         function displayDosenDetail(data) {
             displayInfoDosen(data);
             displayHasilPerhitungan(data);
-            displayDetailKriteria(data);
+            displayMatriksBobotPrioritas(data);
             displayFormula(data);
             displayRankingComparison(data);
         }
@@ -257,34 +381,105 @@
             document.getElementById('hasil-perhitungan').innerHTML = html;
         }
 
-        function displayDetailKriteria(data) {
-            const kriteriaNama = {
-                'KTR1': 'Pendidikan dan Pengajaran',
-                'KTR2': 'Penelitian',
-                'KTR3': 'Pengabdian kepada Masyarakat'
-            };
+        function displayMatriksBobotPrioritas(data) {
+            const matriksBobotPrioritas = data.matriks_bobot_prioritas;
 
+            if (!matriksBobotPrioritas) {
+                console.warn('Data matriks bobot prioritas tidak tersedia');
+                return;
+            }
+
+            // 2. Display Matriks Perbandingan
+            displayMatriksPerbandinganDosen(matriksBobotPrioritas.matriks_perbandingan);
+
+            // 4. Display Analisis Kekuatan dan Kelemahan
+            displayAnalisisKekuatanKelemahan(matriksBobotPrioritas);
+        }
+
+        function displayMatriksPerbandinganDosen(matriksData) {
+            if (!matriksData) return;
+
+            const {
+                matriks,
+                total_kolom,
+                kriteria
+            } = matriksData;
             let html = '';
-            if (data.detail_kriteria) {
-                for (const [kode, detail] of Object.entries(data.detail_kriteria)) {
-                    html += `
-                        <tr>
-                            <td><strong>${kode}</strong></td>
-                            <td>${kriteriaNama[kode] || kode}</td>
-                            <td>${detail.nilai_asli || '0'}</td>
-                            <td>${detail.nilai || '0.000'}</td>
-                            <td>${detail.bobot || '0.000'}</td>
-                            <td class="text-primary fw-bold">${detail.kontribusi || '0.000'}</td>
-                        </tr>
+
+            // Buat baris matriks
+            kriteria.forEach(k1 => {
+                html += `<tr><td class="kriteria-header"><strong>${k1}</strong></td>`;
+                kriteria.forEach(k2 => {
+                    const nilai = matriks[k1][k2];
+                    const cellClass = nilai > 1 ? 'text-success fw-bold' : nilai < 1 ? 'text-danger' : '';
+                    html += `<td class="${cellClass}">${nilai}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            // Baris total
+            let totalHtml = '<th>TOTAL</th>';
+            total_kolom.forEach(total => {
+                totalHtml += `<th>${total}</th>`;
+            });
+
+            document.getElementById('matriks-perbandingan-dosen').innerHTML = html;
+            document.getElementById('total-kolom-matriks').innerHTML = totalHtml;
+        }
+
+
+        function displayAnalisisKekuatanKelemahan(matriksBobotPrioritas) {
+            const nilaiMentah = matriksBobotPrioritas.nilai_mentah;
+            const prioritasGlobal = matriksBobotPrioritas.prioritas_global;
+
+            if (!nilaiMentah || !prioritasGlobal) return;
+
+            // Analisis Kekuatan (nilai tinggi)
+            const kekuatan = Object.values(nilaiMentah)
+                .filter(item => item.nilai_mentah >= 3.5)
+                .sort((a, b) => b.nilai_mentah - a.nilai_mentah);
+
+            let kekuatanHtml = '';
+            if (kekuatan.length > 0) {
+                kekuatan.forEach(item => {
+                    kekuatanHtml += `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-check-circle text-success me-2"></i>${item.nama}</span>
+                            <span class="badge ${item.badge_class}">${item.nilai_mentah}</span>
+                        </div>
                     `;
-                }
+                });
+            } else {
+                kekuatanHtml = '<p class="text-muted">Semua kriteria memerlukan peningkatan</p>';
             }
 
-            if (!html) {
-                html = '<tr><td colspan="6" class="text-center text-muted">Data kriteria tidak tersedia</td></tr>';
+            // Analisis Kelemahan (nilai rendah)
+            const kelemahan = Object.values(nilaiMentah)
+                .filter(item => item.nilai_mentah < 3.5)
+                .sort((a, b) => a.nilai_mentah - b.nilai_mentah);
+
+            let kelemahanHtml = '';
+            if (kelemahan.length > 0) {
+                kelemahan.forEach(item => {
+                    const kontribusiData = prioritasGlobal[item.kode];
+                    const dampak = kontribusiData ? (kontribusiData.bobot_kriteria * 100).toFixed(1) : '0';
+
+                    kelemahanHtml += `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span><i class="fas fa-exclamation-triangle text-warning me-2"></i>${item.nama}</span>
+                                <br><small class="text-muted">Dampak: ${dampak}% terhadap total skor</small>
+                            </div>
+                            <span class="badge ${item.badge_class}">${item.nilai_mentah}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                kelemahanHtml = '<p class="text-muted">Semua kriteria sudah baik</p>';
             }
 
-            document.getElementById('detail-kriteria').innerHTML = html;
+            document.getElementById('analisis-kekuatan').innerHTML = kekuatanHtml;
+            document.getElementById('analisis-kelemahan').innerHTML = kelemahanHtml;
         }
 
         function displayFormula(data) {

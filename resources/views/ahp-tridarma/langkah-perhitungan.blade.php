@@ -44,12 +44,8 @@
                                 4. Uji Konsistensi
                             </a>
                             <a class="nav-link" data-step="5" href="#step5">
-                                <i class="fas fa-chart-bar me-1"></i>
-                                5. Normalisasi Data
-                            </a>
-                            <a class="nav-link" data-step="6" href="#step6">
                                 <i class="fas fa-trophy me-1"></i>
-                                6. Prioritas Global
+                                5. Prioritas Global
                             </a>
                         </nav>
                     </div>
@@ -74,11 +70,6 @@
                         <h4><i class="fas fa-weight me-2"></i>Step 1: Bobot Dasar Kriteria</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan</h6>
-                            <p class="mb-0">Bobot dasar adalah nilai awal yang diberikan untuk setiap kriteria Tridarma
-                                berdasarkan kepentingan relatifnya.</p>
-                        </div>
                         <div id="bobot-dasar-content"></div>
                     </div>
                 </div>
@@ -91,11 +82,6 @@
                         <h4><i class="fas fa-table me-2"></i>Step 2: Matriks Perbandingan Berpasangan</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan</h6>
-                            <p class="mb-0">Matriks perbandingan berpasangan dibuat berdasarkan bobot dasar kriteria untuk
-                                menentukan tingkat kepentingan relatif antar kriteria.</p>
-                        </div>
                         <div id="matriks-perbandingan-content"></div>
                     </div>
                 </div>
@@ -108,11 +94,6 @@
                         <h4><i class="fas fa-balance-scale me-2"></i>Step 3: Perhitungan Bobot Prioritas</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan</h6>
-                            <p class="mb-0">Bobot prioritas dihitung dengan metode eigenvector dari matriks perbandingan
-                                yang telah dinormalisasi.</p>
-                        </div>
                         <div id="bobot-prioritas-content"></div>
                     </div>
                 </div>
@@ -125,18 +106,13 @@
                         <h4><i class="fas fa-check-circle me-2"></i>Step 4: Uji Konsistensi</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan</h6>
-                            <p class="mb-0">Uji konsistensi dilakukan untuk memastikan bahwa perbandingan yang dibuat
-                                tidak kontradiktif. CR harus ≤ 0.1 untuk diterima.</p>
-                        </div>
                         <div id="uji-konsistensi-content"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Step 5: Normalisasi Data -->
-            <div class="step-section" id="step5" style="display: none;">
+            <div class="step-section" id="step6" style="display: none;">
                 <div class="card">
                     <div class="card-header bg-secondary text-white">
                         <h4><i class="fas fa-chart-bar me-2"></i>Step 5: Normalisasi Data Dosen</h4>
@@ -153,7 +129,7 @@
             </div>
 
             <!-- Step 6: Prioritas Global -->
-            <div class="step-section" id="step6" style="display: none;">
+            <div class="step-section" id="step5" style="display: none;">
                 <div class="card">
                     <div class="card-header bg-dark text-white">
                         <h4><i class="fas fa-trophy me-2"></i>Step 6: Perhitungan Prioritas Global</h4>
@@ -298,17 +274,17 @@
                 `;
             }
 
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-                <div class="formula-box">
-                    <strong>Kriteria Tridarma:</strong><br>
-                    • KTR1 (Pendidikan): Mengajar, membimbing, mengembangkan kurikulum<br>
-                    • KTR2 (Penelitian): Publikasi, riset, karya ilmiah<br>
-                    • KTR3 (Pengabdian): Pengabdian masyarakat, konsultasi, pelatihan
-                </div>
-            `;
+            // html += `
+        //             </tbody>
+        //         </table>
+        //     </div>
+        //     <div class="formula-box">
+        //         <strong>Kriteria Tridarma:</strong><br>
+        //         • KTR1 (Pendidikan): Mengajar, membimbing, mengembangkan kurikulum<br>
+        //         • KTR2 (Penelitian): Publikasi, riset, karya ilmiah<br>
+        //         • KTR3 (Pengabdian): Pengabdian masyarakat, konsultasi, pelatihan
+        //     </div>
+        // `;
 
             document.getElementById('bobot-dasar-content').innerHTML = html;
         }
@@ -332,54 +308,151 @@
             });
             html += '</tr></thead><tbody>';
 
-            kriteria.forEach(k1 => {
+            // Array untuk menyimpan total kolom
+            const totalKolom = new Array(kriteria.length).fill(0);
+
+            kriteria.forEach((k1, indexBaris) => {
                 html += `<tr><td class="kriteria-header">${k1}</td>`;
-                kriteria.forEach(k2 => {
+                kriteria.forEach((k2, indexKolom) => {
+                    let nilai;
                     if (k1 === k2) {
+                        nilai = 1.00;
                         html += '<td>1.00</td>';
                     } else {
                         const bobot1 = parseFloat(bobotKriteria[k1] || 0);
                         const bobot2 = parseFloat(bobotKriteria[k2] || 0);
-                        const ratio = bobot2 !== 0 ? (bobot1 / bobot2).toFixed(2) : '1.00';
-                        html += `<td>${ratio}</td>`;
+                        nilai = bobot2 !== 0 ? (bobot1 / bobot2) : 1.00;
+                        html += `<td>${nilai}</td>`;
                     }
+                    // Tambahkan ke total kolom
+                    totalKolom[indexKolom] += nilai;
                 });
                 html += '</tr>';
             });
 
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-                <div class="formula-box">
-                    <strong>Cara Membaca Matriks:</strong><br>
-                    Nilai pada baris i, kolom j menunjukkan seberapa penting kriteria i dibanding kriteria j.<br>
-                    Contoh: Jika KTR1 vs KTR2 = 1.5, artinya KTR1 1.5 kali lebih penting dari KTR2.
-                </div>
-            `;
+            // Tambahkan baris total
+            html += '<tr class="table-warning"><td class="kriteria-header"><strong>TOTAL</strong></td>';
+            totalKolom.forEach(total => {
+                html += `<td><strong>${total}</strong></td>`;
+            });
+            html += '</tr>';
 
             document.getElementById('matriks-perbandingan-content').innerHTML = html;
         }
 
         function displayBobotPrioritas() {
             const bobotKriteria = ahpData.bobot_prioritas?.bobot_prioritas || {};
+            const kriteria = Object.keys(bobotKriteria);
 
+            // let html;
+            // let html = `
+            //     <h6>Perhitungan Bobot Prioritas</h6>
+
+            //     <!-- Langkah 1: Matriks Perbandingan Original -->
+            //     <div class="mb-4">
+            //         <h6 class="text-primary">Langkah 1: Matriks Perbandingan Berpasangan</h6>
+            //         <div class="table-responsive">
+            //             <table class="table table-bordered matriks-table">
+            //                 <thead class="table-primary">
+            //                     <tr>
+            //                         <th>Kriteria</th>
+            // `;
+
+            // kriteria.forEach(k => {
+            //     html += `<th>${k}</th>`;
+            // });
+            // html += '</tr></thead><tbody>';
+
+            // Buat matriks perbandingan dan hitung total kolom
+            const matriksPerbandingan = {};
+            const totalKolom = new Array(kriteria.length).fill(0);
+
+            kriteria.forEach((k1, indexBaris) => {
+                matriksPerbandingan[k1] = {};
+                // html += `<tr><td class="kriteria-header">${k1}</td>`;
+                kriteria.forEach((k2, indexKolom) => {
+                    let nilai;
+                    if (k1 === k2) {
+                        nilai = 1.00;
+                    } else {
+                        const bobot1 = parseFloat(bobotKriteria[k1] || 0);
+                        const bobot2 = parseFloat(bobotKriteria[k2] || 0);
+                        nilai = bobot2 !== 0 ? (bobot1 / bobot2) : 1.00;
+                    }
+                    matriksPerbandingan[k1][k2] = nilai;
+                    totalKolom[indexKolom] += nilai;
+                    // html += `<td>${nilai.toFixed(3)}</td>`;
+                });
+                // html += '</tr>';
+            });
+
+            // Baris total
+            // html += '<tr class="table-warning"><td class="kriteria-header"><strong>TOTAL</strong></td>';
+            // totalKolom.forEach(total => {
+            //     html += `<td><strong>${total.toFixed(3)}</strong></td>`;
+            // });
+            // html += '</tr></tbody></table></div></div>';
+
+            // Langkah 2: Matriks Normalisasi
             let html = `
-                <h6>Hasil Bobot Prioritas</h6>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="table-warning">
-                            <tr>
-                                <th>Kriteria</th>
-                                <th>Bobot Prioritas</th>
-                                <th>Persentase</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="mb-4">
+                    <h6 class="text-success">Proses Bobot Prioritas</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered matriks-table">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Kriteria</th>
             `;
 
+            kriteria.forEach(k => {
+                html += `<th>${k}</th>`;
+            });
+            html += '<th class="table-warning">Rata-rata Baris</th></tr></thead><tbody>';
+
+            // Hitung matriks normalisasi dan rata-rata baris
+            const matriksNormalisasi = {};
+            const rataRataBaris = {};
+
+            kriteria.forEach((k1, indexBaris) => {
+                matriksNormalisasi[k1] = {};
+                let jumlahBaris = 0;
+                html += `<tr><td class="kriteria-header">${k1}</td>`;
+
+                kriteria.forEach((k2, indexKolom) => {
+                    const nilaiNormalisasi = matriksPerbandingan[k1][k2] / totalKolom[indexKolom];
+                    matriksNormalisasi[k1][k2] = nilaiNormalisasi;
+                    jumlahBaris += nilaiNormalisasi;
+                    html += `<td>${nilaiNormalisasi.toFixed(5)}</td>`;
+                });
+
+                const rataRata = jumlahBaris / kriteria.length;
+                rataRataBaris[k1] = rataRata;
+                html += `<td class="table-warning"><strong>${rataRata.toFixed(5)}</strong></td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div></div>';
+
+            // Langkah 3: Hasil Bobot Prioritas
+            html += `
+                <div class="mb-4">
+                    <h6 class="text-warning">Hasil Bobot Prioritas</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>Kriteria</th>
+                                    <th>Bobot Prioritas</th>
+                                    <th>Persentase</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            let totalBobot = 0;
             for (const [kode, bobot] of Object.entries(bobotKriteria)) {
                 const persentase = (parseFloat(bobot) * 100).toFixed(2);
+                totalBobot += parseFloat(bobot);
                 html += `
                     <tr>
                         <td><strong>${kode}</strong></td>
@@ -389,16 +462,20 @@
                 `;
             }
 
+            // Baris total
+            html += `
+                <tr class="table-info">
+                    <td><strong>TOTAL</strong></td>
+                    <td><strong>${totalBobot.toFixed(5)}</strong></td>
+                    <td><strong>100.00%</strong></td>
+                </tr>
+            `;
+
             html += `
                         </tbody>
                     </table>
                 </div>
-                <div class="formula-box">
-                    <strong>Metode Perhitungan:</strong><br>
-                    1. Normalisasi matriks perbandingan<br>
-                    2. Hitung rata-rata setiap baris (eigenvector)<br>
-                    3. Hasil rata-rata = bobot prioritas kriteria
-                </div>
+            </div>
             `;
 
             document.getElementById('bobot-prioritas-content').innerHTML = html;
@@ -406,19 +483,19 @@
 
         function displayUjiKonsistensi() {
             const konsistensi = ahpData.konsistensi || {};
-
+            console.log('Konsistensi Data:', konsistensi);
             let html = `
                 <h6>Hasil Uji Konsistensi</h6>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="result-highlight">
-                            <strong>Lambda Max (λmax):</strong> ${konsistensi.total_lambda_maks || 'N/A'}
+                            <strong>Lambda Max (λmax):</strong> ${konsistensi.total_lambda_maks.toFixed(1) || 'N/A'}
                         </div>
                         <div class="result-highlight">
-                            <strong>Consistency Index (CI):</strong> ${konsistensi.CI || 'N/A'}
+                            <strong>Consistency Index (CI):</strong> ${konsistensi.CI}
                         </div>
                         <div class="result-highlight">
-                            <strong>Consistency Ratio (CR):</strong> ${konsistensi.CR || 'N/A'}
+                            <strong>Consistency Ratio (CR):</strong> ${konsistensi.CR}
                         </div>
                         <div class="result-highlight">
                             <strong>Status:</strong>

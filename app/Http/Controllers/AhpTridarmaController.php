@@ -430,8 +430,167 @@ class AhpTridarmaController extends Controller
                 'ranking' => $dataDosen['ranking'],
                 'kategori_nilai' => $dataDosen['kategori_nilai'],
                 'bobot_kriteria' => $dataLengkap['data']['bobot_prioritas']['bobot_prioritas'],
-                'konsistensi' => $dataLengkap['data']['konsistensi']
+                'konsistensi' => $dataLengkap['data']['konsistensi'],
+                'matriks_bobot_prioritas' => $this->hitungMatriksBobotPrioritasDosen($dataDosen, $dataLengkap['data']['bobot_prioritas']['bobot_prioritas'])
             ]
         ]);
+    }
+
+    /**
+     * Hitung Matriks Bobot Prioritas untuk dosen tertentu
+     */
+    private function hitungMatriksBobotPrioritasDosen($dataDosen, $bobotKriteria)
+    {
+        $kriteria = ['K001', 'K002', 'K003', 'K004'];
+        $kriteriaNama = [
+            'K001' => 'Pendidikan dan Pembelajaran',
+            'K002' => 'Penelitian',
+            'K003' => 'PKM (Pengabdian Kepada Masyarakat)',
+            'K004' => 'Penunjang'
+        ];
+
+        // Nilai maksimum untuk normalisasi (bisa disesuaikan berdasarkan skala)
+        $nilaiMaksimum = [
+            'K001' => 5.0,
+            'K002' => 5.0,
+            'K003' => 5.0,
+            'K004' => 5.0
+        ];
+
+        $detailKriteria = $dataDosen['detail_kriteria'] ?? [];
+
+        // 1. Langkah Nilai Mentah
+        $nilaiMentah = [];
+        foreach ($kriteria as $kode) {
+            $detail = $detailKriteria[$kode] ?? ['nilai' => 1.0];
+            $nilaiAsli = $detail['nilai'] ?? 1.0;
+
+            $nilaiMentah[$kode] = [
+                'kode' => $kode,
+                'nama' => $kriteriaNama[$kode],
+                'nilai_mentah' => $nilaiAsli,
+                'kategori' => $this->getKategoriNilai($nilaiAsli),
+                'badge_class' => $this->getBadgeClass($nilaiAsli)
+            ];
+        }
+
+        // 2. Langkah Normalisasi
+        $normalisasi = [];
+        foreach ($kriteria as $kode) {
+            $nilaiAsli = $nilaiMentah[$kode]['nilai_mentah'];
+            $nilaiMax = $nilaiMaksimum[$kode];
+            $nilaiNormalisasi = $nilaiMax > 0 ? ($nilaiAsli / $nilaiMax) : 0;
+
+            $normalisasi[$kode] = [
+                'kode' => $kode,
+                'nilai_mentah' => $nilaiAsli,
+                'nilai_max' => $nilaiMax,
+                'nilai_normalisasi' => round($nilaiNormalisasi, 5),
+                'formula' => "{$nilaiAsli} ÷ {$nilaiMax} = " . round($nilaiNormalisasi, 5)
+            ];
+        }
+
+        // 3. Langkah Prioritas Global
+        $prioritasGlobal = [];
+        $totalPrioritas = 0;
+
+        foreach ($kriteria as $kode) {
+            $nilaiNormalisasi = $normalisasi[$kode]['nilai_normalisasi'];
+            $bobot = $bobotKriteria[$kode] ?? 0;
+            $kontribusi = $nilaiNormalisasi * $bobot;
+            $totalPrioritas += $kontribusi;
+
+            $prioritasGlobal[$kode] = [
+                'kode' => $kode,
+                'nama' => $kriteriaNama[$kode],
+                'nilai_normalisasi' => round($nilaiNormalisasi, 5),
+                'bobot_kriteria' => round($bobot, 5),
+                'kontribusi' => round($kontribusi, 5),
+                'formula' => round($nilaiNormalisasi, 5) . " × " . round($bobot, 5) . " = " . round($kontribusi, 5)
+            ];
+        }
+
+        // 4. Matriks Perbandingan Antar Kriteria untuk Dosen ini
+        $matriksPerbandingan = $this->buatMatriksPerbandinganDosen($nilaiMentah, $kriteria);
+
+        return [
+            'nilai_mentah' => $nilaiMentah,
+            'normalisasi' => $normalisasi,
+            'prioritas_global' => $prioritasGlobal,
+            'total_prioritas_global' => round($totalPrioritas, 5),
+            'matriks_perbandingan' => $matriksPerbandingan,
+            'ringkasan' => [
+                'dosen_nama' => $dataDosen['dosen']['nama'] ?? $dataDosen['dosen']['nama_dosen'],
+                'total_kriteria' => count($kriteria),
+                'rata_rata_nilai' => round(array_sum(array_column($nilaiMentah, 'nilai_mentah')) / count($kriteria), 3),
+                'kriteria_terbaik' => $this->getKriteriaTerbaik($nilaiMentah),
+                'kriteria_terlemah' => $this->getKriteriaTermudah($nilaiMentah)
+            ]
+        ];
+    }
+
+    /**
+     * Membuat matriks perbandingan untuk dosen
+     */
+    private function buatMatriksPerbandinganDosen($nilaiMentah, $kriteria)
+    {
+        $matriks = [];
+        $totalKolom = array_fill(0, count($kriteria), 0);
+
+        foreach ($kriteria as $i => $k1) {
+            $matriks[$k1] = [];
+            foreach ($kriteria as $j => $k2) {
+                if ($k1 === $k2) {
+                    $nilai = 1.0;
+                } else {
+                    $nilai1 = $nilaiMentah[$k1]['nilai_mentah'] ?: 1.0;
+                    $nilai2 = $nilaiMentah[$k2]['nilai_mentah'] ?: 1.0;
+                    $nilai = $nilai2 > 0 ? ($nilai1 / $nilai2) : 1.0;
+                }
+                $matriks[$k1][$k2] = round($nilai, 3);
+                $totalKolom[$j] += $nilai;
+            }
+        }
+
+        return [
+            'matriks' => $matriks,
+            'total_kolom' => array_map(function($total) { return round($total, 3); }, $totalKolom),
+            'kriteria' => $kriteria
+        ];
+    }
+
+    /**
+     * Helper functions
+     */
+    private function getKategoriNilai($nilai)
+    {
+        if ($nilai >= 4.0) return 'Sangat Baik';
+        if ($nilai >= 3.0) return 'Baik';
+        if ($nilai >= 2.0) return 'Cukup';
+        return 'Kurang';
+    }
+
+    private function getBadgeClass($nilai)
+    {
+        if ($nilai >= 4.0) return 'bg-success';
+        if ($nilai >= 3.0) return 'bg-primary';
+        if ($nilai >= 2.0) return 'bg-warning';
+        return 'bg-danger';
+    }
+
+    private function getKriteriaTerbaik($nilaiMentah)
+    {
+        $terbaik = array_reduce($nilaiMentah, function($carry, $item) {
+            return (!$carry || $item['nilai_mentah'] > $carry['nilai_mentah']) ? $item : $carry;
+        });
+        return $terbaik['nama'] ?? 'N/A';
+    }
+
+    private function getKriteriaTermudah($nilaiMentah)
+    {
+        $terlemah = array_reduce($nilaiMentah, function($carry, $item) {
+            return (!$carry || $item['nilai_mentah'] < $carry['nilai_mentah']) ? $item : $carry;
+        });
+        return $terlemah['nama'] ?? 'N/A';
     }
 }
