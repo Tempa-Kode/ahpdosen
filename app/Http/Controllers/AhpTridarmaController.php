@@ -262,18 +262,16 @@ class AhpTridarmaController extends Controller
     {
         $matriks = $matriksData['matriks'];
         $bobot = $bobotPrioritas['bobot_prioritas'];
+        $jumlahKolom = $matriksData['jumlah_kolom']; // Perbaiki key dari 'total_kolom' ke 'jumlah_kolom'
+        $kriteria = $matriksData['kriteria'];
 
-        // Hitung λ maks
+        // Hitung λ maks menggunakan total kolom matriks perbandingan x bobot prioritas
         $lambdaMaks = [];
         $totalLambdaMaks = 0;
 
-        $kriteriaKode = array_keys($bobot);
-        foreach ($kriteriaKode as $kode) {
-            $jumlahKolom = 0;
-            foreach ($kriteriaKode as $kode2) {
-                $jumlahKolom += $matriks[$kode2][$kode];
-            }
-            $lambdaMaks[$kode] = $jumlahKolom * $bobot[$kode];
+        foreach ($kriteria as $i => $kode) {
+            // Gunakan jumlah kolom dari matriks perbandingan sesuai urutan kriteria
+            $lambdaMaks[$kode] = $jumlahKolom[$i] * $bobot[$kode];
             $totalLambdaMaks += $lambdaMaks[$kode];
         }
 
@@ -513,18 +511,23 @@ class AhpTridarmaController extends Controller
         // 4. Matriks Perbandingan Antar Kriteria untuk Dosen ini
         $matriksPerbandingan = $this->buatMatriksPerbandinganDosen($nilaiMentah, $kriteria);
 
+        // 5. Hitung Bobot Prioritas dari Matriks Perbandingan
+        $bobotPrioritasMatriks = $this->hitungBobotPrioritasMatriks($matriksPerbandingan);
+
         return [
             'nilai_mentah' => $nilaiMentah,
             'normalisasi' => $normalisasi,
             'prioritas_global' => $prioritasGlobal,
             'total_prioritas_global' => round($totalPrioritas, 5),
             'matriks_perbandingan' => $matriksPerbandingan,
+            'bobot_prioritas_matriks' => $bobotPrioritasMatriks,
             'ringkasan' => [
                 'dosen_nama' => $dataDosen['dosen']['nama'] ?? $dataDosen['dosen']['nama_dosen'],
                 'total_kriteria' => count($kriteria),
                 'rata_rata_nilai' => round(array_sum(array_column($nilaiMentah, 'nilai_mentah')) / count($kriteria), 3),
                 'kriteria_terbaik' => $this->getKriteriaTerbaik($nilaiMentah),
-                'kriteria_terlemah' => $this->getKriteriaTermudah($nilaiMentah)
+                'kriteria_terlemah' => $this->getKriteriaTermudah($nilaiMentah),
+                'bobot_prioritas_valid' => $bobotPrioritasMatriks['is_valid']
             ]
         ];
     }
@@ -557,6 +560,79 @@ class AhpTridarmaController extends Controller
             'total_kolom' => array_map(function($total) { return round($total, 3); }, $totalKolom),
             'kriteria' => $kriteria
         ];
+    }
+
+    /**
+     * Menghitung bobot prioritas dari matriks perbandingan dengan normalisasi
+     */
+    private function hitungBobotPrioritasMatriks($matriksData)
+    {
+        $matriks = $matriksData['matriks'];
+        $totalKolom = $matriksData['total_kolom'];
+        $kriteria = $matriksData['kriteria'];
+
+        // Langkah 1: Normalisasi matriks (bagi setiap elemen dengan total kolomnya)
+        $matriksNormalisasi = [];
+        $jumlahBaris = [];
+
+        foreach ($kriteria as $i => $k1) {
+            $matriksNormalisasi[$k1] = [];
+            $jumlahBaris[$k1] = 0;
+
+            foreach ($kriteria as $j => $k2) {
+                // Normalisasi: a_ij / total_kolom_j
+                $nilaiNormalisasi = $totalKolom[$j] > 0 ? ($matriks[$k1][$k2] / $totalKolom[$j]) : 0;
+                $matriksNormalisasi[$k1][$k2] = round($nilaiNormalisasi, 5);
+                $jumlahBaris[$k1] += $nilaiNormalisasi;
+            }
+        }
+
+        // Langkah 2: Hitung bobot prioritas (rata-rata setiap baris)
+        $bobotPrioritas = [];
+        $n = count($kriteria);
+
+        foreach ($kriteria as $k) {
+            $bobotPrioritas[$k] = round($jumlahBaris[$k] / $n, 5);
+        }
+
+        // Langkah 3: Verifikasi total bobot = 1
+        $totalBobot = array_sum($bobotPrioritas);
+
+        return [
+            'matriks_normalisasi' => $matriksNormalisasi,
+            'jumlah_baris' => $jumlahBaris,
+            'bobot_prioritas' => $bobotPrioritas,
+            'total_bobot' => round($totalBobot, 5),
+            'is_valid' => abs($totalBobot - 1.0) < 0.001, // Toleransi untuk floating point
+            'langkah_perhitungan' => $this->getDetailLangkahPerhitungan($matriks, $totalKolom, $matriksNormalisasi, $kriteria)
+        ];
+    }
+
+    /**
+     * Mendapatkan detail langkah perhitungan untuk setiap elemen
+     */
+    private function getDetailLangkahPerhitungan($matriks, $totalKolom, $matriksNormalisasi, $kriteria)
+    {
+        $langkahDetail = [];
+
+        foreach ($kriteria as $i => $k1) {
+            $langkahDetail[$k1] = [];
+            foreach ($kriteria as $j => $k2) {
+                $nilaiAsli = $matriks[$k1][$k2];
+                $totalKol = $totalKolom[$j];
+                $hasilNormalisasi = $matriksNormalisasi[$k1][$k2];
+
+                $langkahDetail[$k1][$k2] = [
+                    'nilai_asli' => $nilaiAsli,
+                    'total_kolom' => $totalKol,
+                    'hasil_normalisasi' => $hasilNormalisasi,
+                    'formula' => "{$nilaiAsli} ÷ {$totalKol} = {$hasilNormalisasi}",
+                    'perhitungan' => "{$nilaiAsli}/{$totalKol}"
+                ];
+            }
+        }
+
+        return $langkahDetail;
     }
 
     /**

@@ -58,7 +58,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-white">
-                            <h5><i class="fas fa-table me-2"></i>Matriks Bobot Prioritas Dosen</h5>
+                            <h5><i class="fas fa-table me-2"></i>Matriks Perbandingan</h5>
                         </div>
                         <div class="card-body">
                             <!-- Matriks Perbandingan Nilai Dosen -->
@@ -85,83 +85,247 @@
                                     </table>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <!-- Analisis Kekuatan dan Kelemahan -->
+            <!-- Perhitungan Bobot Prioritas dari Matriks -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-gradient-success text-white">
+                            <h5><i class="fas fa-calculator me-2"></i>Perhitungan Bobot Prioritas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- Langkah 1: Matriks Normalisasi -->
                             <div class="mb-4">
-                                <h6 class="text-warning">Analisis Kekuatan dan Kelemahan</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered matriks-table">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Kriteria</th>
+                                                <th>K001</th>
+                                                <th>K002</th>
+                                                <th>K003</th>
+                                                <th>K004</th>
+                                                <th class="table-warning">Jumlah Baris</th>
+                                                <th class="table-info">Bobot Prioritas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="matriks-normalisasi">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Uji Konsistensi CI & CR --}}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-gradient-warning text-dark">
+                            <h5><i class="fas fa-check-circle me-2"></i>Uji Konsistensi (CI & CR)</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Status Konsistensi -->
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="alert" id="status-konsistensi-alert">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Status Konsistensi Matriks</h6>
+                                        <div id="status-konsistensi"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Langkah 1: Perhitungan Lambda Max -->
+                            <div class="mb-4">
+                                <h6 class="text-primary step-title">Langkah 1: Perhitungan Lambda Maksimum (λmax)</h6>
+                                <p class="text-muted">Menghitung eigenvalue maksimum dari matriks perbandingan dengan rumus:
+                                    λmax = Σ(Total_kolom_kriteria_i × Bobot_prioritas_i)</p>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Kriteria</th>
+                                                <th>Total Kolom × Bobot Prioritas</th>
+                                                <th>Hasil</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lambda-max-calculation">
+                                        </tbody>
+                                        <tfoot class="table-warning">
+                                            <tr>
+                                                <th>Lambda Max (λmax)</th>
+                                                <th></th>
+                                                <th id="lambda-max-result">0.000</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Langkah 2: Perhitungan CI (Consistency Index) -->
+                            <div class="mb-4">
+                                <h6 class="text-success step-title">Langkah 2: Perhitungan Consistency Index (CI)</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card border-success">
-                                            <div class="card-header bg-success text-white">
-                                                <h6 class="mb-0"><i class="fas fa-thumbs-up me-2"></i>Kekuatan</h6>
-                                            </div>
-                                            <div class="card-body" id="analisis-kekuatan">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Formula CI</h6>
+                                                <div class="formula-box">
+                                                    <strong>CI = (λmax - n) / (n - 1)</strong><br><br>
+                                                    Dimana:<br>
+                                                    • λmax = Lambda maksimum<br>
+                                                    • n = Jumlah kriteria (4)
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="card border-warning">
-                                            <div class="card-header bg-warning text-dark">
-                                                <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Area
-                                                    Pengembangan</h6>
-                                            </div>
-                                            <div class="card-body" id="analisis-kelemahan">
+                                        <div class="card border-info">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Perhitungan</h6>
+                                                <div id="ci-calculation" class="result-highlight">
+                                                    <!-- Akan diisi dengan JavaScript -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Formula Matriks -->
+                            <!-- Langkah 3: Perhitungan CR (Consistency Ratio) -->
+                            <div class="mb-4">
+                                <h6 class="text-warning step-title">Langkah 3: Perhitungan Consistency Ratio (CR)</h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card border-warning">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Random Index (RI)</h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>n</th>
+                                                                <th>RI</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>1</td>
+                                                                <td>0.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>2</td>
+                                                                <td>0.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>3</td>
+                                                                <td>0.58</td>
+                                                            </tr>
+                                                            <tr class="table-warning">
+                                                                <td><strong>4</strong></td>
+                                                                <td><strong>0.90</strong></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>5</td>
+                                                                <td>1.12</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card border-info">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Formula CR</h6>
+                                                <div class="formula-box">
+                                                    <strong>CR = CI / RI</strong><br><br>
+                                                    Dimana:<br>
+                                                    • CI = Consistency Index<br>
+                                                    • RI = Random Index untuk n=4
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card border-success">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Hasil Perhitungan</h6>
+                                                <div id="cr-calculation" class="result-highlight">
+                                                    <!-- Akan diisi dengan JavaScript -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hasil Akhir Uji Konsistensi -->
+                            <div class="mb-4">
+                                <h6 class="text-danger step-title">Kesimpulan Uji Konsistensi</h6>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Parameter</th>
+                                                        <th>Nilai</th>
+                                                        <th>Standar</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="konsistensi-summary">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card" id="kesimpulan-card">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">Kesimpulan</h5>
+                                                <div id="kesimpulan-konsistensi">
+                                                    <!-- Akan diisi dengan JavaScript -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Penjelasan Lengkap -->
                             <div class="formula-box">
-                                <strong>Penjelasan Matriks Bobot Prioritas:</strong><br><br>
-                                <strong>1. Matriks Perbandingan:</strong><br>
-                                a<sub>ij</sub> = Nilai_Kriteria_i / Nilai_Kriteria_j<br>
-                                <em>Menunjukkan seberapa kuat kriteria i dibanding kriteria j untuk dosen ini</em><br><br>
+                                <strong>Penjelasan Uji Konsistensi AHP:</strong><br><br>
+                                <strong>1. Lambda Maksimum (λmax):</strong><br>
+                                Eigenvalue terbesar dari matriks perbandingan berpasangan<br>
+                                Dihitung dengan: Σ(Total_kolom_kriteria_i × Bobot_prioritas_i)<br><br>
 
-                                <strong>2. Interpretasi Nilai:</strong><br>
-                                • a<sub>ij</sub> > 1: Kriteria i lebih baik dari kriteria j<br>
-                                • a<sub>ij</sub> = 1: Kriteria i sama dengan kriteria j<br>
-                                • a<sub>ij</sub>
-                                < 1: Kriteria i lebih lemah dari kriteria j<br><br>
+                                <strong>2. Consistency Index (CI):</strong><br>
+                                Mengukur penyimpangan dari konsistensi sempurna<br>
+                                CI = 0 berarti konsistensi sempurna<br><br>
 
-                                    <strong>3. Konsistensi:</strong><br>
-                                    a<sub>ij</sub> = 1/a<sub>ji</sub> (properti reciprocal)
+                                <strong>3. Consistency Ratio (CR):</strong><br>
+                                Rasio CI terhadap Random Index<br>
+                                <strong>CR ≤ 0.1 (10%)</strong> dianggap konsisten dan dapat diterima<br>
+                                <strong>CR > 0.1</strong> menunjukkan inkonsistensi dan perlu revisi<br><br>
+
+                                <strong>4. Random Index (RI):</strong><br>
+                                Nilai rata-rata CI dari matriks random dengan ukuran yang sama
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Formula Perhitungan -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-secondary text-white">
-                            <h5><i class="fas fa-calculator me-2"></i>Formula Perhitungan Prioritas Global</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="formula-detail" class="bg-light p-3 rounded">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Perbandingan dengan Dosen Lain -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-dark text-white">
-                            <h5><i class="fas fa-users me-2"></i>Posisi Ranking</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="ranking-comparison">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Back Button -->
@@ -290,6 +454,76 @@
         .badge:hover {
             transform: scale(1.05);
         }
+
+        /* Additional styling for new sections */
+        .bg-gradient-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34) !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #e7f3ff;
+            color: #0056b3;
+        }
+
+        .accordion-button:focus {
+            z-index: 3;
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .step-title {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .step-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #007bff;
+        }
+
+        .calculation-formula {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border-left: 3px solid #007bff;
+        }
+
+        .step-item {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 1rem;
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .result-highlight {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .formula-box {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
     </style>
 
     <script>
@@ -309,6 +543,7 @@
                 }
 
                 const data = await response.json();
+                console.log(data);
                 if (data.status === 'success') {
                     displayDosenDetail(data.data);
                     document.getElementById('loading-container').style.display = 'none';
@@ -332,8 +567,6 @@
             displayInfoDosen(data);
             displayHasilPerhitungan(data);
             displayMatriksBobotPrioritas(data);
-            displayFormula(data);
-            displayRankingComparison(data);
         }
 
         function displayInfoDosen(data) {
@@ -350,10 +583,6 @@
                     <strong>Program Studi:</strong>
                     <span>${data.dosen.prodi || 'N/A'}</span>
                 </div>
-                <div class="info-item">
-                    <strong>Status:</strong>
-                    <span class="badge bg-info">Aktif</span>
-                </div>
             `;
             document.getElementById('info-dosen').innerHTML = html;
         }
@@ -368,14 +597,6 @@
                 <div class="info-item">
                     <strong>Prioritas Global:</strong>
                     <span class="text-primary fw-bold">${data.prioritas_global || '0.000'}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Persentase:</strong>
-                    <span class="text-success fw-bold">${data.persentase || '0.00'}%</span>
-                </div>
-                <div class="info-item">
-                    <strong>Kategori:</strong>
-                    <span class="badge bg-success">${data.kategori_nilai?.kategori || 'N/A'}</span>
                 </div>
             `;
             document.getElementById('hasil-perhitungan').innerHTML = html;
@@ -392,8 +613,11 @@
             // 2. Display Matriks Perbandingan
             displayMatriksPerbandinganDosen(matriksBobotPrioritas.matriks_perbandingan);
 
-            // 4. Display Analisis Kekuatan dan Kelemahan
-            displayAnalisisKekuatanKelemahan(matriksBobotPrioritas);
+            // 5. Display Perhitungan Bobot Prioritas Matriks
+            displayPerhitunganBobotPrioritasMatriks(matriksBobotPrioritas.bobot_prioritas_matriks, data.bobot_kriteria);
+
+            // 6. Display Uji Konsistensi - menggunakan data konsistensi dari API
+            displayUjiKonsistensiFromAPI(data.konsistensi);
         }
 
         function displayMatriksPerbandinganDosen(matriksData) {
@@ -427,145 +651,367 @@
             document.getElementById('total-kolom-matriks').innerHTML = totalHtml;
         }
 
-
-        function displayAnalisisKekuatanKelemahan(matriksBobotPrioritas) {
-            const nilaiMentah = matriksBobotPrioritas.nilai_mentah;
-            const prioritasGlobal = matriksBobotPrioritas.prioritas_global;
-
-            if (!nilaiMentah || !prioritasGlobal) return;
-
-            // Analisis Kekuatan (nilai tinggi)
-            const kekuatan = Object.values(nilaiMentah)
-                .filter(item => item.nilai_mentah >= 3.5)
-                .sort((a, b) => b.nilai_mentah - a.nilai_mentah);
-
-            let kekuatanHtml = '';
-            if (kekuatan.length > 0) {
-                kekuatan.forEach(item => {
-                    kekuatanHtml += `
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span><i class="fas fa-check-circle text-success me-2"></i>${item.nama}</span>
-                            <span class="badge ${item.badge_class}">${item.nilai_mentah}</span>
-                        </div>
-                    `;
-                });
-            } else {
-                kekuatanHtml = '<p class="text-muted">Semua kriteria memerlukan peningkatan</p>';
-            }
-
-            // Analisis Kelemahan (nilai rendah)
-            const kelemahan = Object.values(nilaiMentah)
-                .filter(item => item.nilai_mentah < 3.5)
-                .sort((a, b) => a.nilai_mentah - b.nilai_mentah);
-
-            let kelemahanHtml = '';
-            if (kelemahan.length > 0) {
-                kelemahan.forEach(item => {
-                    const kontribusiData = prioritasGlobal[item.kode];
-                    const dampak = kontribusiData ? (kontribusiData.bobot_kriteria * 100).toFixed(1) : '0';
-
-                    kelemahanHtml += `
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <span><i class="fas fa-exclamation-triangle text-warning me-2"></i>${item.nama}</span>
-                                <br><small class="text-muted">Dampak: ${dampak}% terhadap total skor</small>
-                            </div>
-                            <span class="badge ${item.badge_class}">${item.nilai_mentah}</span>
-                        </div>
-                    `;
-                });
-            } else {
-                kelemahanHtml = '<p class="text-muted">Semua kriteria sudah baik</p>';
-            }
-
-            document.getElementById('analisis-kekuatan').innerHTML = kekuatanHtml;
-            document.getElementById('analisis-kelemahan').innerHTML = kelemahanHtml;
-        }
-
-        function displayFormula(data) {
-            if (!data.detail_kriteria) {
-                document.getElementById('formula-detail').innerHTML =
-                    '<p class="text-muted">Formula tidak dapat ditampilkan karena data kriteria tidak tersedia.</p>';
+        function displayPerhitunganBobotPrioritasMatriks(bobotPrioritasData, bobotKriteriaUmum) {
+            if (!bobotPrioritasData) {
+                console.warn('Data bobot prioritas matriks tidak tersedia');
                 return;
             }
 
-            const detailKriteria = data.detail_kriteria;
-            let formulaTerms = [];
-            let calculationTerms = [];
+            const kriteriaNama = {
+                'K001': 'Pendidikan dan Pembelajaran',
+                'K002': 'Penelitian',
+                'K003': 'PKM (Pengabdian Kepada Masyarakat)',
+                'K004': 'Penunjang'
+            };
 
-            for (const [kode, detail] of Object.entries(detailKriteria)) {
-                formulaTerms.push(`(${kode}_norm × W_${kode})`);
-                calculationTerms.push(`(${detail.nilai || '0.000'} × ${detail.bobot || '0.000'})`);
-            }
-
-            const html = `
-                <div class="formula-box">
-                    <strong>Formula Umum:</strong><br>
-                    Prioritas Global = ${formulaTerms.join(' + ')}<br><br>
-
-                    <strong>Perhitungan untuk ${data.dosen.nama || data.dosen.nama_dosen}:</strong><br>
-                    Prioritas Global = ${calculationTerms.join(' + ')}<br>
-                    Prioritas Global = ${data.prioritas_global || '0.000'}<br><br>
-
-                    <strong>Keterangan:</strong><br>
-                    • KTR1_norm = Nilai normalisasi Pendidikan dan Pengajaran<br>
-                    • KTR2_norm = Nilai normalisasi Penelitian<br>
-                    • KTR3_norm = Nilai normalisasi Pengabdian kepada Masyarakat<br>
-                    • W_KTR = Bobot prioritas masing-masing kriteria
-                </div>
-            `;
-
-            document.getElementById('formula-detail').innerHTML = html;
+            // 2. Display Matriks Normalisasi
+            displayMatriksNormalisasi(bobotPrioritasData);
         }
 
-        function displayRankingComparison(data) {
-            // Untuk demo, kita buat perbandingan sederhana
-            const currentRank = data.ranking || 0;
-            const totalDosen = 100; // Asumsi total dosen
+        function displayMatriksNormalisasi(bobotPrioritasData) {
+            const matriksNormalisasi = bobotPrioritasData.matriks_normalisasi;
+            const bobotPrioritas = bobotPrioritasData.bobot_prioritas;
+            const jumlahBaris = bobotPrioritasData.jumlah_baris;
+            const kriteria = ['K001', 'K002', 'K003', 'K004'];
 
-            const percentile = ((totalDosen - currentRank + 1) / totalDosen * 100).toFixed(1);
+            let html = '';
+            kriteria.forEach(k1 => {
+                html += `<tr><td class="kriteria-header"><strong>${k1}</strong></td>`;
+                kriteria.forEach(k2 => {
+                    const nilai = matriksNormalisasi[k1][k2];
+                    html += `<td>${nilai}</td>`;
+                });
+                html += `<td class="table-warning"><strong>${jumlahBaris[k1].toFixed(5)}</strong></td>`;
+                html += `<td class="table-info"><strong>${bobotPrioritas[k1].toFixed(5)}</strong></td>`;
+                html += '</tr>';
+            });
 
-            const html = `
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <h3 class="text-primary">#${currentRank}</h3>
-                            <p class="text-muted">Ranking dari ${totalDosen} dosen</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <h3 class="text-success">${percentile}%</h3>
-                            <p class="text-muted">Persentil</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <h3 class="text-info">${data.prioritas_global || '0.000'}</h3>
-                            <p class="text-muted">Skor AHP</p>
-                        </div>
-                    </div>
+            document.getElementById('matriks-normalisasi').innerHTML = html;
+        }
+
+        function displayUjiKonsistensi(matriksPerbandingan, bobotPrioritas) {
+            const ujiKonsistensiContainer = document.getElementById('uji-konsistensi-hasil');
+            if (!ujiKonsistensiContainer) {
+                console.error('Container uji konsistensi tidak ditemukan');
+                return;
+            }
+
+            // Perhitungan Lambda Max
+            let lambdaMax = 0;
+            const kriteria = ['K001', 'K002', 'K003', 'K004'];
+
+            for (let i = 0; i < kriteria.length; i++) {
+                let sumRow = 0;
+                for (let j = 0; j < kriteria.length; j++) {
+                    sumRow += matriksPerbandingan.matriks[kriteria[i]][kriteria[j]] * bobotPrioritas.bobot_prioritas[
+                        kriteria[j]];
+                }
+                lambdaMax += sumRow;
+            }
+
+            // Perhitungan CI (Consistency Index)
+            const n = kriteria.length;
+            const ci = (lambdaMax - n) / (n - 1);
+
+            // Nilai RI (Random Index) untuk n=4
+            const ri = 0.90;
+
+            // Perhitungan CR (Consistency Ratio)
+            const cr = ci / ri;
+
+            // Status konsistensi
+            const isKonsisten = cr <= 0.1;
+
+            let html = `
+                <div class="alert ${isKonsisten ? 'alert-success' : 'alert-warning'} mb-4">
+                    <h6 class="mb-2">
+                        <i class="fas fa-${isKonsisten ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                        Status Konsistensi: ${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}
+                    </h6>
+                    <small>CR = ${cr.toFixed(4)} ${isKonsisten ? '≤' : '>'} 0.1</small>
                 </div>
 
-                <div class="mt-4">
-                    <h6>Interpretasi Ranking:</h6>
-                    <div class="progress mb-2" style="height: 25px;">
-                        <div class="progress-bar bg-success" role="progressbar"
-                             style="width: ${percentile}%"
-                             aria-valuenow="${percentile}" aria-valuemin="0" aria-valuemax="100">
-                            ${percentile}%
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Langkah Perhitungan</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="step-item mb-3">
+                                    <strong>1. Lambda Max (λmax)</strong>
+                                    <div class="mt-2">
+                                        <div class="calculation-formula mb-2">
+                                            λmax = Σ(Wi × Σj(aij × Wj))
+                                        </div>`;
+
+            // Detail perhitungan lambda max
+            for (let i = 0; i < kriteria.length; i++) {
+                let sumRow = 0;
+                let detailCalculation = '';
+                for (let j = 0; j < kriteria.length; j++) {
+                    const value = matriksPerbandingan.matriks[kriteria[i]][kriteria[j]] * bobotPrioritas.bobot_prioritas[
+                        kriteria[j]];
+                    sumRow += value;
+                    detailCalculation +=
+                        `(${matriksPerbandingan.matriks[kriteria[i]][kriteria[j]].toFixed(3)} × ${bobotPrioritas.bobot_prioritas[kriteria[j]].toFixed(3)})`;
+                    if (j < kriteria.length - 1) detailCalculation += ' + ';
+                }
+
+                html += `
+                        <div class="small text-muted mb-1">
+                            ${kriteria[i]}: ${detailCalculation} = ${sumRow.toFixed(4)}
+                        </div>`;
+            }
+
+            html += `
+                                        <div class="fw-bold">λmax = ${lambdaMax}</div>
+                                    </div>
+                                </div>
+
+                                <div class="step-item mb-3">
+                                    <strong>2. Consistency Index (CI)</strong>
+                                    <div class="mt-2">
+                                        <div class="calculation-formula mb-2">
+                                            CI = (λmax - n) / (n - 1)
+                                        </div>
+                                        <div class="small text-muted mb-1">
+                                            CI = (${lambdaMax.toFixed(4)} - ${n}) / (${n} - 1)
+                                        </div>
+                                        <div class="small text-muted mb-1">
+                                            CI = ${(lambdaMax - n).toFixed(4)} / ${(n - 1)}
+                                        </div>
+                                        <div class="fw-bold">CI = ${ci.toFixed(4)}</div>
+                                    </div>
+                                </div>
+
+                                <div class="step-item">
+                                    <strong>3. Consistency Ratio (CR)</strong>
+                                    <div class="mt-2">
+                                        <div class="calculation-formula mb-2">
+                                            CR = CI / RI
+                                        </div>
+                                        <div class="small text-muted mb-1">
+                                            RI untuk n=${n} = ${ri}
+                                        </div>
+                                        <div class="small text-muted mb-1">
+                                            CR = ${ci.toFixed(4)} / ${ri}
+                                        </div>
+                                        <div class="fw-bold">CR = ${cr.toFixed(4)}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <small class="text-muted">
-                        Dosen ini berada pada ${percentile}% teratas dari seluruh dosen yang dinilai.
-                        ${currentRank <= 10 ? 'Termasuk dalam 10 besar!' :
-                          currentRank <= 25 ? 'Termasuk dalam kuartil pertama.' :
-                          'Masih ada ruang untuk peningkatan.'}
-                    </small>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Ringkasan Hasil</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Lambda Max (λmax)</strong></td>
+                                        <td class="text-end">${lambdaMax}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Consistency Index (CI)</strong></td>
+                                        <td class="text-end">${ci.toFixed(4)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Random Index (RI)</strong></td>
+                                        <td class="text-end">${ri}</td>
+                                    </tr>
+                                    <tr class="table-${isKonsisten ? 'success' : 'warning'}">
+                                        <td><strong>Consistency Ratio (CR)</strong></td>
+                                        <td class="text-end"><strong>${cr.toFixed(4)}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Batas Konsistensi</strong></td>
+                                        <td class="text-end">≤ 0.1</td>
+                                    </tr>
+                                    <tr class="table-${isKonsisten ? 'success' : 'warning'}">
+                                        <td><strong>Status</strong></td>
+                                        <td class="text-end">
+                                            <span class="badge bg-${isKonsisten ? 'success' : 'warning'}">
+                                                ${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                ${!isKonsisten ? `
+                                    <div class="alert alert-warning mt-3 mb-0">
+                                        <small>
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Matriks perbandingan tidak konsisten.
+                                            Disarankan untuk merevisi nilai perbandingan.
+                                        </small>
+                                    </div>` : `
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <small>
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            Matriks perbandingan konsisten dan dapat digunakan.
+                                        </small>
+                                    </div>`}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
 
-            document.getElementById('ranking-comparison').innerHTML = html;
+            ujiKonsistensiContainer.innerHTML = html;
+        }
+
+        function displayUjiKonsistensiFromAPI(konsistensiData) {
+            console.log('Data konsistensi yang diterima:', konsistensiData);
+
+            if (!konsistensiData) {
+                console.warn('Data konsistensi tidak tersedia');
+                return;
+            }
+
+            const {
+                total_lambda_maks,
+                CI,
+                RI,
+                CR,
+                konsisten,
+                lambda_maks
+            } = konsistensiData;
+
+            console.log('Lambda maks data:', lambda_maks);
+            console.log('Total lambda maks:', total_lambda_maks);
+            console.log('CI:', CI, 'RI:', RI, 'CR:', CR);
+            console.log('Konsisten:', konsisten);
+
+            // Status konsistensi
+            const isKonsisten = konsisten === 'Ya';
+
+            // 1. Update Status Konsistensi Alert
+            const statusAlert = document.getElementById('status-konsistensi-alert');
+            if (statusAlert) {
+                statusAlert.className = `alert ${isKonsisten ? 'alert-success' : 'alert-warning'}`;
+            }
+
+            const statusKonsistensi = document.getElementById('status-konsistensi');
+            if (statusKonsistensi) {
+                statusKonsistensi.innerHTML = `
+                    <strong>CR = ${CR} ${isKonsisten ? '≤' : '>'} 0.1</strong><br>
+                    Status: <span class="badge bg-${isKonsisten ? 'success' : 'warning'}">
+                        ${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}
+                    </span>
+                `;
+            }
+
+            // 2. Update Lambda Max Calculation dengan detail
+            const lambdaMaxCalc = document.getElementById('lambda-max-calculation');
+            if (lambdaMaxCalc && lambda_maks) {
+                let lambdaHtml = '';
+                let totalLambda = 0;
+
+                Object.keys(lambda_maks).forEach((kriteria, index) => {
+                    const nilai = lambda_maks[kriteria];
+                    totalLambda += parseFloat(nilai);
+
+                    lambdaHtml += `
+                        <tr>
+                            <td><strong>${kriteria}</strong></td>
+                            <td>Total kolom ${kriteria} × Bobot prioritas ${kriteria}</td>
+                            <td>${nilai}</td>
+                        </tr>
+                    `;
+                });
+                lambdaMaxCalc.innerHTML = lambdaHtml;
+
+                // Pastikan total ditampilkan dengan benar
+                const lambdaMaxResult = document.getElementById('lambda-max-result');
+                if (lambdaMaxResult) {
+                    lambdaMaxResult.textContent = total_lambda_maks || totalLambda;
+                }
+            }
+
+            // 3. Update CI Calculation
+            const ciCalculation = document.getElementById('ci-calculation');
+            if (ciCalculation) {
+                ciCalculation.innerHTML = `
+                    <strong>Perhitungan CI:</strong><br>
+                    CI = (${total_lambda_maks} - 4) / (4 - 1)<br>
+                    CI = ${(total_lambda_maks - 4)} / 3<br>
+                    <strong class="text-success">CI = ${CI}</strong>
+                `;
+            }
+
+            // 4. Update CR Calculation
+            const crCalculation = document.getElementById('cr-calculation');
+            if (crCalculation) {
+                crCalculation.innerHTML = `
+                    <strong>Perhitungan CR:</strong><br>
+                    CR = ${CI} / ${RI}<br>
+                    <strong class="text-${isKonsisten ? 'success' : 'warning'}">CR = ${CR}</strong><br><br>
+                    <span class="badge bg-${isKonsisten ? 'success' : 'warning'}">
+                        ${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}
+                    </span>
+                `;
+            }
+
+            // 5. Update Konsistensi Summary Table
+            const konsistensiSummary = document.getElementById('konsistensi-summary');
+            if (konsistensiSummary) {
+                konsistensiSummary.innerHTML = `
+                    <tr>
+                        <td><strong>Lambda Max (λmax)</strong></td>
+                        <td>${total_lambda_maks}</td>
+                        <td>≥ n (4)</td>
+                        <td><span class="badge bg-info">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consistency Index (CI)</strong></td>
+                        <td>${CI}</td>
+                        <td>≥ 0</td>
+                        <td><span class="badge bg-info">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Index (RI)</strong></td>
+                        <td>${RI}</td>
+                        <td>0.90 (n=4)</td>
+                        <td><span class="badge bg-info">Standar</span></td>
+                    </tr>
+                    <tr class="table-${isKonsisten ? 'success' : 'warning'}">
+                        <td><strong>Consistency Ratio (CR)</strong></td>
+                        <td><strong>${CR}</strong></td>
+                        <td><strong>≤ 0.1</strong></td>
+                        <td>
+                            <span class="badge bg-${isKonsisten ? 'success' : 'warning'}">
+                                ${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // 6. Update Kesimpulan Konsistensi
+            const kesimpulanKonsistensi = document.getElementById('kesimpulan-konsistensi');
+            const kesimpulanCard = document.getElementById('kesimpulan-card');
+
+            if (kesimpulanKonsistensi) {
+                kesimpulanKonsistensi.innerHTML = `
+                    <div class="mb-3">
+                        <i class="fas fa-${isKonsisten ? 'check-circle' : 'exclamation-triangle'} fa-3x text-${isKonsisten ? 'success' : 'warning'} mb-3"></i>
+                    </div>
+                    <h6 class="text-${isKonsisten ? 'success' : 'warning'}">${isKonsisten ? 'KONSISTEN' : 'TIDAK KONSISTEN'}</h6>
+                    <p class="small mb-3">CR = ${CR}</p>
+                    ${isKonsisten ?
+                        '<p class="small text-muted">Matriks perbandingan dapat diterima dan digunakan untuk pengambilan keputusan.</p>' :
+                        '<p class="small text-muted">Matriks perbandingan perlu direvisi karena tidak konsisten.</p>'
+                    }
+                `;
+            }
+
+            if (kesimpulanCard) {
+                kesimpulanCard.className = `card border-${isKonsisten ? 'success' : 'warning'}`;
+            }
         }
 
         // Load data saat halaman dimuat
