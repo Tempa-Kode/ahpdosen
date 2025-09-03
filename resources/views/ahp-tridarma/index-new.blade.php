@@ -141,8 +141,6 @@
                                                 <th>Nama Dosen</th>
                                                 <th>Program Studi</th>
                                                 <th>Prioritas Global</th>
-                                                <th>Persentase (%)</th>
-                                                <th>Nilai Desimal</th>
                                             </tr>
                                         </thead>
                                         <tbody id="ranking-final-tbody">
@@ -347,6 +345,7 @@
 
         function updateRankingTable(rankingData) {
             const tbody = document.getElementById('ranking-tbody');
+            rankingData.sort((a, b) => a.ranking - b.ranking);
             tbody.innerHTML = rankingData.map(item => {
                 const rankClass = item.ranking <= 3 ? `rank-${item.ranking}` : 'bg-light';
 
@@ -374,22 +373,22 @@
         }
 
         function updatePrioritasGlobal(data) {
-            if (!data.hasil_akhir || data.hasil_akhir.length === 0) return;
+            if (!data.prioritas_global_choice || data.prioritas_global_choice.length === 0) return;
 
             // Top 5 dosen untuk prioritas global
-            const top5 = data.hasil_akhir.slice(0, 5);
+            const top5 = data.prioritas_global_choice.slice(0, 5);
             const tbody = document.getElementById('prioritas-global-tbody');
 
             tbody.innerHTML = top5.map(item => {
-                const detailKriteria = item.detail_kriteria || {};
+                const detailKriteria = item.detail_kriteria_choice || {};
                 return `
                     <tr>
                         <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
-                        <td class="text-center">${detailKriteria.K001?.nilai || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K002?.nilai || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K003?.nilai || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K004?.nilai || '0.000'}</td>
-                        <td class="text-center priority-value">${item.prioritas_global}</td>
+                        <td class="text-center">${detailKriteria.K001?.bobot_matriks_dosen || '0.000'}</td>
+                        <td class="text-center">${detailKriteria.K002?.bobot_matriks_dosen || '0.000'}</td>
+                        <td class="text-center">${detailKriteria.K003?.bobot_matriks_dosen || '0.000'}</td>
+                        <td class="text-center">${detailKriteria.K004?.bobot_matriks_dosen || '0.000'}</td>
+                        <td class="text-center priority-value">${item.prioritas_global_choice}</td>
                     </tr>
                 `;
             }).join('');
@@ -397,17 +396,17 @@
             // Formula perhitungan
             if (top5.length > 0) {
                 const firstDosen = top5[0];
-                const detailKriteria = firstDosen.detail_kriteria || {};
+                const detailKriteria = firstDosen.detail_kriteria_choice || {};
                 const formulaHtml = `
                     <div class="col-12">
                         <p class="mb-2"><strong>Contoh perhitungan untuk ${firstDosen.dosen.nama || firstDosen.dosen.nama_dosen}:</strong></p>
                         <div class="formula-card p-3 bg-light rounded">
                             <span class="priority-value">
-                                Prioritas Global = (${detailKriteria.K001?.nilai || '0.000'} × ${detailKriteria.K001?.bobot || '0.000'}) +
-                                (${detailKriteria.K002?.nilai || '0.000'} × ${detailKriteria.K002?.bobot || '0.000'}) +
-                                (${detailKriteria.K003?.nilai || '0.000'} × ${detailKriteria.K003?.bobot || '0.000'}) +
-                                (${detailKriteria.K004?.nilai || '0.000'} × ${detailKriteria.K004?.bobot || '0.000'})
-                                = ${firstDosen.prioritas_global}
+                                Prioritas Global = (${detailKriteria.K001?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K001?.bobot_kriteria || '0.000'}) +
+                                (${detailKriteria.K002?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K002?.bobot_kriteria || '0.000'}) +
+                                (${detailKriteria.K003?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K003?.bobot_kriteria || '0.000'}) +
+                                (${detailKriteria.K004?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K004?.bobot_kriteria || '0.000'})
+                                = ${firstDosen.prioritas_global_choice}
                             </span>
                         </div>
                     </div>
@@ -417,14 +416,12 @@
 
             // Ranking final
             const rankingFinalTbody = document.getElementById('ranking-final-tbody');
-            rankingFinalTbody.innerHTML = data.hasil_akhir.map(item => `
+            rankingFinalTbody.innerHTML = data.prioritas_global_choice.map(item => `
                 <tr>
                     <td><span class="badge bg-primary">#${item.ranking}</span></td>
                     <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
                     <td>${item.dosen.prodi || 'N/A'}</td>
-                    <td class="priority-value">${item.prioritas_global}</td>
-                    <td>${item.persentase}%</td>
-                    <td>${item.prioritas_global}</td>
+                    <td class="priority-value">${item.prioritas_global_choice}</td>
                 </tr>
             `).join('');
         }

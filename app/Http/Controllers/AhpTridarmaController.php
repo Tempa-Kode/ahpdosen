@@ -52,22 +52,52 @@ class AhpTridarmaController extends Controller
         $prioritasGlobal = $this->hitungPrioritasGlobal($dataKriteria, $bobotPrioritas['bobot_prioritas']);
 
         // 5.1. Hitung prioritas global tahap choice (bobot prioritas kriteria x matriks bobot prioritas dosen)
-        $prioritasGlobalChoice = $this->hitungPrioritasGlobalChoice($dataKriteria, $bobotPrioritas['bobot_prioritas']);
+        $prioritasGlobalChoice = $this->hitungPrioritasGlobalChoice($prioritasGlobal, $bobotPrioritas['bobot_prioritas']);
 
-        // 6. Urutkan dan tambahkan ranking
-        usort($prioritasGlobal, function($a, $b) {
-            return $b['prioritas_global'] <=> $a['prioritas_global'];
+        // 6. Urutkan berdasarkan prioritas global choice dan tambahkan ranking
+        usort($prioritasGlobalChoice, function($a, $b) {
+            return $b['prioritas_global_choice'] <=> $a['prioritas_global_choice'];
         });
 
-        foreach ($prioritasGlobal as $index => &$data) {
+        foreach ($prioritasGlobalChoice as $index => &$data) {
             $data['ranking'] = $index + 1;
         }
 
-        // 7. Hitung persentase menggunakan min-max scaling
-        $prioritasGlobal = $this->hitungPersentaseMinMax($prioritasGlobal);
+        // 6.1. Update ranking di prioritasGlobal berdasarkan urutan prioritasGlobalChoice
+        foreach ($prioritasGlobal as &$dataGlobal) {
+            foreach ($prioritasGlobalChoice as $dataChoice) {
+                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
+                    $dataGlobal['ranking'] = $dataChoice['ranking'];
+                    break;
+                }
+            }
+        }
 
-        // 8. Tambahkan kategori nilai decimal
-        $prioritasGlobal = $this->tambahkanKategoriNilaiDecimal($prioritasGlobal);
+        // 7. Hitung persentase menggunakan min-max scaling berdasarkan prioritas global choice
+        $prioritasGlobalChoice = $this->hitungPersentaseMinMaxChoice($prioritasGlobalChoice);
+
+        // 7.1. Update persentase di prioritasGlobal berdasarkan prioritasGlobalChoice
+        foreach ($prioritasGlobal as &$dataGlobal) {
+            foreach ($prioritasGlobalChoice as $dataChoice) {
+                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
+                    $dataGlobal['persentase'] = $dataChoice['persentase'];
+                    break;
+                }
+            }
+        }
+
+        // 8. Tambahkan kategori nilai decimal berdasarkan persentase dari prioritas choice
+        $prioritasGlobalChoice = $this->tambahkanKategoriNilaiDecimalChoice($prioritasGlobalChoice);
+
+        // 8.1. Update kategori nilai di prioritasGlobal berdasarkan prioritasGlobalChoice
+        foreach ($prioritasGlobal as &$dataGlobal) {
+            foreach ($prioritasGlobalChoice as $dataChoice) {
+                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
+                    $dataGlobal['kategori_nilai'] = $dataChoice['kategori_nilai'];
+                    break;
+                }
+            }
+        }
 
         return response()->json([
             'status' => 'success',
@@ -84,12 +114,14 @@ class AhpTridarmaController extends Controller
                     'metode' => 'AHP (Analytical Hierarchy Process)',
                     'formula_prioritas_global_choice' => 'Σ(Bobot Prioritas Kriteria × Matriks Bobot Prioritas Dosen)',
                     'tahap_choice' => 'Menggunakan matriks bobot prioritas dari perbandingan antar kriteria setiap dosen',
+                    'ranking_berdasarkan' => 'Prioritas Global Choice (bukan prioritas global biasa)',
                     'penjelasan_metodologi' => [
                         'langkah_1' => 'Ambil bobot prioritas kriteria dari perbandingan berpasangan',
                         'langkah_2' => 'Buat matriks perbandingan untuk setiap dosen berdasarkan nilai kriteria',
                         'langkah_3' => 'Hitung bobot prioritas dari matriks perbandingan dosen',
                         'langkah_4' => 'Kalikan bobot prioritas kriteria dengan matriks bobot prioritas dosen',
-                        'keunggulan' => 'Metode ini mempertimbangkan struktur hierarki AHP yang benar'
+                        'langkah_5' => 'Urutkan dan beri ranking berdasarkan prioritas global choice',
+                        'keunggulan' => 'Metode ini mempertimbangkan struktur hierarki AHP yang benar dengan ranking berdasarkan tahap choice'
                     ],
                     'kriteria' => [
                         'K001' => 'Pendidikan dan Pembelajaran',
@@ -377,6 +409,75 @@ class AhpTridarmaController extends Controller
                 'prioritas_global_choice' => round($prioritasChoice, 5),
                 'formula_total' => "Σ(Bobot Kriteria × Bobot Matriks Dosen) = " . round($prioritasChoice, 5)
             ];
+        }
+
+        return $prioritasGlobalChoice;
+    }
+
+    /**
+     * Hitung persentase menggunakan min-max scaling untuk prioritas global choice
+     */
+    private function hitungPersentaseMinMaxChoice($prioritasGlobalChoice)
+    {
+        if (empty($prioritasGlobalChoice)) return $prioritasGlobalChoice;
+
+        $nilaiPrioritas = array_column($prioritasGlobalChoice, 'prioritas_global_choice');
+        $min = min($nilaiPrioritas);
+        $max = max($nilaiPrioritas);
+
+        foreach ($prioritasGlobalChoice as &$data) {
+            if ($max > $min) {
+                $persentase = (($data['prioritas_global_choice'] - $min) / ($max - $min)) * 100;
+            } else {
+                $persentase = 100;
+            }
+            $data['persentase'] = round($persentase, 2);
+        }
+
+        return $prioritasGlobalChoice;
+    }
+
+    /**
+     * Tambahkan kategori nilai decimal berdasarkan persentase dari prioritas choice
+     */
+    private function tambahkanKategoriNilaiDecimalChoice($prioritasGlobalChoice)
+    {
+        foreach ($prioritasGlobalChoice as &$data) {
+            $persentase = $data['persentase'];
+
+            if ($persentase >= 81) {
+                $kategori = [
+                    'kategori' => 'Sangat Baik',
+                    'nilai_decimal' => 5.0,
+                    'keterangan' => 'Performa sangat memuaskan'
+                ];
+            } elseif ($persentase >= 61) {
+                $kategori = [
+                    'kategori' => 'Baik',
+                    'nilai_decimal' => 4.0,
+                    'keterangan' => 'Performa memuaskan'
+                ];
+            } elseif ($persentase >= 41) {
+                $kategori = [
+                    'kategori' => 'Cukup',
+                    'nilai_decimal' => 3.0,
+                    'keterangan' => 'Performa memadai'
+                ];
+            } elseif ($persentase >= 21) {
+                $kategori = [
+                    'kategori' => 'Kurang',
+                    'nilai_decimal' => 2.0,
+                    'keterangan' => 'Performa perlu ditingkatkan'
+                ];
+            } else {
+                $kategori = [
+                    'kategori' => 'Sangat Kurang',
+                    'nilai_decimal' => 1.0,
+                    'keterangan' => 'Performa sangat perlu ditingkatkan'
+                ];
+            }
+
+            $data['kategori_nilai'] = $kategori;
         }
 
         return $prioritasGlobalChoice;
