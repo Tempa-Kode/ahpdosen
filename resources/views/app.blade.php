@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- End fonts -->
 
     <!-- core:css -->
@@ -132,10 +134,10 @@
                                                                         href="{{ route("ahp.penelitian.index") }}">Penelitian
                                                                         (AHP)</a>
                                                                 </li>
-                                                                <li class="nav-item"><a class="nav-link"
+                                                                {{-- <li class="nav-item"><a class="nav-link"
                                                                         href="{{ route("ahp.tridarma.index") }}">AHP
                                                                         Tridarma</a>
-                                                                </li>
+                                                                </li> --}}
                                                                 <li class="nav-item"><a class="nav-link"
                                                                         href="{{ route("pengabdian.index") }}">
                                                                         Pengabdian Kepada Masyarakat</a></li>
@@ -147,17 +149,16 @@
                                                         <div class="col-md-6">
                                                             <ul>
                                                                 <li class="nav-item"><a class="nav-link"
-                                                                        href="#"
-                                                                        onclick="alert('Belum tersedia')">Hasil
+                                                                        href="{{ route("ahp.tridarma.index") }}">Hasil
                                                                         Keseluruhan</a></li>
-                                                                <li class="nav-item"><a class="nav-link"
+                                                                {{-- <li class="nav-item"><a class="nav-link"
                                                                         href="#"
                                                                         onclick="alert('Belum tersedia')">Ranking
                                                                         Final</a></li>
                                                                 <li class="nav-item"><a class="nav-link"
                                                                         href="#"
                                                                         onclick="alert('Belum tersedia')">Laporan
-                                                                        Lengkap</a></li>
+                                                                        Lengkap</a></li> --}}
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -168,13 +169,13 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link {{ Str::startsWith(Route::currentRouteName(), "ahp.") ? "active" : "" }}"
                                 href="{{ route("ahp.dashboard") }}">
                                 <i class="link-icon" data-feather="bar-chart-2"></i>
                                 <span class="menu-title">AHP Dashboard</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </nav>

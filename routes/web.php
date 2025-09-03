@@ -86,6 +86,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/detail-dosen', function () {
             return view('ahp-tridarma.detail-dosen');
         })->name('ahp.tridarma.detail.dosen');
+
+        Route::get('/detail/{dosen_id}', [\App\Http\Controllers\AhpTridarmaController::class, 'detailDosenAhpTridarma'])->name('ahp-tridarma.detail');
     });    // Legacy route - untuk backward compatibility
     Route::get('/perhitungan', [\App\Http\Controllers\PerhitunganController::class, 'pendidikanDanPembelajaran'])->name('perhitungan.pendidikanDanPembelajaran');
 });
