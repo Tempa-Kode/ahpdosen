@@ -51,6 +51,9 @@ class AhpTridarmaController extends Controller
         // 5. Hitung prioritas global untuk setiap dosen
         $prioritasGlobal = $this->hitungPrioritasGlobal($dataKriteria, $bobotPrioritas['bobot_prioritas']);
 
+        // 5.1. Hitung prioritas global tahap choice (bobot prioritas kriteria x matriks bobot prioritas dosen)
+        $prioritasGlobalChoice = $this->hitungPrioritasGlobalChoice($dataKriteria, $bobotPrioritas['bobot_prioritas']);
+
         // 6. Urutkan dan tambahkan ranking
         usort($prioritasGlobal, function($a, $b) {
             return $b['prioritas_global'] <=> $a['prioritas_global'];
@@ -75,9 +78,19 @@ class AhpTridarmaController extends Controller
                 'bobot_prioritas' => $bobotPrioritas,
                 'konsistensi' => $konsistensi,
                 'hasil_akhir' => $prioritasGlobal,
+                'prioritas_global_choice' => $prioritasGlobalChoice,
                 'jumlah_dosen' => count($prioritasGlobal),
                 'metadata' => [
                     'metode' => 'AHP (Analytical Hierarchy Process)',
+                    'formula_prioritas_global_choice' => 'Σ(Bobot Prioritas Kriteria × Matriks Bobot Prioritas Dosen)',
+                    'tahap_choice' => 'Menggunakan matriks bobot prioritas dari perbandingan antar kriteria setiap dosen',
+                    'penjelasan_metodologi' => [
+                        'langkah_1' => 'Ambil bobot prioritas kriteria dari perbandingan berpasangan',
+                        'langkah_2' => 'Buat matriks perbandingan untuk setiap dosen berdasarkan nilai kriteria',
+                        'langkah_3' => 'Hitung bobot prioritas dari matriks perbandingan dosen',
+                        'langkah_4' => 'Kalikan bobot prioritas kriteria dengan matriks bobot prioritas dosen',
+                        'keunggulan' => 'Metode ini mempertimbangkan struktur hierarki AHP yang benar'
+                    ],
                     'kriteria' => [
                         'K001' => 'Pendidikan dan Pembelajaran',
                         'K002' => 'Penelitian',
@@ -322,6 +335,51 @@ class AhpTridarmaController extends Controller
         }
 
         return $prioritasGlobal;
+    }
+
+    /**
+     * Hitung prioritas global tahap choice menggunakan matriks bobot prioritas dosen
+     * Formula: Bobot Prioritas Kriteria × Matriks Bobot Prioritas Dosen
+     */
+    private function hitungPrioritasGlobalChoice($dataKriteria, $bobotKriteria)
+    {
+        $prioritasGlobalChoice = [];
+
+        foreach ($dataKriteria as $data) {
+            // Hitung matriks bobot prioritas untuk dosen ini
+            $matriksBobotPrioritas = $this->hitungMatriksBobotPrioritasDosen($data, $bobotKriteria);
+
+            // Mengambil bobot prioritas dari struktur yang sesuai dengan response JSON
+            $bobotPrioritasMatriks = $matriksBobotPrioritas['bobot_prioritas_matriks']['bobot_prioritas'] ?? [];
+
+            $prioritasChoice = 0;
+            $detailKriteriaChoice = [];
+
+            foreach (['K001', 'K002', 'K003', 'K004'] as $kode) {
+                $bobotKriteriaVal = $bobotKriteria[$kode] ?? 0;
+                $bobotMatriksDosen = $bobotPrioritasMatriks[$kode] ?? 0;
+                $kontribusiChoice = $bobotKriteriaVal * $bobotMatriksDosen;
+
+                $prioritasChoice += $kontribusiChoice;
+                $detailKriteriaChoice[$kode] = [
+                    'bobot_kriteria' => round($bobotKriteriaVal, 5),
+                    'bobot_matriks_dosen' => round($bobotMatriksDosen, 5),
+                    'kontribusi_choice' => round($kontribusiChoice, 5),
+                    'formula' => round($bobotKriteriaVal, 5) . " × " . round($bobotMatriksDosen, 5) . " = " . round($kontribusiChoice, 5)
+                ];
+            }
+
+            $prioritasGlobalChoice[] = [
+                'dosen' => $data['dosen'],
+                'detail_kriteria_choice' => $detailKriteriaChoice,
+                'bobot_prioritas_matriks_dosen' => $bobotPrioritasMatriks,
+                'matriks_bobot_prioritas' => $matriksBobotPrioritas,
+                'prioritas_global_choice' => round($prioritasChoice, 5),
+                'formula_total' => "Σ(Bobot Kriteria × Bobot Matriks Dosen) = " . round($prioritasChoice, 5)
+            ];
+        }
+
+        return $prioritasGlobalChoice;
     }
 
     /**
