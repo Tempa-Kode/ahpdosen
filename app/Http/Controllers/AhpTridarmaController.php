@@ -49,51 +49,51 @@ class AhpTridarmaController extends Controller
         $konsistensi = $this->hitungKonsistensi($matriks, $bobotPrioritas, count($kriteriaKode));
 
         // 5. Hitung prioritas global untuk setiap dosen
-        $prioritasGlobal = $this->hitungPrioritasGlobal($dataKriteria, $bobotPrioritas['bobot_prioritas']);
+        $prioritasGlobal = $this->hitungPrioritasGlobal($dataKriteria, $this->bobotDasar);
 
         // 5.1. Hitung prioritas global tahap choice (bobot prioritas kriteria x matriks bobot prioritas dosen)
         $prioritasGlobalChoice = $this->hitungPrioritasGlobalChoice($prioritasGlobal, $bobotPrioritas['bobot_prioritas']);
 
-        // 6. Urutkan berdasarkan prioritas global choice dan tambahkan ranking
-        usort($prioritasGlobalChoice, function($a, $b) {
-            return $b['prioritas_global_choice'] <=> $a['prioritas_global_choice'];
+        // 6. Urutkan berdasarkan prioritas_global dan tambahkan ranking
+        usort($prioritasGlobal, function($a, $b) {
+            return $b['prioritas_global'] <=> $a['prioritas_global'];
         });
 
-        foreach ($prioritasGlobalChoice as $index => &$data) {
+        foreach ($prioritasGlobal as $index => &$data) {
             $data['ranking'] = $index + 1;
         }
 
-        // 6.1. Update ranking di prioritasGlobal berdasarkan urutan prioritasGlobalChoice
-        foreach ($prioritasGlobal as &$dataGlobal) {
-            foreach ($prioritasGlobalChoice as $dataChoice) {
-                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
-                    $dataGlobal['ranking'] = $dataChoice['ranking'];
+        // 6.1. Update ranking di prioritasGlobalChoice berdasarkan urutan prioritasGlobal
+        foreach ($prioritasGlobalChoice as &$dataChoice) {
+            foreach ($prioritasGlobal as $dataGlobal) {
+                if ($dataChoice['dosen']['id'] === $dataGlobal['dosen']['id']) {
+                    $dataChoice['ranking'] = $dataGlobal['ranking'];
                     break;
                 }
             }
         }
 
-        // 7. Hitung persentase menggunakan min-max scaling berdasarkan prioritas global choice
-        $prioritasGlobalChoice = $this->hitungPersentaseMinMaxChoice($prioritasGlobalChoice);
+        // 7. Hitung persentase menggunakan min-max scaling berdasarkan prioritas global
+        $prioritasGlobal = $this->hitungPersentaseMinMax($prioritasGlobal);
 
-        // 7.1. Update persentase di prioritasGlobal berdasarkan prioritasGlobalChoice
-        foreach ($prioritasGlobal as &$dataGlobal) {
-            foreach ($prioritasGlobalChoice as $dataChoice) {
-                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
-                    $dataGlobal['persentase'] = $dataChoice['persentase'];
+        // 7.1. Update persentase di prioritasGlobalChoice berdasarkan prioritasGlobal
+        foreach ($prioritasGlobalChoice as &$dataChoice) {
+            foreach ($prioritasGlobal as $dataGlobal) {
+                if ($dataChoice['dosen']['id'] === $dataGlobal['dosen']['id']) {
+                    $dataChoice['persentase'] = $dataGlobal['persentase'];
                     break;
                 }
             }
         }
 
-        // 8. Tambahkan kategori nilai decimal berdasarkan persentase dari prioritas choice
-        $prioritasGlobalChoice = $this->tambahkanKategoriNilaiDecimalChoice($prioritasGlobalChoice);
+        // 8. Tambahkan kategori nilai decimal berdasarkan persentase dari prioritas global
+        $prioritasGlobal = $this->tambahkanKategoriNilaiDecimal($prioritasGlobal);
 
-        // 8.1. Update kategori nilai di prioritasGlobal berdasarkan prioritasGlobalChoice
-        foreach ($prioritasGlobal as &$dataGlobal) {
-            foreach ($prioritasGlobalChoice as $dataChoice) {
-                if ($dataGlobal['dosen']['id'] === $dataChoice['dosen']['id']) {
-                    $dataGlobal['kategori_nilai'] = $dataChoice['kategori_nilai'];
+        // 8.1. Update kategori nilai di prioritasGlobalChoice berdasarkan prioritasGlobal
+        foreach ($prioritasGlobalChoice as &$dataChoice) {
+            foreach ($prioritasGlobal as $dataGlobal) {
+                if ($dataChoice['dosen']['id'] === $dataGlobal['dosen']['id']) {
+                    $dataChoice['kategori_nilai'] = $dataGlobal['kategori_nilai'];
                     break;
                 }
             }
@@ -112,16 +112,16 @@ class AhpTridarmaController extends Controller
                 'jumlah_dosen' => count($prioritasGlobal),
                 'metadata' => [
                     'metode' => 'AHP (Analytical Hierarchy Process)',
+                    'formula_prioritas_global' => 'Σ(Nilai Kriteria × Bobot Kriteria)',
                     'formula_prioritas_global_choice' => 'Σ(Bobot Prioritas Kriteria × Matriks Bobot Prioritas Dosen)',
-                    'tahap_choice' => 'Menggunakan matriks bobot prioritas dari perbandingan antar kriteria setiap dosen',
-                    'ranking_berdasarkan' => 'Prioritas Global Choice (bukan prioritas global biasa)',
+                    'ranking_berdasarkan' => 'Prioritas Global (prioritas_global)',
                     'penjelasan_metodologi' => [
                         'langkah_1' => 'Ambil bobot prioritas kriteria dari perbandingan berpasangan',
-                        'langkah_2' => 'Buat matriks perbandingan untuk setiap dosen berdasarkan nilai kriteria',
-                        'langkah_3' => 'Hitung bobot prioritas dari matriks perbandingan dosen',
-                        'langkah_4' => 'Kalikan bobot prioritas kriteria dengan matriks bobot prioritas dosen',
-                        'langkah_5' => 'Urutkan dan beri ranking berdasarkan prioritas global choice',
-                        'keunggulan' => 'Metode ini mempertimbangkan struktur hierarki AHP yang benar dengan ranking berdasarkan tahap choice'
+                        'langkah_2' => 'Hitung prioritas global untuk setiap dosen berdasarkan nilai kriteria × bobot kriteria',
+                        'langkah_3' => 'Urutkan dan beri ranking berdasarkan prioritas global',
+                        'langkah_4' => 'Hitung persentase menggunakan min-max scaling berdasarkan prioritas global',
+                        'langkah_5' => 'Tentukan kategori nilai berdasarkan persentase prioritas global',
+                        'keunggulan' => 'Ranking langsung berdasarkan prioritas global yang mudah dipahami'
                     ],
                     'kriteria' => [
                         'K001' => 'Pendidikan dan Pembelajaran',
@@ -192,8 +192,8 @@ class AhpTridarmaController extends Controller
         }
 
         // Proses data K002 - Penelitian
-        if (isset($dataK002['prioritas_global']) && is_array($dataK002['prioritas_global'])) {
-            foreach ($dataK002['prioritas_global'] as $item) {
+        if (isset($dataK002['hasil_ranking']) && is_array($dataK002['hasil_ranking'])) {
+            foreach ($dataK002['hasil_ranking'] as $item) {
                 $dosenId = $item['dosen']['id'] ?? null;
                 if ($dosenId && isset($gabunganDosen[$dosenId])) {
                     $gabunganDosen[$dosenId]['K002'] = $item['nilai_decimal'] ?? 1.0;

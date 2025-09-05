@@ -53,7 +53,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="ranking-table">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th class="text-center">Rank</th>
                                         <th>NIDN</th>
@@ -63,6 +63,7 @@
                                         <th class="text-center" title="Penelitian">K002</th>
                                         <th class="text-center" title="PKM">K003</th>
                                         <th class="text-center" title="PKM">K004</th>
+                                        <th class="text-center" title="PKM">Skor</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -70,84 +71,6 @@
                                     <!-- Konten diisi oleh JavaScript -->
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-clipboard-check me-2"></i>
-                            Tahap Choice: Prioritas Global & Perankingan Final
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan Tahap Choice</h6>
-                            <p class="mb-0">
-                                Pada tahap ini, nilai bobot prioritas kriteria dikalikan dengan skor ternormalisasi setiap
-                                dosen untuk mendapatkan skor akhir (Prioritas Global). Berdasarkan skor inilah perankingan
-                                final ditentukan.
-                            </p>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <h6>Hasil Prioritas Global (Top 5 Dosen)</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered prioritas-global-table">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2" class="text-center align-middle">ALTERNATIF (DOSEN)</th>
-                                                <th colspan="4" class="text-center">SKOR TERNORMALISASI PER KRITERIA</th>
-                                                <th rowspan="2" class="text-center align-middle">Prioritas Global</th>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center">K001</th>
-                                                <th class="text-center">K002</th>
-                                                <th class="text-center">K003</th>
-                                                <th class="text-center">K004</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="prioritas-global-tbody">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h6>Contoh Formula Perhitungan Prioritas Global</h6>
-                                <div class="alert alert-light border">
-                                    <div class="row" id="formula-perhitungan">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h6>Ranking Final Berdasarkan Prioritas Global</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead class="table-success">
-                                            <tr>
-                                                <th>Ranking</th>
-                                                <th>Nama Dosen</th>
-                                                <th>Program Studi</th>
-                                                <th>Prioritas Global</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="ranking-final-tbody">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -323,17 +246,12 @@
                 document.getElementById('ranking-tbody').innerHTML =
                     '<tr><td colspan="10" class="text-center text-danger">Data ranking tidak tersedia</td></tr>';
             }
-
-            // Tabel Prioritas Global
-            updatePrioritasGlobal(data);
         }
 
         // Fungsi untuk menampilkan error di tabel jika fetch gagal
         function displayErrorInTables() {
             document.getElementById('ranking-tbody').innerHTML =
                 '<tr><td colspan="10" class="text-center text-danger">Gagal memuat data AHP</td></tr>';
-            document.getElementById('prioritas-global-tbody').innerHTML =
-                '<tr><td colspan="5" class="text-center text-danger">Gagal memuat data AHP</td></tr>';
         }
 
         function updateKonsistensi(konsistensiData) {
@@ -347,7 +265,7 @@
             const tbody = document.getElementById('ranking-tbody');
             rankingData.sort((a, b) => a.ranking - b.ranking);
             tbody.innerHTML = rankingData.map(item => {
-                const rankClass = item.ranking <= 3 ? `rank-${item.ranking}` : 'bg-light';
+                const rankClass = item.ranking <= 3 ? `rank-${item.ranking}` : 'bg-info';
 
                 // Pastikan detail_kriteria ada dan gunakan K001, K002, K003, K004
                 const detailKriteria = item.detail_kriteria || {};
@@ -362,6 +280,7 @@
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K002?.nilai || '0.000'}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K003?.nilai || '0.000'}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${detailKriteria.K004?.nilai || '0.000'}</span></td>
+                        <td><span class="badge bg-success indikator-score">${item.prioritas_global || '0.000'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="lihatDetailDosen(${item.dosen.id})">
                                 <i class="fas fa-eye me-1"></i>Detail
@@ -370,60 +289,6 @@
                     </tr>
                 `;
             }).join('');
-        }
-
-        function updatePrioritasGlobal(data) {
-            if (!data.prioritas_global_choice || data.prioritas_global_choice.length === 0) return;
-
-            // Top 5 dosen untuk prioritas global
-            const top5 = data.prioritas_global_choice.slice(0, 5);
-            const tbody = document.getElementById('prioritas-global-tbody');
-
-            tbody.innerHTML = top5.map(item => {
-                const detailKriteria = item.detail_kriteria_choice || {};
-                return `
-                    <tr>
-                        <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
-                        <td class="text-center">${detailKriteria.K001?.bobot_matriks_dosen || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K002?.bobot_matriks_dosen || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K003?.bobot_matriks_dosen || '0.000'}</td>
-                        <td class="text-center">${detailKriteria.K004?.bobot_matriks_dosen || '0.000'}</td>
-                        <td class="text-center priority-value">${item.prioritas_global_choice}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Formula perhitungan
-            if (top5.length > 0) {
-                const firstDosen = top5[0];
-                const detailKriteria = firstDosen.detail_kriteria_choice || {};
-                const formulaHtml = `
-                    <div class="col-12">
-                        <p class="mb-2"><strong>Contoh perhitungan untuk ${firstDosen.dosen.nama || firstDosen.dosen.nama_dosen}:</strong></p>
-                        <div class="formula-card p-3 bg-light rounded">
-                            <span class="priority-value">
-                                Prioritas Global = (${detailKriteria.K001?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K001?.bobot_kriteria || '0.000'}) +
-                                (${detailKriteria.K002?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K002?.bobot_kriteria || '0.000'}) +
-                                (${detailKriteria.K003?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K003?.bobot_kriteria || '0.000'}) +
-                                (${detailKriteria.K004?.bobot_matriks_dosen || '0.000'} × ${detailKriteria.K004?.bobot_kriteria || '0.000'})
-                                = ${firstDosen.prioritas_global_choice}
-                            </span>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('formula-perhitungan').innerHTML = formulaHtml;
-            }
-
-            // Ranking final
-            const rankingFinalTbody = document.getElementById('ranking-final-tbody');
-            rankingFinalTbody.innerHTML = data.prioritas_global_choice.map(item => `
-                <tr>
-                    <td><span class="badge bg-primary">#${item.ranking}</span></td>
-                    <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
-                    <td>${item.dosen.prodi || 'N/A'}</td>
-                    <td class="priority-value">${item.prioritas_global_choice}</td>
-                </tr>
-            `).join('');
         }
 
         function createCharts(data) {

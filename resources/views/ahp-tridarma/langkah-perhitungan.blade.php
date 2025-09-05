@@ -45,7 +45,7 @@
                             </a>
                             <a class="nav-link" data-step="5" href="#step5">
                                 <i class="fas fa-trophy me-1"></i>
-                                5. Prioritas Global
+                                5. Skor AHP
                             </a>
                         </nav>
                     </div>
@@ -132,14 +132,9 @@
             <div class="step-section" id="step5" style="display: none;">
                 <div class="card">
                     <div class="card-header bg-dark text-white">
-                        <h4><i class="fas fa-trophy me-2"></i>Step 6: Perhitungan Prioritas Global</h4>
+                        <h4><i class="fas fa-trophy me-2"></i>Step 5: Skor AHP</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan</h6>
-                            <p class="mb-0">Prioritas global dihitung dengan mengalikan bobot prioritas kriteria dengan
-                                nilai ternormalisasi setiap dosen, kemudian dijumlahkan untuk mendapatkan skor akhir.</p>
-                        </div>
                         <div id="prioritas-global-content"></div>
                     </div>
                 </div>
@@ -574,15 +569,13 @@
             const sample = hasil.slice(0, 5);
 
             let html = `
-                <h6>Perhitungan Prioritas Global (5 Dosen Teratas)</h6>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
                                 <th>Ranking</th>
                                 <th>Nama Dosen</th>
-                                <th>Prioritas Global</th>
-                                <th>Persentase</th>
+                                <th>Skor AHP</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -594,27 +587,11 @@
                         <td><span class="badge bg-primary">#${item.ranking}</span></td>
                         <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
                         <td>${item.prioritas_global}</td>
-                        <td>${item.persentase}%</td>
                     </tr>
                 `;
             });
 
             html += '</tbody></table></div>';
-
-            if (sample.length > 0) {
-                const firstDosen = sample[0];
-                const detailKriteria = firstDosen.detail_kriteria || {};
-                html += `
-                    <div class="formula-box">
-                        <strong>Contoh Perhitungan untuk ${firstDosen.dosen.nama || firstDosen.dosen.nama_dosen}:</strong><br><br>
-                        Prioritas Global = (Nilai_KTR1 × Bobot_KTR1) + (Nilai_KTR2 × Bobot_KTR2) + (Nilai_KTR3 × Bobot_KTR3)<br><br>
-                        = (${detailKriteria.KTR1?.nilai || '0.000'} × ${bobotKriteria.KTR1 || '0.000'}) +
-                          (${detailKriteria.KTR2?.nilai || '0.000'} × ${bobotKriteria.KTR2 || '0.000'}) +
-                          (${detailKriteria.KTR3?.nilai || '0.000'} × ${bobotKriteria.KTR3 || '0.000'})<br><br>
-                        = ${firstDosen.prioritas_global}
-                    </div>
-                `;
-            }
 
             document.getElementById('prioritas-global-content').innerHTML = html;
         }
