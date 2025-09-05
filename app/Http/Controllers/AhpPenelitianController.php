@@ -377,6 +377,9 @@ class AhpPenelitianController extends Controller
             ];
         }
 
+        // Hitung nilai_decimal menggunakan min-max scaling berdasarkan skor_total_ahp
+        $skorAhp = $this->tambahkanNilaiDecimal($skorAhp);
+
         return $skorAhp;
     }
 
@@ -525,5 +528,65 @@ class AhpPenelitianController extends Controller
         }
 
         return $prioritasGlobal;
+    }
+
+    /**
+     * Menambahkan nilai_decimal menggunakan min-max scaling berdasarkan skor_total_ahp
+     */
+    private function tambahkanNilaiDecimal($skorAhp)
+    {
+        if (empty($skorAhp)) {
+            return $skorAhp;
+        }
+
+        // Cari nilai minimum dan maksimum skor_total_ahp
+        $nilaiSkor = array_column($skorAhp, 'skor_total_ahp');
+        $nilaiMin = min($nilaiSkor);
+        $nilaiMax = max($nilaiSkor);
+
+        // Definisi range dan kategori
+        $rangeKategori = [
+            ['range' => '81% - 100%', 'kategori' => 'Sangat tinggi', 'nilai_decimal' => 5.00000],
+            ['range' => '61% - 80%', 'kategori' => 'Tinggi', 'nilai_decimal' => 4.00000],
+            ['range' => '41% - 60%', 'kategori' => 'Sedang', 'nilai_decimal' => 3.00000],
+            ['range' => '21% - 40%', 'kategori' => 'Rendah', 'nilai_decimal' => 2.00000],
+            ['range' => '0 - 20%', 'kategori' => 'Sangat rendah', 'nilai_decimal' => 1.00000]
+        ];
+
+        // Hitung nilai_decimal untuk setiap dosen
+        foreach ($skorAhp as &$data) {
+            $skorTotal = $data['skor_total_ahp'];
+
+            // Rumus min-max scaling: (x - min) / (max - min) * 100
+            if ($nilaiMax - $nilaiMin != 0) {
+                $persentase = (($skorTotal - $nilaiMin) / ($nilaiMax - $nilaiMin)) * 100;
+            } else {
+                $persentase = 100; // Jika semua nilai sama, beri 100%
+            }
+
+            // Tentukan kategori berdasarkan persentase
+            if ($persentase >= 81) {
+                $kategori = $rangeKategori[0];
+            } elseif ($persentase >= 61) {
+                $kategori = $rangeKategori[1];
+            } elseif ($persentase >= 41) {
+                $kategori = $rangeKategori[2];
+            } elseif ($persentase >= 21) {
+                $kategori = $rangeKategori[3];
+            } else {
+                $kategori = $rangeKategori[4];
+            }
+
+            // Tambahkan informasi ke data dosen
+            $data['nilai_decimal'] = $kategori['nilai_decimal'];
+            $data['persentase_skor'] = round($persentase, 2);
+            $data['kategori_range'] = $kategori['range'];
+            $data['kategori_label'] = $kategori['kategori'];
+            $data['min_skor'] = $nilaiMin;
+            $data['max_skor'] = $nilaiMax;
+            $data['formula_min_max'] = "({$skorTotal} - {$nilaiMin}) / ({$nilaiMax} - {$nilaiMin}) * 100% = {$persentase}%";
+        }
+
+        return $skorAhp;
     }
 }

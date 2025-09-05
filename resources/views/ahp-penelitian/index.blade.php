@@ -62,106 +62,27 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="ranking-table">
-                                <thead class="table-dark">
+                                <thead class="table-success">
                                     {{-- INI BAGIAN YANG DIPERBAIKI --}}
                                     <tr>
-                                        <th class="text-center">Rank</th>
-                                        <th>NIDN</th>
-                                        <th>Nama Dosen</th>
-                                        <th>Prodi</th>
-                                        <th class="text-center" title="Publikasi Terakreditasi">K1</th>
-                                        <th class="text-center" title="Presentasi Seminar">K2</th>
-                                        <th class="text-center" title="Buku Penelitian">K3</th>
-                                        <th class="text-center" title="HaKI">K4</th>
-                                        <th class="text-center" title="Karya Ilmiah/Seni">K5</th>
-                                        <th class="text-center">Bobot Prioritas</th>
-                                        <th class="text-center">Skor AHP</th>
-                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center text-black">Rank</th>
+                                        <th class="text-black">NIDN</th>
+                                        <th class="text-black">Nama Dosen</th>
+                                        <th class="text-black">Prodi</th>
+                                        <th class="text-center text-black" title="Publikasi Terakreditasi">K1</th>
+                                        <th class="text-center text-black" title="Presentasi Seminar">K2</th>
+                                        <th class="text-center text-black" title="Buku Penelitian">K3</th>
+                                        <th class="text-center text-black" title="HaKI">K4</th>
+                                        <th class="text-center text-black" title="Karya Ilmiah/Seni">K5</th>
+                                        <th class="text-center text-black">Nilai Desimal</th>
+                                        <th class="text-center text-black">Skor AHP</th>
+                                        <th class="text-center text-black">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ranking-tbody">
                                     {{-- Konten diisi oleh JavaScript --}}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-clipboard-check me-2"></i>
-                            Tahap Choice: Prioritas Global & Perankingan Final
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Penjelasan Tahap Choice</h6>
-                            <p class="mb-0">
-                                Pada tahap ini, nilai bobot prioritas kriteria dikalikan dengan skor ternormalisasi setiap dosen untuk mendapatkan skor akhir (Prioritas Global). Berdasarkan skor inilah perankingan final ditentukan.
-                            </p>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <h6>Hasil Prioritas Global (Top 5 Dosen)</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered prioritas-global-table">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2" class="text-center align-middle">ALTERNATIF (DOSEN)</th>
-                                                <th colspan="5" class="text-center">SKOR TERNORMALISASI PER KRITERIA</th>
-                                                <th rowspan="2" class="text-center align-middle">Prioritas Global</th>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center">K1</th>
-                                                <th class="text-center">K2</th>
-                                                <th class="text-center">K3</th>
-                                                <th class="text-center">K4</th>
-                                                <th class="text-center">K5</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="prioritas-global-tbody">
-                                            </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h6>Contoh Formula Perhitungan Prioritas Global</h6>
-                                <div class="alert alert-light border">
-                                    <div class="row" id="formula-perhitungan">
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h6>Ranking Final Berdasarkan Prioritas Global</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead class="table-success">
-                                            <tr>
-                                                <th>Ranking</th>
-                                                <th>Nama Dosen</th>
-                                                <th>Program Studi</th>
-                                                <th>Prioritas Global</th>
-                                                <th>Persentase (%)</th>
-                                                <th>Nilai Desimal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="ranking-final-tbody">
-                                            </tbody>
-                                    </table>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -352,15 +273,11 @@
             } else {
                 document.getElementById('ranking-tbody').innerHTML = '<tr><td colspan="12" class="text-center text-danger">Data ranking tidak tersedia</td></tr>';
             }
-
-            // Tabel Prioritas Global
-            updatePrioritasGlobal(data);
         }
 
         // Fungsi untuk menampilkan error di tabel jika fetch gagal
         function displayErrorInTables() {
             document.getElementById('ranking-tbody').innerHTML = '<tr><td colspan="12" class="text-center text-danger">Gagal memuat data AHP</td></tr>';
-            document.getElementById('prioritas-global-tbody').innerHTML = '<tr><td colspan="7" class="text-center text-danger">Gagal memuat data AHP</td></tr>';
         }
 
         function updateStatistiks(statistik, konsistensiData) {
@@ -394,60 +311,12 @@
                         <td><span class="badge bg-secondary indikator-score">${item.detail_skor.KPT03?.skala_normalisasi || 0}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${item.detail_skor.KPT04?.skala_normalisasi || 0}</span></td>
                         <td><span class="badge bg-secondary indikator-score">${item.detail_skor.KPT05?.skala_normalisasi || 0}</span></td>
-                        <td class="text-center" style="font-size: 0.8em; font-family: monospace;">
-                            <div style="line-height: 1.3;">
-                                <small>KPT01: ${item.detail_skor.KPT01?.bobot_prioritas || '0.000'}</small><br>
-                                <small>KPT02: ${item.detail_skor.KPT02?.bobot_prioritas || '0.000'}</small><br>
-                                <small>KPT03: ${item.detail_skor.KPT03?.bobot_prioritas || '0.000'}</small><br>
-                                <small>KPT04: ${item.detail_skor.KPT04?.bobot_prioritas || '0.000'}</small><br>
-                                <small>KPT05: ${item.detail_skor.KPT05?.bobot_prioritas || '0.000'}</small>
-                            </div>
-                        </td>
+                        <td><span class="badge bg-warning skor-badge">${item.nilai_decimal}</span></td>
                         <td><span class="badge bg-success skor-badge">${item.skor_total_ahp}</span></td>
                         <td><button class="btn btn-sm btn-outline-primary" onclick="lihatDetailDosen(${item.dosen.id})"><i class="fas fa-eye"></i> Detail</button></td>
                     </tr>
                 `;
             }).join('');
-        }
-
-        function updatePrioritasGlobal(data) {
-            const tbody = document.getElementById('prioritas-global-tbody');
-            const bobotPrioritas = data.langkah_perhitungan?.['3_bobot_prioritas']?.bobot_prioritas;
-            const ranking = Array.isArray(data.prioritas_global) ? data.prioritas_global : [];
-
-            if (!bobotPrioritas || ranking.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Data prioritas tidak lengkap.</td></tr>';
-                return;
-            }
-
-            const bobotRow = `
-                <tr class="table-warning">
-                    <td><strong>Bobot Prioritas</strong></td>
-                    <td class="text-center">${bobotPrioritas.KPT01 || '0.000'}</td>
-                    <td class="text-center">${bobotPrioritas.KPT02 || '0.000'}</td>
-                    <td class="text-center">${bobotPrioritas.KPT03 || '0.000'}</td>
-                    <td class="text-center">${bobotPrioritas.KPT04 || '0.000'}</td>
-                    <td class="text-center">${bobotPrioritas.KPT05 || '0.000'}</td>
-                    <td class="text-center"><strong>-</strong></td>
-                </tr>
-            `;
-
-            const dosenRows = ranking.slice(0, 5).map(item => `
-                <tr>
-                    <td><strong>${item.dosen?.nama || 'N/A'}</strong></td>
-                    <td class="text-center">${item.detail_skor?.KPT01?.bobot_prioritas || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT02?.bobot_prioritas || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT03?.bobot_prioritas || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT04?.bobot_prioritas || 0}</td>
-                    <td class="text-center">${item.detail_skor?.KPT05?.bobot_prioritas || 0}</td>
-                    <td class="text-center priority-value">${item.prioritas_global }</td>
-                </tr>
-            `).join('');
-
-            tbody.innerHTML = bobotRow + dosenRows;
-
-            updateFormulaPerhitungan(ranking.slice(0, 2), bobotPrioritas);
-            updateRankingFinal(ranking);
         }
 
         function updateFormulaPerhitungan(topDosen, bobotPrioritas) {
@@ -473,27 +342,6 @@
             }).join('');
         }
 
-        function updateRankingFinal(ranking) {
-            const tbody = document.getElementById('ranking-final-tbody');
-            if (ranking.length === 0) return;
-
-            const maxScore = Math.max(...ranking.map(item => item.skor_total_ahp));
-            tbody.innerHTML = ranking.slice(0, 10).map((item, index) => {
-                const persentase = maxScore > 0 ? ((item.skor_total_ahp / maxScore) * 100).toFixed(2) : 0;
-                const rankBadge = index < 3 ? `rank-${index + 1}` : 'bg-light';
-                return `
-                    <tr ${index === 0 ? 'class="table-warning"' : ''}>
-                        <td><span class="badge rank-badge ${rankBadge}">${item.ranking}</span></td>
-                        <td><strong>${item.dosen.nama}</strong></td>
-                        <td><span class="badge bg-info">${item.dosen.prodi}</span></td>
-                        <td><code>${item.prioritas_global}</code></td>
-                        <td><strong>${item.persentase}%</strong></td>
-                        <td><strong>${item.nilai_decimal}</strong></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
         function lihatDetailDosen(dosenId) {
             const dosenData = ahpData.hasil_ranking.find(item => item.dosen.id == dosenId);
             if (!dosenData) {
@@ -513,7 +361,6 @@
                     <div class="col-12">
                         <ul class="nav nav-tabs" id="dosenDetailTabs" role="tablist">
                             <li class="nav-item" role="presentation"><button class="nav-link active" id="perhitungan-tab" data-bs-toggle="tab" data-bs-target="#perhitungan-pane" type="button" role="tab"><i class="fas fa-calculator"></i> Detail Perhitungan</button></li>
-                            <li class="nav-item" role="presentation"><button class="nav-link" id="matriks-tab" data-bs-toggle="tab" data-bs-target="#matriks-pane" type="button" role="tab"><i class="fas fa-table"></i> Matriks Perbandingan Individual</button></li>
                         </ul>
                         <div class="tab-content mt-3" id="dosenDetailTabsContent">
                             <div class="tab-pane fade show active" id="perhitungan-pane" role="tabpanel">
@@ -522,7 +369,7 @@
                                     <table class="table table-sm table-striped">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>Indikator</th><th>Nama Indikator</th><th>Total Nilai</th><th>Skala Normalisasi</th><th>Bobot Prioritas</th><th>Skor</th>
+                                                <th>Indikator</th><th>Nama Indikator</th><th>Total Nilai</th><th>Skala Normalisasi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -532,16 +379,11 @@
                                                     <td><small>${getNamaIndikator(kode)}</small></td>
                                                     <td><span class="badge bg-secondary">${detail.total_nilai_indikator || 0}</span></td>
                                                     <td><span class="badge bg-info">${detail.skala_normalisasi}</span></td>
-                                                    <td><span class="badge bg-warning text-dark">${detail.bobot_prioritas}</span></td>
-                                                    <td><span class="badge bg-success">${detail.skor}</span></td>
                                                 </tr>
                                             `).join('')}
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="matriks-pane" role="tabpanel">
-                                ${generateMatriksPerbandinganHtml(dosenData)}
                             </div>
                         </div>
                     </div>

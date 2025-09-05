@@ -69,7 +69,7 @@
                         <p>Menentukan bobot dasar untuk setiap indikator penelitian:</p>
                         <div class="table-responsive">
                             <table class="table table-bordered">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kode Indikator</th>
                                         <th>Nama Indikator</th>
@@ -90,10 +90,10 @@
                         <h5><i class="fas fa-table me-2"></i>Langkah 2: Matriks Perbandingan Berpasangan</h5>
                     </div>
                     <div class="card-body">
-                        <p>Membuat matriks perbandingan berpasangan dengan rumus: KPTi/KPTj</p>
+                        <p>Membuat matriks perbandingan berpasangan :</p>
                         <div class="table-responsive">
                             <table class="table table-bordered text-center">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kriteria</th>
                                         <th>KPT01</th>
@@ -127,7 +127,7 @@
                         <h6>Matriks Normalisasi:</h6>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered text-center">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kriteria</th>
                                         <th>KPT01</th>
@@ -217,7 +217,7 @@
                         <div class="row mb-4">
                             <div class="col-12">
                                 <h6>Range Skala Interval:</h6>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-md-4">
                                         <div class="card border-primary">
                                             <div class="card-header bg-primary text-white">KPT01</div>
@@ -254,13 +254,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table table-striped">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Dosen</th>
@@ -289,7 +289,7 @@
 
                         <div class="table-responsive">
                             <table class="table table-striped">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Ranking</th>
                                         <th>Nama Dosen</th>
@@ -553,27 +553,27 @@
                 const tbody = document.getElementById('skor-akhir-table');
                 const bobotPrioritas = ahpData.langkah_perhitungan['3_bobot_prioritas'].bobot_prioritas;
 
-                tbody.innerHTML = ranking.slice(0, 10).map(item => {
+                tbody.innerHTML = ranking.map(item => {
                     const detailCalculation = Object.entries(item.detail_skor)
                         .map(([kode, detail]) =>
                             `${detail.skala_normalisasi} × ${bobotPrioritas[kode]} = ${detail.skor}`)
                         .join('<br>');
 
                     return `
-            <tr>
-                <td>
-                    <span class="badge ${item.ranking <= 3 ? 'bg-warning' : 'bg-secondary'} fs-6">
-                        ${item.ranking}
-                    </span>
-                </td>
-                <td><strong>${item.dosen.nama}</strong></td>
-                <td><span class="badge bg-info">${item.dosen.prodi}</span></td>
-                <td><small>${detailCalculation}</small></td>
-                <td>
-                    <span class="badge bg-success fs-6">${item.skor_total_ahp}</span>
-                </td>
-            </tr>
-        `;
+                    <tr>
+                        <td>
+                            <span class="badge ${item.ranking <= 3 ? 'bg-warning' : 'bg-secondary'} fs-6">
+                                ${item.ranking}
+                            </span>
+                        </td>
+                        <td><strong>${item.dosen.nama}</strong></td>
+                        <td><span class="badge bg-info">${item.dosen.prodi}</span></td>
+                        <td><small>${detailCalculation}</small></td>
+                        <td>
+                            <span class="badge bg-success fs-6">${item.skor_total_ahp}</span>
+                        </td>
+                    </tr>
+                `;
                 }).join('');
             }
 
