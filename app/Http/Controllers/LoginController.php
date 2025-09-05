@@ -49,15 +49,15 @@ class LoginController extends Controller
 
         $dosenTerbaik = [];
 
-        // Ambil data dari prioritas_global_choice yang sudah diurutkan berdasarkan ranking
-        if (isset($dataAhp['data']['prioritas_global_choice']) && is_array($dataAhp['data']['prioritas_global_choice'])) {
-            foreach ($dataAhp['data']['prioritas_global_choice'] as $item) {
+        // Ambil data dari hasil_akhir yang sudah diurutkan berdasarkan ranking
+        if (isset($dataAhp['data']['hasil_akhir']) && is_array($dataAhp['data']['hasil_akhir'])) {
+            foreach ($dataAhp['data']['hasil_akhir'] as $item) {
                 $dosenTerbaik[] = [
                     'id' => $item['dosen']['id'],
                     'nama' => $item['dosen']['nama_dosen'] ?? $item['dosen']['nama'],
                     'nidn' => $item['dosen']['nidn'] ?? '',
                     'prodi' => $item['dosen']['prodi'] ?? 'N/A',
-                    'skor' => $item['prioritas_global_choice'],
+                    'skor' => $item['prioritas_global'],
                     'persentase' => $item['persentase'] ?? 0,
                     'ranking' => $item['ranking'] ?? 0,
                     'kategori' => $item['kategori_nilai']['kategori'] ?? 'N/A',

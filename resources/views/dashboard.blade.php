@@ -18,7 +18,6 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <h6 class="card-title">Ranking Dosen Terbaik (Bar Chart)</h6>
-                                        <p class="text-muted mb-0 small">Skor berdasarkan Prioritas Global Choice</p>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="barChart" width="400" height="200"></canvas>
@@ -55,7 +54,7 @@
                                                         <th>NIDN</th>
                                                         <th>Nama Dosen</th>
                                                         <th>Program Studi</th>
-                                                        <th>Skor Choice</th>
+                                                        <th>Skor AHP</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -85,7 +84,7 @@
                                                             <td>{{ $dosen["prodi"] }}</td>
                                                             <td>
                                                                 <strong
-                                                                    class="text-primary">{{ number_format($dosen["skor"], 5) }}</strong>
+                                                                    class="text-primary">{{ $dosen["skor"] }}</strong>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -112,13 +111,13 @@
         const barChart = new Chart(barCtx, {
             type: 'bar',
             data: {
-                labels: dosenData.map(dosen => {
+                labels: dosenData.slice(0, 10).map(dosen => {
                     // Ambil 2 kata dari depan atau nama lengkap jika pendek
                     const namaParts = dosen.nama.split(' ');
                     return namaParts.length > 2 ? namaParts.slice(0, 2).join(' ') : dosen.nama;
                 }),
                 datasets: [{
-                    label: 'Skor Prioritas Global Choice',
+                    label: 'Skor AHP',
                     data: dosenData.map(dosen => dosen.skor),
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.8)',
@@ -152,7 +151,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Ranking Dosen Berdasarkan Prioritas Global Choice (AHP Tridarma)'
+                        text: 'Ranking Dosen Berdasarkan Skor AHP'
                     },
                     legend: {
                         display: false
@@ -181,7 +180,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Skor Prioritas Global Choice'
+                            text: 'Skor AHP'
                         }
                     },
                     x: {
