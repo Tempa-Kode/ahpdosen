@@ -163,8 +163,8 @@
                                 return [
                                     'NIDN: ' + (dosen.nidn || 'N/A'),
                                     'Prodi: ' + dosen.prodi,
-                                    'Persentase: ' + dosen.persentase.toFixed(2) + '%',
-                                    'Kategori: ' + dosen.kategori
+                                    // 'Persentase: ' + dosen.persentase.toFixed(2) + '%',
+                                    // 'Kategori: ' + dosen.kategori
                                 ];
                             }
                         }
