@@ -68,7 +68,7 @@
                                                                     <span class="badge bg-secondary">🥈
                                                                         #{{ $dosen["ranking"] }}</span>
                                                                 @elseif($dosen["ranking"] == 3)
-                                                                    <span class="badge bg-warning text-dark">�
+                                                                    <span class="badge bg-warning text-dark">🥉
                                                                         #{{ $dosen["ranking"] }}</span>
                                                                 @else
                                                                     <span

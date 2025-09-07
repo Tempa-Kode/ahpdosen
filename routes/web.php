@@ -123,3 +123,5 @@ Route::prefix('api/perhitungan-tridarma')->name('api.perhitungan.tridarma.')->gr
 });
 
 Route::get('kegiatan-penunjang-tridarma', [\App\Http\Controllers\PerhitunganTridarmaController::class, 'penilaianK004Page'])->name('perhitungan.penilaian.k004.page');
+
+Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])->name('report.index');

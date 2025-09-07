@@ -151,6 +151,12 @@
                                                                 <li class="nav-item"><a class="nav-link"
                                                                         href="{{ route("ahp.tridarma.index") }}">Hasil
                                                                         Keseluruhan</a></li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link"
+                                                                        href="{{ route("report.index") }}">
+                                                                        Download Report
+                                                                    </a>
+                                                                </li>
                                                                 {{-- <li class="nav-item"><a class="nav-link"
                                                                         href="#"
                                                                         onclick="alert('Belum tersedia')">Ranking
