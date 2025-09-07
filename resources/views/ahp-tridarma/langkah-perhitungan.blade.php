@@ -131,7 +131,7 @@
             <!-- Step 6: Prioritas Global -->
             <div class="step-section" id="step5" style="display: none;">
                 <div class="card">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary text-white">
                         <h4><i class="fas fa-trophy me-2"></i>Step 6: Perhitungan Prioritas Global</h4>
                     </div>
                     <div class="card-body">
@@ -577,7 +577,7 @@
                 <h6>Perhitungan Prioritas Global (5 Dosen Teratas)</h6>
                 <div class="table-responsive">
                     <table class="table table-bordered">
-                        <thead class="table-dark">
+                        <thead class="table-primary">
                             <tr>
                                 <th>Ranking</th>
                                 <th>Nama Dosen</th>

@@ -69,7 +69,7 @@
                                                                     <span class="badge bg-secondary">🥈
                                                                         #{{ $dosen["ranking"] }}</span>
                                                                 @elseif($dosen["ranking"] == 3)
-                                                                    <span class="badge bg-warning text-dark">�
+                                                                    <span class="badge bg-warning text-dark">🥉
                                                                         #{{ $dosen["ranking"] }}</span>
                                                                 @else
                                                                     <span
@@ -164,8 +164,6 @@
                                 return [
                                     'NIDN: ' + (dosen.nidn || 'N/A'),
                                     'Prodi: ' + dosen.prodi,
-                                    'Persentase: ' + dosen.persentase.toFixed(2) + '%',
-                                    'Kategori: ' + dosen.kategori
                                 ];
                             }
                         }

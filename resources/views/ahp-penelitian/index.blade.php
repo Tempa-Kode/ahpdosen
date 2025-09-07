@@ -62,7 +62,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="ranking-table">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     {{-- INI BAGIAN YANG DIPERBAIKI --}}
                                     <tr>
                                         <th class="text-center">Rank</th>
@@ -92,7 +92,7 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
                             <i class="fas fa-clipboard-check me-2"></i>
                             Tahap Choice: Prioritas Global & Perankingan Final
@@ -110,8 +110,8 @@
                             <div class="col-12">
                                 <h6>Hasil Prioritas Global (Top 5 Dosen)</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered prioritas-global-table">
-                                        <thead>
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="table-primary">
                                             <tr>
                                                 <th rowspan="2" class="text-center align-middle">ALTERNATIF (DOSEN)</th>
                                                 <th colspan="5" class="text-center">SKOR TERNORMALISASI PER KRITERIA</th>
@@ -520,7 +520,7 @@
                                 <h6>Detail Perhitungan per Indikator</h6>
                                 <div class="table-responsive">
                                     <table class="table table-sm table-striped">
-                                        <thead class="table-dark">
+                                        <thead class="table-primary">
                                             <tr>
                                                 <th>Indikator</th><th>Nama Indikator</th><th>Total Nilai</th><th>Skala Normalisasi</th><th>Bobot Prioritas</th><th>Skor</th>
                                             </tr>
@@ -614,13 +614,13 @@
                     <h6><i class="fas fa-table"></i> Matriks Perbandingan Berpasangan (Simulasi Skor)</h6>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm text-center">
-                            <thead class="table-dark">
+                            <thead class="table-primary">
                                 <tr><th></th>${indikatorKode.map(k => `<th>${k}</th>`).join('')}</tr>
                             </thead>
                             <tbody>
                                 ${pairwiseMatrix.map((row, i) => `
                                     <tr>
-                                        <th class="table-dark">${indikatorKode[i]}</th>
+                                        <th class="table-primary">${indikatorKode[i]}</th>
                                         ${row.map(val => `<td>${val.toFixed(3)}</td>`).join('')}
                                     </tr>
                                 `).join('')}

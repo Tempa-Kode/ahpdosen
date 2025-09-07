@@ -69,7 +69,7 @@
                         <p>Menentukan bobot dasar untuk setiap indikator penelitian:</p>
                         <div class="table-responsive">
                             <table class="table table-bordered">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kode Indikator</th>
                                         <th>Nama Indikator</th>
@@ -93,7 +93,7 @@
                         <p>Membuat matriks perbandingan berpasangan dengan rumus: KPTi/KPTj</p>
                         <div class="table-responsive">
                             <table class="table table-bordered text-center">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kriteria</th>
                                         <th>KPT01</th>
@@ -127,7 +127,7 @@
                         <h6>Matriks Normalisasi:</h6>
                         <div class="table-responsive mb-4">
                             <table class="table table-bordered text-center">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Kriteria</th>
                                         <th>KPT01</th>
@@ -260,7 +260,7 @@
 
                         <div class="table-responsive">
                             <table class="table table-striped">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Dosen</th>
@@ -289,7 +289,7 @@
 
                         <div class="table-responsive">
                             <table class="table table-striped">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>Ranking</th>
                                         <th>Nama Dosen</th>

@@ -53,7 +53,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="ranking-table">
-                                <thead class="table-dark">
+                                <thead class="table-primary">
                                     <tr>
                                         <th class="text-center">Rank</th>
                                         <th>NIDN</th>
@@ -79,7 +79,7 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
                             <i class="fas fa-clipboard-check me-2"></i>
                             Tahap Choice: Prioritas Global & Perankingan Final
@@ -99,8 +99,8 @@
                             <div class="col-12">
                                 <h6>Hasil Prioritas Global (Top 5 Dosen)</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered prioritas-global-table">
-                                        <thead>
+                                    <table class="table table-striped">
+                                        <thead class="table-primary">
                                             <tr>
                                                 <th rowspan="2" class="text-center align-middle">ALTERNATIF (DOSEN)</th>
                                                 <th colspan="4" class="text-center">SKOR TERNORMALISASI PER KRITERIA</th>
