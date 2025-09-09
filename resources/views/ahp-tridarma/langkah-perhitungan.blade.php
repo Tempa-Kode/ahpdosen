@@ -131,7 +131,7 @@
             <!-- Step 6: Prioritas Global -->
             <div class="step-section" id="step5" style="display: none;">
                 <div class="card">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary  text-white">
                         <h4><i class="fas fa-trophy me-2"></i>Step 5: Skor AHP</h4>
                     </div>
                     <div class="card-body">
@@ -572,7 +572,7 @@
             let html = `
                 <div class="table-responsive">
                     <table class="table table-bordered">
-                        <thead class="table-dark">
+                        <thead class="table-primary">
                             <tr>
                                 <th class="text-center">RANKING</th>
                                 <th class="text-center">NAMA DOSEN</th>
