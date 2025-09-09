@@ -208,6 +208,7 @@
                 }
 
                 const data = await response.json();
+                console.log('AHP Data:', data);
                 if (data.status === 'success') {
                     ahpData = data.data;
                     displayStepContent();
@@ -341,17 +342,17 @@
 
             // let html;
             // let html = `
-            //     <h6>Perhitungan Bobot Prioritas</h6>
+        //     <h6>Perhitungan Bobot Prioritas</h6>
 
-            //     <!-- Langkah 1: Matriks Perbandingan Original -->
-            //     <div class="mb-4">
-            //         <h6 class="text-primary">Langkah 1: Matriks Perbandingan Berpasangan</h6>
-            //         <div class="table-responsive">
-            //             <table class="table table-bordered matriks-table">
-            //                 <thead class="table-primary">
-            //                     <tr>
-            //                         <th>Kriteria</th>
-            // `;
+        //     <!-- Langkah 1: Matriks Perbandingan Original -->
+        //     <div class="mb-4">
+        //         <h6 class="text-primary">Langkah 1: Matriks Perbandingan Berpasangan</h6>
+        //         <div class="table-responsive">
+        //             <table class="table table-bordered matriks-table">
+        //                 <thead class="table-primary">
+        //                     <tr>
+        //                         <th>Kriteria</th>
+        // `;
 
             // kriteria.forEach(k => {
             //     html += `<th>${k}</th>`;
@@ -566,32 +567,110 @@
         function displayPrioritasGlobal() {
             const hasil = ahpData.hasil_akhir || [];
             const bobotKriteria = ahpData.bobot_prioritas?.bobot_prioritas || {};
-            const sample = hasil.slice(0, 5);
+            const sample = hasil.slice(0, 5); // Tampilkan 5 dosen teratas
 
             let html = `
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>Ranking</th>
-                                <th>Nama Dosen</th>
-                                <th>Skor AHP</th>
+                                <th class="text-center">RANKING</th>
+                                <th class="text-center">NAMA DOSEN</th>
+                                <th class="text-center">PERHITUNGAN DETAIL</th>
+                                <th class="text-center">SKOR AHP</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
 
-            sample.forEach(item => {
+            sample.forEach((item, index) => {
+                const detailKriteria = item.detail_kriteria || {};
+
+                // Buat styling untuk ranking
+                let rankBadge = '';
+                let rankColor = '';
+                if (index === 0) {
+                    rankBadge = 'bg-warning text-dark';
+                    rankColor = 'background-color: #fff3cd;';
+                } else if (index === 1) {
+                    rankBadge = 'bg-secondary';
+                    rankColor = 'background-color: #e2e3e5;';
+                } else if (index === 2) {
+                    rankBadge = 'bg-warning text-dark';
+                    rankColor = 'background-color: #fef7cd;';
+                } else {
+                    rankBadge = 'bg-primary';
+                }
+
+                // Ambil data kriteria
+                const k001 = detailKriteria.K001 || {
+                    nilai: 0,
+                    bobot: 0,
+                    kontribusi: 0
+                };
+                const k002 = detailKriteria.K002 || {
+                    nilai: 0,
+                    bobot: 0,
+                    kontribusi: 0
+                };
+                const k003 = detailKriteria.K003 || {
+                    nilai: 0,
+                    bobot: 0,
+                    kontribusi: 0
+                };
+                const k004 = detailKriteria.K004 || {
+                    nilai: 0,
+                    bobot: 0,
+                    kontribusi: 0
+                };
+
+                // Program Studi (simulasi - bisa disesuaikan dengan data asli)
+                const programStudi = item.dosen.program_studi || 'Sains Data';
+
                 html += `
                     <tr>
-                        <td><span class="badge bg-primary">#${item.ranking}</span></td>
-                        <td><strong>${item.dosen.nama || item.dosen.nama_dosen}</strong></td>
-                        <td>${item.prioritas_global}</td>
+                        <td class="text-center align-middle">
+                            <span class="badge ${rankBadge} fs-5">${item.ranking}</span>
+                        </td>
+                        <td class="fw-bold align-middle">
+                            ${item.dosen.nama || item.dosen.nama_dosen}
+                        </td>
+                        <td class="text-start" style="font-family: monospace; font-size: 12px;">
+                            ${k001.nilai} × ${k001.bobot} = ${k001.kontribusi}<br>
+                            ${k002.nilai} × ${k002.bobot} = ${k002.kontribusi}<br>
+                            ${k003.nilai} × ${k003.bobot} = ${k003.kontribusi}<br>
+                            ${k004.nilai} × ${k004.bobot} = ${k004.kontribusi}<br>
+                        </td>
+                        <td class="text-center align-middle">
+                            <span class="badge bg-success fs-5">${item.prioritas_global}</span>
+                        </td>
                     </tr>
                 `;
             });
 
-            html += '</tbody></table></div>';
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="formula-box">
+                            <strong>Penjelasan Perhitungan:</strong><br>
+                            • <strong>Nilai pertama:</strong> Skala normalisasi untuk setiap kriteria (1-5)<br>
+                            • <strong>Nilai kedua:</strong> Bobot prioritas dari matriks perbandingan berpasangan<br>
+                            • <strong>Hasil perkalian:</strong> Kontribusi setiap kriteria terhadap skor akhir<br>
+                            • <strong>Skor AHP:</strong> Penjumlahan semua kontribusi kriteria<br><br>
+
+                            <strong>Kriteria:</strong><br>
+                            • K001 = Pendidikan & Pengajaran (Bobot: ${bobotKriteria.K001 || 'N/A'})<br>
+                            • K002 = Penelitian (Bobot: ${bobotKriteria.K002 || 'N/A'})<br>
+                            • K003 = Pengabdian Masyarakat (Bobot: ${bobotKriteria.K003 || 'N/A'})<br>
+                            • K004 = Penunjang (Bobot: ${bobotKriteria.K004 || 'N/A'})
+                        </div>
+                    </div>
+                </div>
+            `;
 
             document.getElementById('prioritas-global-content').innerHTML = html;
         }
