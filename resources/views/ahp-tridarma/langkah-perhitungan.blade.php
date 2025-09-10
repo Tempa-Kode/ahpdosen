@@ -318,7 +318,7 @@
                         const bobot1 = parseFloat(bobotKriteria[k1] || 0);
                         const bobot2 = parseFloat(bobotKriteria[k2] || 0);
                         nilai = bobot2 !== 0 ? (bobot1 / bobot2) : 1.00;
-                        html += `<td>${nilai}</td>`;
+                        html += `<td>${nilai.toFixed(5)}</td>`;
                     }
                     // Tambahkan ke total kolom
                     totalKolom[indexKolom] += nilai;
@@ -329,7 +329,7 @@
             // Tambahkan baris total
             html += '<tr class="table-warning"><td class="kriteria-header"><strong>TOTAL</strong></td>';
             totalKolom.forEach(total => {
-                html += `<td><strong>${total}</strong></td>`;
+                html += `<td><strong>${total.toFixed(5)}</strong></td>`;
             });
             html += '</tr>';
 
