@@ -286,7 +286,7 @@
                             <td class="criteria-cell">{{ $item["k002"] }}</td>
                             <td class="criteria-cell">{{ $item["k003"] }}</td>
                             <td class="criteria-cell">{{ $item["k004"] }}</td>
-                            <td class="score-cell">{{ number_format($item["nilai_decimal"], 3) }}</td>
+                            <td class="score-cell">{{ $item["skor"] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
