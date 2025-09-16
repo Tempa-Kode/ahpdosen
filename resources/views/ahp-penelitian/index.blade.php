@@ -75,7 +75,7 @@
                                         <th class="text-center text-black" title="HaKI">K4</th>
                                         <th class="text-center text-black" title="Karya Ilmiah/Seni">K5</th>
                                         <th class="text-center text-black">Nilai Desimal</th>
-                                        <th class="text-center text-black">Skor AHP</th>
+                                        <th class="text-center text-black">Prioritas Global</th>
                                         <th class="text-center text-black">Aksi</th>
                                     </tr>
                                 </thead>

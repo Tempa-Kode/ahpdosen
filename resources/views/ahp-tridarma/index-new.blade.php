@@ -63,7 +63,7 @@
                                         <th class="text-center" title="Penelitian">K002</th>
                                         <th class="text-center" title="PKM">K003</th>
                                         <th class="text-center" title="PKM">K004</th>
-                                        <th class="text-center" title="PKM">Skor</th>
+                                        <th class="text-center" title="PKM">Prioritas Global</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
