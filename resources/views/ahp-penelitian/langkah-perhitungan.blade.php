@@ -430,13 +430,13 @@
                 tbody.innerHTML = indikatorKode.map(i => `
         <tr>
             <td><strong>${i}</strong></td>
-            ${indikatorKode.map(j => `<td>${matriks[i][j]}</td>`).join('')}
+            ${indikatorKode.map(j => `<td>${matriks[i][j].toFixed(2)}</td>`).join('')}
         </tr>
     `).join('');
 
                 document.getElementById('jumlah-kolom-row').innerHTML = `
         <td><strong>Jumlah</strong></td>
-        ${indikatorKode.map(kode => `<td><strong>${jumlahKolom[kode]}</strong></td>`).join('')}
+        ${indikatorKode.map(kode => `<td><strong>${jumlahKolom[kode].toFixed(2)}</strong></td>`).join('')}
     `;
             }
 
@@ -477,7 +477,7 @@
                 tbody.innerHTML = Object.entries(konsistensi.lambda_maks_detail).map(([kode, lambda]) => `
         <tr>
             <td><strong>${kode}</strong></td>
-            <td>${totalPerbandingan[kode]} × ${bobotPrioritas[kode]}</td>
+            <td>${totalPerbandingan[kode].toFixed(2)} × ${bobotPrioritas[kode]}</td>
             <td><span class="badge bg-info">${lambda}</span></td>
         </tr>
     `).join('') + `
