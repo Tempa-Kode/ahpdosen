@@ -318,7 +318,7 @@
                         const bobot1 = parseFloat(bobotKriteria[k1] || 0);
                         const bobot2 = parseFloat(bobotKriteria[k2] || 0);
                         nilai = bobot2 !== 0 ? (bobot1 / bobot2) : 1.00;
-                        html += `<td>${nilai.toFixed(5)}</td>`;
+                        html += `<td>${nilai.toFixed(2)}</td>`;
                     }
                     // Tambahkan ke total kolom
                     totalKolom[indexKolom] += nilai;
@@ -329,7 +329,7 @@
             // Tambahkan baris total
             html += '<tr class="table-warning"><td class="kriteria-header"><strong>TOTAL</strong></td>';
             totalKolom.forEach(total => {
-                html += `<td><strong>${total.toFixed(5)}</strong></td>`;
+                html += `<td><strong>${total.toFixed(2)}</strong></td>`;
             });
             html += '</tr>';
 
@@ -418,12 +418,12 @@
                     const nilaiNormalisasi = matriksPerbandingan[k1][k2] / totalKolom[indexKolom];
                     matriksNormalisasi[k1][k2] = nilaiNormalisasi;
                     jumlahBaris += nilaiNormalisasi;
-                    html += `<td>${nilaiNormalisasi.toFixed(5)}</td>`;
+                    html += `<td>${nilaiNormalisasi.toFixed(2)}</td>`;
                 });
 
                 const rataRata = jumlahBaris / kriteria.length;
                 rataRataBaris[k1] = rataRata;
-                html += `<td class="table-warning"><strong>${rataRata.toFixed(5)}</strong></td>`;
+                html += `<td class="table-warning"><strong>${rataRata.toFixed(2)}</strong></td>`;
                 html += '</tr>';
             });
 
@@ -462,7 +462,7 @@
             html += `
                 <tr class="table-info">
                     <td><strong>TOTAL</strong></td>
-                    <td><strong>${totalBobot.toFixed(5)}</strong></td>
+                    <td><strong>${totalBobot.toFixed(2)}</strong></td>
                     <td><strong>100.00%</strong></td>
                 </tr>
             `;

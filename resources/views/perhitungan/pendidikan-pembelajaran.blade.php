@@ -342,7 +342,7 @@
                 <tr>
                     <td>${item.range}</td>
                     <td>${item.variabel}</td>
-                    <td>${item.nilai_decimal.toFixed(5)}</td>
+                    <td>${item.nilai_decimal.toFixed(2)}</td>
                     <td>${jumlahDosen} dosen</td>
                 </tr>
             `;
@@ -368,7 +368,7 @@
                     <td><code>${item.dosen_nidn}</code></td>
                     <td>${item.dosen_prodi}</td>
                     <td><span class="badge badge-outline-info percentage-badge">${item.persentase}%</span></td>
-                    <td><strong class="text-primary">${item.skala_interval.nilai_decimal.toFixed(5)}</strong></td>
+                    <td><strong class="text-primary">${item.skala_interval.nilai_decimal.toFixed(2)}</strong></td>
                     <td>${item.skala_interval.variabel}</td>
                     <td>
                         ${item.total_responden}

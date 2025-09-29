@@ -636,7 +636,7 @@
                 kriteria.forEach(k2 => {
                     const nilai = matriks[k1][k2];
                     const cellClass = nilai > 1 ? 'text-success fw-bold' : nilai < 1 ? 'text-danger' : '';
-                    html += `<td class="${cellClass}">${nilai}</td>`;
+                    html += `<td class="${cellClass}">${nilai.toFixed(2)}</td>`;
                 });
                 html += '</tr>';
             });
@@ -679,10 +679,10 @@
                 html += `<tr><td class="kriteria-header"><strong>${k1}</strong></td>`;
                 kriteria.forEach(k2 => {
                     const nilai = matriksNormalisasi[k1][k2];
-                    html += `<td>${nilai}</td>`;
+                    html += `<td>${nilai.toFixed(2)}</td>`;
                 });
-                html += `<td class="table-warning"><strong>${jumlahBaris[k1].toFixed(5)}</strong></td>`;
-                html += `<td class="table-info"><strong>${bobotPrioritas[k1].toFixed(5)}</strong></td>`;
+                html += `<td class="table-warning"><strong>${jumlahBaris[k1].toFixed(2)}</strong></td>`;
+                html += `<td class="table-info"><strong>${bobotPrioritas[k1].toFixed(2)}</strong></td>`;
                 html += '</tr>';
             });
 
@@ -919,7 +919,7 @@
                         <tr>
                             <td><strong>${kriteria}</strong></td>
                             <td>Total kolom ${kriteria} × Bobot prioritas ${kriteria}</td>
-                            <td>${nilai}</td>
+                            <td>${nilai.toFixed(2)}</td>
                         </tr>
                     `;
                 });
