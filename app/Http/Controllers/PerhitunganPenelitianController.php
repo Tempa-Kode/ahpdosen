@@ -238,27 +238,61 @@ class PerhitunganPenelitianController extends Controller
     /**
      * Hitung skala interval berdasarkan total nilai indikator KPT04
      */
+    // private function hitungSkalaIntervalKPT04($totalNilai)
+    // {
+    //     if ($totalNilai >= 57) {
+    //         return [
+    //             'nilai_skala' => 5,
+    //             'kategori' => 'Sangat tinggi',
+    //             'range' => '57-69'
+    //         ];
+    //     } elseif ($totalNilai >= 45) {
+    //         return [
+    //             'nilai_skala' => 4,
+    //             'kategori' => 'Tinggi',
+    //             'range' => '45-56'
+    //         ];
+    //     } elseif ($totalNilai >= 29) {
+    //         return [
+    //             'nilai_skala' => 3,
+    //             'kategori' => 'Sedang',
+    //             'range' => '29-42'
+    //         ];
+    //     } elseif ($totalNilai >= 15) {
+    //         return [
+    //             'nilai_skala' => 2,
+    //             'kategori' => 'Rendah',
+    //             'range' => '15-28'
+    //         ];
+    //     } else {
+    //         return [
+    //             'nilai_skala' => 1,
+    //             'kategori' => 'Sangat Rendah',
+    //             'range' => '<=14'
+    //         ];
+    //     }
+    // }
     private function hitungSkalaIntervalKPT04($totalNilai)
     {
-        if ($totalNilai >= 57) {
+        if ($totalNilai >= 5) {
             return [
                 'nilai_skala' => 5,
                 'kategori' => 'Sangat tinggi',
                 'range' => '57-69'
             ];
-        } elseif ($totalNilai >= 45) {
+        } elseif ($totalNilai == 4) {
             return [
                 'nilai_skala' => 4,
                 'kategori' => 'Tinggi',
                 'range' => '45-56'
             ];
-        } elseif ($totalNilai >= 29) {
+        } elseif ($totalNilai == 3) {
             return [
                 'nilai_skala' => 3,
                 'kategori' => 'Sedang',
                 'range' => '29-42'
             ];
-        } elseif ($totalNilai >= 15) {
+        } elseif ($totalNilai == 2) {
             return [
                 'nilai_skala' => 2,
                 'kategori' => 'Rendah',
