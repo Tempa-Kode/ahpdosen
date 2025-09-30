@@ -202,35 +202,35 @@ class PerhitunganPenelitianController extends Controller
      */
     private function hitungSkalaIntervalKPT03($totalNilai)
     {
-        if ($totalNilai >= 241) {
+        if ($totalNilai >= 240) {
             return [
                 'nilai_skala' => 5,
                 'kategori' => 'Sangat tinggi',
-                'range' => '241-300'
+                'range' => '240-300'
             ];
-        } elseif ($totalNilai >= 178) {
+        } elseif ($totalNilai >= 180) {
             return [
                 'nilai_skala' => 4,
                 'kategori' => 'Tinggi',
-                'range' => '178-240'
+                'range' => '180-239'
             ];
-        } elseif ($totalNilai >= 121) {
+        } elseif ($totalNilai >= 120) {
             return [
                 'nilai_skala' => 3,
                 'kategori' => 'Sedang',
-                'range' => '121-178'
+                'range' => '120-179'
             ];
-        } elseif ($totalNilai >= 61) {
+        } elseif ($totalNilai >= 60) {
             return [
                 'nilai_skala' => 2,
                 'kategori' => 'Rendah',
-                'range' => '61-120'
+                'range' => '60-119'
             ];
         } else {
             return [
                 'nilai_skala' => 1,
                 'kategori' => 'Sangat Rendah',
-                'range' => '<=60'
+                'range' => '<=59'
             ];
         }
     }
