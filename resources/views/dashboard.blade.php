@@ -14,7 +14,7 @@
                         <div class="row">
 
                             <!-- Bar Chart -->
-                            <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="col-12 mb-4">
                                 <div class="card">
                                     <div class="card-header">
                                         <h6 class="card-title">Ranking Dosen Terbaik (Bar Chart)</h6>
@@ -25,7 +25,7 @@
                                 </div>
                             </div>
 
-                            <!-- Pie Chart -->
+                            {{-- <!-- Pie Chart -->
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card">
                                     <div class="card-header">
@@ -35,7 +35,7 @@
                                         <canvas id="pieChart" width="400" height="200"></canvas>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <!-- Tabel Data Dosen -->

@@ -78,7 +78,7 @@
         </div>
 
         <div class="row mt-4">
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">
@@ -103,7 +103,7 @@
                         <canvas id="prodiChart" height="300"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -326,27 +326,27 @@
                 prodiCount[prodi] = (prodiCount[prodi] || 0) + 1;
             });
 
-            const ctx2 = document.getElementById('prodiChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(prodiCount),
-                    datasets: [{
-                        data: Object.values(prodiCount),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 205, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
+            // const ctx2 = document.getElementById('prodiChart').getContext('2d');
+            // new Chart(ctx2, {
+            //     type: 'pie',
+            //     data: {
+            //         labels: Object.keys(prodiCount),
+            //         datasets: [{
+            //             data: Object.values(prodiCount),
+            //             backgroundColor: [
+            //                 'rgba(255, 99, 132, 0.8)',
+            //                 'rgba(54, 162, 235, 0.8)',
+            //                 'rgba(255, 205, 86, 0.8)',
+            //                 'rgba(75, 192, 192, 0.8)',
+            //                 'rgba(153, 102, 255, 0.8)'
+            //             ]
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         maintainAspectRatio: false
+            //     }
+            // });
         }
 
         function showLoading(show) {

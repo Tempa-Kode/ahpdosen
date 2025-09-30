@@ -90,7 +90,7 @@
         </div>
 
         <div class="row mt-4">
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">
@@ -103,7 +103,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">
@@ -115,7 +115,7 @@
                         <canvas id="prodiChart" height="300"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -530,7 +530,7 @@
         function createCharts(rankingData) {
             // Hancurkan chart lama jika ada untuk mencegah duplikasi
             if (topDosenChart) topDosenChart.destroy();
-            if (prodiChart) prodiChart.destroy();
+            // if (prodiChart) prodiChart.destroy();
 
             // Top 10 Dosen Chart
             const top10 = rankingData.slice(0, 10);
@@ -551,22 +551,22 @@
             });
 
             // Distribusi Program Studi Chart
-            const prodiStats = {};
-            rankingData.forEach(item => {
-                prodiStats[item.dosen.prodi] = (prodiStats[item.dosen.prodi] || 0) + 1;
-            });
-            const ctx2 = document.getElementById('prodiChart').getContext('2d');
-            prodiChart = new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(prodiStats),
-                    datasets: [{
-                        data: Object.values(prodiStats),
-                        backgroundColor: ['rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)','rgba(255, 205, 86, 0.8)','rgba(75, 192, 192, 0.8)']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            // const prodiStats = {};
+            // rankingData.forEach(item => {
+            //     prodiStats[item.dosen.prodi] = (prodiStats[item.dosen.prodi] || 0) + 1;
+            // });
+            // const ctx2 = document.getElementById('prodiChart').getContext('2d');
+            // prodiChart = new Chart(ctx2, {
+            //     type: 'pie',
+            //     data: {
+            //         labels: Object.keys(prodiStats),
+            //         datasets: [{
+            //             data: Object.values(prodiStats),
+            //             backgroundColor: ['rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)','rgba(255, 205, 86, 0.8)','rgba(75, 192, 192, 0.8)']
+            //         }]
+            //     },
+            //     options: { responsive: true, maintainAspectRatio: false }
+            // });
         }
 
         function showLoading(show) {
