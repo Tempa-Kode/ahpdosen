@@ -75,11 +75,11 @@ class PerhitunganController extends Controller
         return response()->json([
             'kriteria' => $kriteria,
             'skala_interval_referensi_tetap' => [
-                ['range' => '81% - 100%', 'variabel' => 'Sangat tinggi', 'nilai_decimal' => 5.00000],
-                ['range' => '61% - 80%', 'variabel' => 'Tinggi', 'nilai_decimal' => 4.00000],
-                ['range' => '41% - 60%', 'variabel' => 'Sedang', 'nilai_decimal' => 3.00000],
-                ['range' => '21% - 40%', 'variabel' => 'Rendah', 'nilai_decimal' => 2.00000],
-                ['range' => '0% - 20%', 'variabel' => 'Sangat rendah', 'nilai_decimal' => 1.00000]
+                ['range' => '81% - 100%', 'variabel' => 'Sangat tinggi', 'nilai_decimal' => 5.00],
+                ['range' => '61% - 80%', 'variabel' => 'Tinggi', 'nilai_decimal' => 4.00],
+                ['range' => '41% - 60%', 'variabel' => 'Sedang', 'nilai_decimal' => 3.00],
+                ['range' => '21% - 40%', 'variabel' => 'Rendah', 'nilai_decimal' => 2.00],
+                ['range' => '0% - 20%', 'variabel' => 'Sangat rendah', 'nilai_decimal' => 1.00]
             ],
             'skala_interval_dinamis' => $skalaIntervalDinamis,
             'statistik_skala_interval' => $statistikSkala,
@@ -397,44 +397,44 @@ class PerhitunganController extends Controller
 
         return [
             [
-                'range' => round($batas4, 2) . '% - ' . round($max, 2) . '%',
+                'range' => 81 . '% - ' . 100 . '%',
                 'variabel' => 'Sangat tinggi',
-                'nilai_decimal' => 5.00000,
-                'batas_min' => $batas4,
-                'batas_max' => $max,
-                'jumlah_data' => $totalData - $q4Index
+                'nilai_decimal' => 5.00,
+                'batas_min' => 81,
+                'batas_max' => 100,
+                // 'jumlah_data' => $totalData - $q4Index
             ],
             [
-                'range' => round($batas3, 2) . '% - ' . round($batas4, 2) . '%',
+                'range' => 61 . '% - ' . 80 . '%',
                 'variabel' => 'Tinggi',
-                'nilai_decimal' => 4.00000,
-                'batas_min' => $batas3,
-                'batas_max' => $batas4,
-                'jumlah_data' => $q4Index - $q3Index
+                'nilai_decimal' => 4.00,
+                'batas_min' => 61,
+                'batas_max' => 80,
+                // 'jumlah_data' => $q4Index - $q3Index
             ],
             [
-                'range' => round($batas2, 2) . '% - ' . round($batas3, 2) . '%',
+                'range' => 41 . '% - ' . 60 . '%',
                 'variabel' => 'Sedang',
-                'nilai_decimal' => 3.00000,
-                'batas_min' => $batas2,
-                'batas_max' => $batas3,
+                'nilai_decimal' => 3.00,
+                'batas_min' => 41,
+                'batas_max' => 60,
                 'jumlah_data' => $q3Index - $q2Index
             ],
             [
-                'range' => round($batas1, 2) . '% - ' . round($batas2, 2) . '%',
+                'range' => 21 . '% - ' . 40 . '%',
                 'variabel' => 'Rendah',
-                'nilai_decimal' => 2.00000,
-                'batas_min' => $batas1,
-                'batas_max' => $batas2,
-                'jumlah_data' => $q2Index - $q1Index
+                'nilai_decimal' => 2.00,
+                'batas_min' => 21,
+                'batas_max' => 40,
+                // 'jumlah_data' => $q2Index - $q1Index
             ],
             [
-                'range' => round($min, 2) . '% - ' . round($batas1, 2) . '%',
+                'range' => 0 . '% - ' . 20 . '%',
                 'variabel' => 'Sangat rendah',
-                'nilai_decimal' => 1.00000,
-                'batas_min' => $min,
-                'batas_max' => $batas1,
-                'jumlah_data' => $q1Index
+                'nilai_decimal' => 1.00,
+                'batas_min' => 0,
+                'batas_max' => 20,
+                // 'jumlah_data' => $q1Index
             ]
         ];
     }
