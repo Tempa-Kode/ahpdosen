@@ -8,6 +8,7 @@ use App\Models\Kriteria;
 use App\Models\SubIndikator;
 use App\Models\SubSubIndikator;
 use Illuminate\Http\Request;
+use Revolution\Google\Sheets\Facades\Sheets;
 
 class PenilaianController extends Controller
 {
@@ -83,5 +84,13 @@ class PenilaianController extends Controller
         }
 
         return back()->with('success', 'Nilai untuk ' . $dosen->nama . ' berhasil diperbarui.');
+    }
+
+    public function getDataSpreadSheet($nidn)
+    {
+        $values = Sheets::spreadsheet('1CmS-dIZWZkPq7FHSIICsmQj-z5OJhv1jch-cSXiuXzc')
+            ->sheet($nidn)
+            ->all();
+        return response()->json($values);
     }
 }

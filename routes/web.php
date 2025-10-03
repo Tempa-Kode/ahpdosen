@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\PenilaianController;
 use Illuminate\Support\Facades\Route;
+use Revolution\Google\Sheets\Facades\Sheets;
+use App\Http\Controllers\PenilaianController;
 
 Route::get('/', [\App\Http\Controllers\LoginController::class, 'login'])->name('login');
 Route::post('/login', [\App\Http\Controllers\LoginController::class, 'prosesLogin'])->name('prosesLogin');
@@ -125,3 +126,23 @@ Route::prefix('api/perhitungan-tridarma')->name('api.perhitungan.tridarma.')->gr
 Route::get('kegiatan-penunjang-tridarma', [\App\Http\Controllers\PerhitunganTridarmaController::class, 'penilaianK004Page'])->name('perhitungan.penilaian.k004.page');
 
 Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])->name('report.index');
+
+// routes/web.php
+Route::get('/test-sheets', function () {
+    try {
+        $sheets = Sheets::spreadsheetList();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Service account authentication working',
+            'data' => count($sheets)
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ]);
+    }
+});
+
+// Get data from a specific Google Sheet by NIDN
+Route::get('/sheets/{nidn}', [PenilaianController::class, 'getDataSpreadSheet'])->name('sheets.getDataByNidn');
