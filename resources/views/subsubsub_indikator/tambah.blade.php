@@ -39,7 +39,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="skor_kredit" class="form-label">Skor Kredit</label>
-                            <input type="number" class="form-control" id="skor_kredit" name="skor_kredit" autocomplete="off" value="{{ old('skor_kredit') }}">
+                            <input type="number" class="form-control" id="skor_kredit" step="0.01" name="skor_kredit" autocomplete="off" value="{{ old('skor_kredit') }}">
                         </div>
                         <button type="submit" class="btn btn-primary me-2">Simpan</button>
                     </form>
