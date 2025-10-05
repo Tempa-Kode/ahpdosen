@@ -145,4 +145,4 @@ Route::get('/test-sheets', function () {
 });
 
 // Get data from a specific Google Sheet by NIDN
-Route::get('/sheets/{nidn}', [PenilaianController::class, 'getDataSpreadSheet'])->name('sheets.getDataByNidn');
+Route::get('/penilaian/spreadsheet/{nidn}', [PenilaianController::class, 'getDataSpreadSheet'])->name('sheets.getDataByNidn');

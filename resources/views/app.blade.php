@@ -233,6 +233,7 @@
     <!-- End custom js for this page -->
 
     @yield("js")
+    @stack("scripts")
 </body>
 
 </html>
