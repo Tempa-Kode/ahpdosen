@@ -7,6 +7,7 @@ use App\Models\Indikator; // Tambahkan ini
 use App\Models\Kriteria;
 use App\Models\SubIndikator;
 use App\Models\SubSubIndikator;
+use App\Models\SubSubSubIndikator;
 use Illuminate\Http\Request;
 use Revolution\Google\Sheets\Facades\Sheets;
 
@@ -29,6 +30,10 @@ class PenilaianController extends Controller
             },
             'indikator.subIndikator.subSubIndikator' => function ($query) use ($dosen) {
                 // Ambil penilaian untuk sub-sub-indikator
+                $query->with(['penilaians' => fn($q) => $q->where('dosen_id', $dosen->id)]);
+            },
+            'indikator.subIndikator.subSubIndikator.subSubSubIndikator' => function ($query) use ($dosen) {
+                // Ambil penilaian untuk sub-sub-sub-indikator
                 $query->with(['penilaians' => fn($q) => $q->where('dosen_id', $dosen->id)]);
             }
         ])->get();
@@ -77,6 +82,18 @@ class PenilaianController extends Controller
             foreach ($request->nilai['sub_sub_indikator'] as $id => $nilai) {
                 if (!is_null($nilai)) {
                     SubSubIndikator::find($id)->penilaians()->updateOrCreate(
+                        ['dosen_id' => $dosen->id],
+                        ['nilai' => $nilai]
+                    );
+                }
+            }
+        }
+
+        // 4. Proses nilai untuk SubSubSubIndikator
+        if ($request->has('nilai.sub_sub_sub_indikator')) {
+            foreach ($request->nilai['sub_sub_sub_indikator'] as $id => $nilai) {
+                if (!is_null($nilai)) {
+                    SubSubSubIndikator::find($id)->penilaians()->updateOrCreate(
                         ['dosen_id' => $dosen->id],
                         ['nilai' => $nilai]
                     );

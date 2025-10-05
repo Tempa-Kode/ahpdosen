@@ -82,45 +82,84 @@
                                                                                     data-bs-target="#collapse-sub-{{ $subIndikator->id }}"
                                                                                     aria-expanded="false"
                                                                                     aria-controls="collapse-sub-{{ $subIndikator->id }}">
-                                                                                {{ $subIndikator->nama_sub_indikator }}
+                                                                            {{ $subIndikator->nama_sub_indikator }}
                                                                             </button>
                                                                         </h2>
 
                                                                         <div id="collapse-sub-{{ $subIndikator->id }}" class="accordion-collapse collapse">
                                                                             <div class="accordion-body question-body">
 
-                                                                                {{-- SATU TABEL SAJA (responsif via .table-responsive) --}}
-                                                                                <div class="table-responsive">
-                                                                                    <table class="table table-bordered align-middle rating-table">
-                                                                                        <thead>
-                                                                                            <tr>
-                                                                                                <th>Sub-Sub Indikator</th>
-                                                                                                <th style="width:15%">Nilai</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                            @foreach ($subIndikator->subSubIndikator as $subSub)
-                                                                                                @php $nilai = $subSub->penilaians->first()->nilai ?? ''; @endphp
-                                                                                                <tr class="rating-row">
-                                                                                                    <td class="rating-label">
-                                                                                                        {{ strtolower($subSub->nama_sub_sub_indikator) }}
-                                                                                                    </td>
-                                                                                                    <td>
+                                                                            <div class="table-responsive">
+                                                                                <table class="table table-bordered align-middle rating-table">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                    <th>Sub/Sub-Sub Indikator</th>
+                                                                                    <th style="width:15%">Nilai</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach ($subIndikator->subSubIndikator as $subSub)
+                                                                                    @php
+                                                                                        // Deteksi apakah subSub punya anak level-3
+                                                                                        $hasLevel3 = $subSub->subSubSubIndikator && $subSub->subSubSubIndikator->isNotEmpty();
+                                                                                    @endphp
 
-                                                                                                        <input type="number" step="0.01" class="form-control" @if ($kriteria->nama_kriteria === 'Pendidikan dan Pembelajaran') readonly @endif
-                                                                                                               name="nilai[sub_sub_indikator][{{ $subSub->id }}]"
-                                                                                                               value="{{ $nilai }}"
-                                                                                                               placeholder="Masukkan nilai">
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            @endforeach
-                                                                                        </tbody>
-                                                                                    </table>
-                                                                                </div>
+                                                                                    @if ($hasLevel3)
+                                                                                        {{-- Judul kelompok (nama subSubIndikator) --}}
+                                                                                        <tr class="table-light">
+                                                                                        <td colspan="2">
+                                                                                            <em>{{ $subSub->nama_sub_sub_indikator }}</em>
+                                                                                        </td>
+                                                                                        </tr>
+
+                                                                                        {{-- Render baris untuk masing-masing SubSubSubIndikator --}}
+                                                                                        @foreach ($subSub->subSubSubIndikator as $subSubSub)
+                                                                                        @php $nilai = $subSubSub->penilaians->first()->nilai ?? ''; @endphp
+                                                                                        <tr class="rating-row">
+                                                                                            <td class="rating-label">
+                                                                                            {{ strtolower($subSubSub->nama_sub_sub_sub_indikator) }}
+                                                                                            </td>
+                                                                                            <td>
+                                                                                            <input
+                                                                                                type="number"
+                                                                                                step="0.01"
+                                                                                                class="form-control"
+                                                                                                @if ($kriteria->nama_kriteria === 'Pendidikan dan Pembelajaran') readonly @endif
+                                                                                                name="nilai[sub_sub_sub_indikator][{{ $subSubSub->id }}]"
+                                                                                                value="{{ $nilai }}"
+                                                                                                placeholder="Masukkan nilai">
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        @endforeach
+
+                                                                                    @else
+                                                                                        {{-- TANPA LEVEL-3 -> pakai nilai subSubIndikator seperti semula --}}
+                                                                                        @php $nilai = $subSub->penilaians->first()->nilai ?? ''; @endphp
+                                                                                        <tr class="rating-row">
+                                                                                        <td class="rating-label">
+                                                                                            {{ strtolower($subSub->nama_sub_sub_indikator) }}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <input
+                                                                                            type="number"
+                                                                                            step="0.01"
+                                                                                            class="form-control"
+                                                                                            @if ($kriteria->nama_kriteria === 'Pendidikan dan Pembelajaran') readonly @endif
+                                                                                            name="nilai[sub_sub_indikator][{{ $subSub->id }}]"
+                                                                                            value="{{ $nilai }}"
+                                                                                            placeholder="Masukkan nilai">
+                                                                                        </td>
+                                                                                        </tr>
+                                                                                    @endif
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                                </table>
+                                                                            </div>
 
                                                                             </div>
                                                                         </div>
                                                                     </div>
+
                                                                 @else
                                                                     {{-- SUB-INDIKATOR TANPA ANAK -> 1 INPUT SAJA --}}
                                                                     <div class="card mb-2">

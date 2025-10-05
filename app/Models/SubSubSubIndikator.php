@@ -19,4 +19,9 @@ class SubSubSubIndikator extends Model
     {
         return $this->belongsTo(SubSubIndikator::class, 'sub_sub_indikator_id');
     }
+
+    public function penilaians()
+    {
+        return $this->morphMany(Penilaian::class, 'penilaian');
+    }
 }
