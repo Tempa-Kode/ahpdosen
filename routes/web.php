@@ -48,6 +48,15 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'edit'])->name('subsubindikator.edit');
         Route::put('/update/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'update'])->name('subsubindikator.update');
         Route::delete('/hapus/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'hapus'])->name('subsubindikator.hapus');
+        Route::get('/detail/{id}', [\App\Http\Controllers\SubSubIndikatorController::class, 'detail'])->name('subsubindikator.detail');
+    });
+    Route::prefix('sub-sub-sub-indikator')->group(function () {
+        Route::get('/tambah', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'tambah'])->name('subsubsubindikator.tambah');
+        Route::post('/simpan', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'simpan'])->name('subsubsubindikator.simpan');
+        Route::get('/edit/{id}', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'edit'])->name('subsubsubindikator.edit');
+        Route::put('/update/{id}', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'update'])->name('subsubsubindikator.update');
+        Route::delete('/hapus/{id}', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'hapus'])->name('subsubsubindikator.hapus');
+        Route::get('/detail/{id}', [\App\Http\Controllers\SubSubSubIndikatorController::class, 'detail'])->name('subsubsubindikator.detail');
     });
 
     Route::get('/penilaian/{dosen}/form', [PenilaianController::class, 'form'])->name('penilaian.form');

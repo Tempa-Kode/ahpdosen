@@ -95,4 +95,13 @@ class SubSubIndikatorController extends Controller
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data.' . $e->getMessage()]);
         }
     }
+
+    public function detail($id)
+    {
+        $subSubIndikator = SubSubIndikator::where('id', $id)->with('subIndikator.indikator.kriteria')->first();
+        if (!$subSubIndikator) {
+            return redirect()->back()->withErrors(['error' => 'Sub Sub Indikator tidak ditemukan.']);
+        }
+        return view('subsub_indikator.detail', compact('subSubIndikator'));
+    }
 }
