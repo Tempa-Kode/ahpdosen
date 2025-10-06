@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Kriteria;
 use App\Models\Indikator;
 use App\Models\SubIndikator;
+use App\Models\SubSubIndikator;
+use App\Models\SubSubSubIndikator;
 use App\Models\Penilaian;
 use App\Models\Dosen;
 
@@ -61,7 +63,7 @@ class PerhitunganPenelitianController extends Controller
             ->where('penilaian_id', $indikator->id)
             ->first();
 
-                // Jika indikator memiliki nilai langsung, gunakan nilai tersebut
+        // Jika indikator memiliki nilai langsung, gunakan nilai tersebut
         if ($penilaianIndikator && $penilaianIndikator->nilai > 0) {
             $nilai_indikator = $penilaianIndikator->nilai;
 
@@ -76,6 +78,7 @@ class PerhitunganPenelitianController extends Controller
                 'bobot' => $bobot,
                 'total_nilai_indikator' => $nilai_indikator,
                 'detail_sub_indikator' => [],
+                'sumber_nilai' => 'nilai_langsung_indikator'
             ];
 
             return $result;
@@ -88,26 +91,28 @@ class PerhitunganPenelitianController extends Controller
         $total_nilai_indikator = 0;
 
         foreach ($subIndikators as $subIndikator) {
-            // Ambil penilaian untuk sub indikator ini
-            $penilaian = Penilaian::where('dosen_id', $dosen_id)
-                ->where('penilaian_type', 'App\Models\SubIndikator')
-                ->where('penilaian_id', $subIndikator->id)
-                ->first();
+            $nilaiSubIndikator = $this->hitungNilaiSubIndikator($dosen_id, $subIndikator);
 
-            $nilai = $penilaian ? $penilaian->nilai : 0;
-            $total_sub = $nilai * $subIndikator->skor_kredit;
+            // Jika sub indikator memiliki skor_kredit, gunakan untuk perhitungan
+            // Jika tidak, langsung tambahkan nilai tanpa perkalian
+            if ($subIndikator->skor_kredit && $subIndikator->skor_kredit > 0) {
+                $total_sub = $nilaiSubIndikator['nilai'] * $subIndikator->skor_kredit;
+            } else {
+                $total_sub = $nilaiSubIndikator['nilai'];
+            }
+
             $total_nilai_indikator += $total_sub;
 
             $detail_sub_indikator[] = [
                 'sub_indikator_id' => $subIndikator->id,
                 'nama' => $subIndikator->nama_sub_indikator,
                 'skor_kredit' => $subIndikator->skor_kredit,
-                'nilai' => $nilai,
-                'total' => $total_sub
+                'nilai' => $nilaiSubIndikator['nilai'],
+                'total' => $total_sub,
+                'sumber_nilai' => $nilaiSubIndikator['sumber_nilai'],
+                'detail_sub_sub_indikator' => $nilaiSubIndikator['detail_sub_sub_indikator'] ?? []
             ];
-        }
-
-        // Hitung bobot berdasarkan skala interval untuk indikator KPT
+        }        // Hitung bobot berdasarkan skala interval untuk indikator KPT
         $skalaInterval = $this->hitungSkalaIntervalIndikator($indikator->kd_indikator, $total_nilai_indikator);
         $bobot = $skalaInterval ? $skalaInterval['nilai_skala'] : $indikator->bobot_indikator;
 
@@ -118,6 +123,134 @@ class PerhitunganPenelitianController extends Controller
             'bobot' => $bobot,
             'total_nilai_indikator' => $total_nilai_indikator,
             'detail_sub_indikator' => $detail_sub_indikator,
+            'sumber_nilai' => 'perhitungan_sub_indikator'
+        ];
+    }
+
+    /**
+     * Hitung nilai untuk satu sub indikator
+     */
+    private function hitungNilaiSubIndikator($dosen_id, $subIndikator)
+    {
+        // Cek apakah sub indikator memiliki nilai langsung
+        $penilaianSubIndikator = Penilaian::where('dosen_id', $dosen_id)
+            ->where('penilaian_type', 'App\Models\SubIndikator')
+            ->where('penilaian_id', $subIndikator->id)
+            ->first();
+
+        // Jika sub indikator memiliki nilai langsung, gunakan nilai tersebut
+        if ($penilaianSubIndikator && $penilaianSubIndikator->nilai > 0) {
+            return [
+                'nilai' => $penilaianSubIndikator->nilai,
+                'sumber_nilai' => 'nilai_langsung_sub_indikator',
+                'detail_sub_sub_indikator' => []
+            ];
+        }
+
+        // Jika tidak ada nilai langsung, gunakan perhitungan berdasarkan sub sub indikator
+        $subSubIndikators = SubSubIndikator::where('sub_indikator_id', $subIndikator->id)->get();
+
+        if ($subSubIndikators->isEmpty()) {
+            return [
+                'nilai' => 0,
+                'sumber_nilai' => 'tidak_ada_data',
+                'detail_sub_sub_indikator' => []
+            ];
+        }
+
+        $detail_sub_sub_indikator = [];
+        $total_nilai_sub_indikator = 0;
+
+        foreach ($subSubIndikators as $subSubIndikator) {
+            $nilaiSubSubIndikator = $this->hitungNilaiSubSubIndikator($dosen_id, $subSubIndikator);
+
+            // Jika sub sub indikator memiliki skor_kredit, gunakan untuk perhitungan
+            // Jika tidak, langsung tambahkan nilai tanpa perkalian
+            if ($subSubIndikator->skor_kredit && $subSubIndikator->skor_kredit > 0) {
+                $total_sub_sub = $nilaiSubSubIndikator['nilai'] * $subSubIndikator->skor_kredit;
+            } else {
+                $total_sub_sub = $nilaiSubSubIndikator['nilai'];
+            }
+
+            $total_nilai_sub_indikator += $total_sub_sub;
+
+            $detail_sub_sub_indikator[] = [
+                'sub_sub_indikator_id' => $subSubIndikator->id,
+                'nama' => $subSubIndikator->nama_sub_sub_indikator,
+                'skor_kredit' => $subSubIndikator->skor_kredit ?? 0,
+                'nilai' => $nilaiSubSubIndikator['nilai'],
+                'total' => $total_sub_sub,
+                'sumber_nilai' => $nilaiSubSubIndikator['sumber_nilai'],
+                'detail_sub_sub_sub_indikator' => $nilaiSubSubIndikator['detail_sub_sub_sub_indikator'] ?? []
+            ];
+        }
+
+        return [
+            'nilai' => $total_nilai_sub_indikator,
+            'sumber_nilai' => 'perhitungan_sub_sub_indikator',
+            'detail_sub_sub_indikator' => $detail_sub_sub_indikator
+        ];
+    }
+
+    /**
+     * Hitung nilai untuk satu sub sub indikator
+     */
+    private function hitungNilaiSubSubIndikator($dosen_id, $subSubIndikator)
+    {
+        // Cek apakah sub sub indikator memiliki nilai langsung
+        $penilaianSubSubIndikator = Penilaian::where('dosen_id', $dosen_id)
+            ->where('penilaian_type', 'App\Models\SubSubIndikator')
+            ->where('penilaian_id', $subSubIndikator->id)
+            ->first();
+
+        // Jika sub sub indikator memiliki nilai langsung, gunakan nilai tersebut
+        if ($penilaianSubSubIndikator && $penilaianSubSubIndikator->nilai > 0) {
+            return [
+                'nilai' => $penilaianSubSubIndikator->nilai,
+                'sumber_nilai' => 'nilai_langsung_sub_sub_indikator',
+                'detail_sub_sub_sub_indikator' => []
+            ];
+        }
+
+        // Jika tidak ada nilai langsung, gunakan perhitungan berdasarkan sub sub sub indikator
+        $subSubSubIndikators = SubSubSubIndikator::where('sub_sub_indikator_id', $subSubIndikator->id)->get();
+
+        if ($subSubSubIndikators->isEmpty()) {
+            return [
+                'nilai' => 0,
+                'sumber_nilai' => 'tidak_ada_data',
+                'detail_sub_sub_sub_indikator' => []
+            ];
+        }
+
+        $detail_sub_sub_sub_indikator = [];
+        $total_nilai_sub_sub_indikator = 0;
+
+        foreach ($subSubSubIndikators as $subSubSubIndikator) {
+            // Ambil penilaian untuk sub sub sub indikator ini
+            $penilaian = Penilaian::where('dosen_id', $dosen_id)
+                ->where('penilaian_type', 'App\Models\SubSubSubIndikator')
+                ->where('penilaian_id', $subSubSubIndikator->id)
+                ->first();
+
+            $nilai = $penilaian ? $penilaian->nilai : 0;
+            $total_sub_sub_sub = $nilai * $subSubSubIndikator->skor_kredit;
+            $total_nilai_sub_sub_indikator += $total_sub_sub_sub;
+
+            $detail_sub_sub_sub_indikator[] = [
+                'sub_sub_sub_indikator_id' => $subSubSubIndikator->id,
+                'nama' => $subSubSubIndikator->nama_sub_sub_sub_indikator,
+                'skor_kredit' => $subSubSubIndikator->skor_kredit,
+                'nilai' => $nilai,
+                'total' => $total_sub_sub_sub,
+                'sumber_nilai' => 'nilai_langsung_sub_sub_sub_indikator'
+            ];
+        }
+
+        return [
+            'nilai' => $total_nilai_sub_sub_indikator,
+            'sumber_nilai' => 'perhitungan_sub_sub_sub_indikator',
+            'detail_sub_sub_sub_indikator' => $detail_sub_sub_sub_indikator
         ];
     }
 
@@ -448,6 +581,20 @@ class PerhitunganPenelitianController extends Controller
         }
 
         return response()->json($hasil_semua);
+    }
+
+    /**
+     * Method publik untuk testing perhitungan indikator
+     */
+    public function hitungNilaiIndikatorPublic($dosen_id, $indikator_id)
+    {
+        $indikator = Indikator::find($indikator_id);
+        if (!$indikator) {
+            return response()->json(['error' => 'Indikator tidak ditemukan'], 404);
+        }
+
+        $result = $this->hitungNilaiIndikator($dosen_id, $indikator);
+        return response()->json($result);
     }
 }
 

@@ -106,6 +106,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 Route::prefix('api/penelitian')->name('api.penelitian.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PerhitunganPenelitianController::class, 'hitungSemuaDosen'])->name('api.penelitian');
     Route::get('/skala-interval-kpt01', [\App\Http\Controllers\PerhitunganPenelitianController::class, 'laporanSkalaIntervalKPT01'])->name('skala.interval.kpt01');
+    Route::get('/test-indikator/{dosen_id}/{indikator_id}', [\App\Http\Controllers\PerhitunganPenelitianController::class, 'hitungNilaiIndikatorPublic'])->name('test.indikator');
 });
 
 // API Routes untuk AHP Penelitian
