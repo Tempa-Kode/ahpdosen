@@ -69,10 +69,32 @@
                                                      data-bs-parent="#accordionIndikator-{{ $kriteria->id }}">
 
                                                     <div class="accordion-body" style="padding-top:.75rem">
-
+                                                        @if ($indikator->nama_indikator == "pedagogik")
+                                                            <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#pedagogikModal">
+                                                                <i class="link-icon text-sm" data-feather="info"></i>
+                                                                Info
+                                                            </button>
+                                                        @endif
+                                                        @if ($indikator->nama_indikator == "Profesional")
+                                                            <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#profesionalModal">
+                                                                <i class="link-icon text-sm" data-feather="info"></i>
+                                                                Info
+                                                            </button>
+                                                        @endif
+                                                        @if ($indikator->nama_indikator == "Pribadi")
+                                                            <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#pribadiModal">
+                                                                <i class="link-icon text-sm" data-feather="info"></i>
+                                                                Info
+                                                            </button>
+                                                        @endif
+                                                        @if ($indikator->nama_indikator == "Sosial")
+                                                            <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#sosialModal">
+                                                                <i class="link-icon text-sm" data-feather="info"></i>
+                                                                Info
+                                                            </button>
+                                                        @endif
                                                         <div class="accordion" id="accordionSubIndikator-{{ $indikator->id }}">
                                                             @foreach ($indikator->subIndikator as $subIndikator)
-
                                                                 @if ($subIndikator->subSubIndikator->isNotEmpty())
                                                                     {{-- SUB-INDIKATOR YG PUNYA SUB-SUB --}}
                                                                     <div class="accordion-item question-item mb-2">
@@ -166,7 +188,10 @@
                                                                         <div class="card-body">
                                                                             <div class="row g-2 align-items-center">
                                                                                 <div class="col-12 col-md-8">
-                                                                                    <strong>{{ $subIndikator->nama_sub_indikator }}</strong>
+                                                                                    <label for="{{ $subIndikator->id }}" class="form-label">
+                                                                                        {{ $subIndikator->nama_sub_indikator }}
+                                                                                    </label>
+                                                                                    {{-- <strong>{{ $subIndikator->nama_sub_indikator }}</strong> --}}
                                                                                 </div>
                                                                                 <div class="col-12 col-md-4">
                                                                                     @php $nilai = $subIndikator->penilaians->first()->nilai ?? ''; @endphp
@@ -193,7 +218,8 @@
                                                 <div class="card-body">
                                                     <div class="row g-2 align-items-center">
                                                         <div class="col-12 col-md-8">
-                                                            <strong>{{ $indikator->nama_indikator }}</strong>
+                                                            {{-- <strong>{{ $indikator->nama_indikator }}</strong> --}}
+                                                            <label for="{{ $indikator->id }}" class="form-label">{{ $indikator->nama_indikator }}</label>
                                                         </div>
                                                         <div class="col-12 col-md-4">
                                                             @php $nilai = $indikator->penilaians->first()->nilai ?? ''; @endphp
@@ -234,6 +260,82 @@
             </div>
         </form>
     </div>
+
+    {{-- Modal Info Pedagogik --}}
+    <div class="modal fade" id="pedagogikModal" tabindex="-1" aria-labelledby="pedagogikModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="pedagogikModalLabel">Kompetensi Pedagogik</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Kompetensi pedagogik adalah kemampuan seorang pendidik dalam mengelola pembelajaran yang efektif, efisien, dan bermakna bagi peserta didik.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Info Pedagogik--}}
+
+    {{-- Modal Info Profesional --}}
+    <div class="modal fade" id="profesionalModal" tabindex="-1" aria-labelledby="profesionalModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="profesionalModalLabel">Kompetensi Profesional</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Kompetensi profesional adalah kemampuan seorang pendidik dalam menguasai materi pembelajaran dan mengembangkan profesinya secara berkelanjutan.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Info Pedagogik--}}
+
+    {{-- Modal Info Pribadi --}}
+    <div class="modal fade" id="pribadiModal" tabindex="-1" aria-labelledby="pribadiModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="pribadiModalLabel">Kompetensi Pribadi</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Kompetensi pribadi adalah kemampuan seorang pendidik untuk menunjukkan kepribadian yang mencerminkan sikap mulia dan dapat dijadikan teladan.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Info Pedagogik--}}
+
+    {{-- Modal Info Sosial --}}
+    <div class="modal fade" id="sosialModal" tabindex="-1" aria-labelledby="sosialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="sosialModalLabel">Kompetensi Sosial</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Kompetensi sosial adalah kemampuan pendidik untuk berinteraksi dan berkomunikasi secara efektif dengan peserta didik, rekan kerja, orang tua, dan masyarakat.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Info Pedagogik--}}
 
     <style>
         .accordion-button:not(.collapsed){background-color:#e7f3ff;color:#0d6efd;}
